@@ -1,10 +1,18 @@
 package Controleur;
 
+import Global.Configuration;
+import Modele.Jeu;
+import Structures.Sequence;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceUtilisateur;
 
 public class ControleurMediateur implements CollecteurEvenements{
-
+	Jeu jeu;
+	InterfaceUtilisateur inter;
+	
+	public ControleurMediateur(Jeu j) {
+		jeu = j;
+	}
 	@Override
 	public void clicSouris(int l, int c) {
 		// TODO Auto-generated method stub
@@ -19,14 +27,12 @@ public class ControleurMediateur implements CollecteurEvenements{
 
 	@Override
 	public void fixerInterfaceUtilisateur(InterfaceUtilisateur i) {
-		// TODO Auto-generated method stub
-		
+		inter = i;
 	}
 
 	@Override
 	public void tictac() {
-		// TODO Auto-generated method stub
-		
+		inter.metAJour();
 	}
 
 }

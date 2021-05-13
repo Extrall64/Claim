@@ -10,13 +10,13 @@ import javax.swing.JComponent;
 import Modele.*;
 import Patterns.*;
 
-public class JeuGraphiqueSwing extends JComponent {
+public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 	int largeur, hauteur;
 	Graphics2D drawable;
 	VueJeu vue;
 
 	public JeuGraphiqueSwing(Jeu j) {
-		
+		vue = new VueJeu(j, this);
 	}
 
 	@Override
@@ -30,7 +30,23 @@ public class JeuGraphiqueSwing extends JComponent {
 		tracerNiveau();
 	}
 	
-	void tracerNiveau() {
+	void tracerNiveau(){
+		vue.tracerNiveau();
+	}
+
+	@Override
+	public int largeur() {
+		return largeur;
+	}
+
+	@Override
+	public int hauteur() {
+		return hauteur;
+	}
+	
+	@Override
+	public void tracerImage(ImageClaim img, int x, int y, int largeur, int hauteur) {
+		drawable.drawImage(img.image(), x, y, largeur, hauteur, null);
 	}
 	
 }

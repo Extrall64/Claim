@@ -16,9 +16,8 @@ public class InterfaceGraphique implements Runnable, Observateur, InterfaceUtili
 	JeuGraphiqueSwing jg;
 	boolean maximized;
 	JFrame frame;
-	JLabel joueurCourant,joueur1,joueur2,IA1,IA2;
-	JButton nouvellePartie,moins1, plus1,moins2, plus2;
-	
+	JLabel joueurCourant;
+	JButton nouvellePartie;
 	
 
 	InterfaceGraphique(Jeu j, CollecteurEvenements c) {
@@ -45,9 +44,27 @@ public class InterfaceGraphique implements Runnable, Observateur, InterfaceUtili
 	}
 
 	public void run() {	
+		frame = new JFrame("Sokoban");
+		jg = new JeuGraphiqueSwing(jeu);
+		frame.add(jg);
 		
+		jg.addMouseListener(new AdaptateurSouris(jg, controle));
+		//frame.addKeyListener(new AdaptateurClavier(controle));
+		Timer time = new Timer(16, new AdaptateurTemps(controle));
+		time.start();
+		controle.fixerInterfaceUtilisateur(this);
+
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(500, 300);
+		frame.setVisible(true);
 	}
 
+	@Override
+	public void metAJour() {
+		jg.repaint();
+	}
+
+	@Override
 	public void basculePleinEcran() {
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice device = env.getDefaultScreenDevice();
@@ -59,8 +76,5 @@ public class InterfaceGraphique implements Runnable, Observateur, InterfaceUtili
 			maximized = true;
 		}
 	}
-
-	public void metAJour() {
-		jg.repaint();
-	}
+	
 }

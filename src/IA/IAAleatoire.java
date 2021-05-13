@@ -1,16 +1,14 @@
-package Joueur;
+package IA;
 
 
 import java.util.*;
 import Modele.*;
 import Patterns.*;
 
-public class IAAleatoire implements Joueur{
-    Modele m;
+public class IAAleatoire extends IA{
     int [] main;
     Random rand;
-    public IAAleatoire(Modele m, int [] ref_main) {
-        this.m = m;
+    public IAAleatoire(int [] ref_main) {
         main = ref_main;
         rand = new Random();
     }
@@ -19,4 +17,9 @@ public class IAAleatoire implements Joueur{
         int carte = rand.nextInt( main.length );
         return carte;
     }
+	@Override
+	public int typeJoeur() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

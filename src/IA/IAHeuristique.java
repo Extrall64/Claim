@@ -1,14 +1,12 @@
-package Joueur;
+package IA;
 
 import java.util.*;
 import Modele.*;
 import Patterns.*;
 
-public class IAHeuristique implements Joueur {
-    Modele m;
+public class IAHeuristique extends IA{
     int [] main;
-    public IAHeuristique(Modele m, int [] ref_main) {
-        this.m = m;
+    public IAHeuristique( int [] ref_main) {
         main =  ref_main;
     }
     @Override
@@ -17,4 +15,9 @@ public class IAHeuristique implements Joueur {
         int carte = 0;
         return carte;
     }
+	@Override
+	public int typeJoeur() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

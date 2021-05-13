@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Configuration {
 	private static Configuration instance = null;
@@ -55,5 +57,11 @@ public class Configuration {
 			default:
 				throw new RuntimeException("Type de séquence inconnu : " + type);
 		}
+	}
+	
+	public Logger logger() {
+		Logger log = Logger.getLogger("Claim.Logger");
+		log.setLevel(Level.parse(lis("LogLevel")));
+		return log;
 	}
  }

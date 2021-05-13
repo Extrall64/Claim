@@ -44,7 +44,7 @@ public class InterfaceGraphique implements Runnable, Observateur, InterfaceUtili
 	}
 
 	public void run() {	
-		frame = new JFrame("Sokoban");
+		frame = new JFrame("Claim");
 		jg = new JeuGraphiqueSwing(jeu);
 		frame.add(jg);
 		

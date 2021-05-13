@@ -40,7 +40,7 @@ public class VueJeu {
 	}
 
 	void tracerNiveau() {
-		ng.tracerImage(images[0][9], 50, 50, 200, 200);
+		ng.tracerImage(images[0][9], 50, 50, 200, 300);
 	}
 	
 }

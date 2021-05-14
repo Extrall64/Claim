@@ -17,7 +17,7 @@ public class VueJeu {
 
 	private ImageClaim chargeImage(String nom) {
 		ImageClaim img = null;
-		InputStream in = Configuration.charge("carte" + File.separator + nom + ".png");
+		InputStream in = Configuration.charge("carte_JPEG" + File.separator + nom + ".jpg");
 		return ImageClaim.getImageSokoban(in);
 	}
 

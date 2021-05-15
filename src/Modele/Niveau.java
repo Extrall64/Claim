@@ -114,7 +114,7 @@ public class Niveau extends Historique<Action>{
     	nouveau(new Action(this, this.clone()));//mise a jour historique
     	carteCourantes[joueurCourant] = carte;
     	retirerCarteMainCourante(carte);
-    	if(carteCourantes[autreJoueur(joueurCourant)] == -1) {
+    	if(carteCourantes[autreJoueur()] == -1) {
     		inverserJoueur();
     	}
     	
@@ -187,34 +187,29 @@ public class Niveau extends Historique<Action>{
     	return carteCourantes[Jeu.JoueurA] != -1 && carteCourantes[Jeu.JoueurB] != -1;
     }
     
-    public int autreJoueur(int j) {
-    	return (j+1)%2;
+    public int autreJoueur() {
+    	return (joueurCourant+1)%2;
     }
     
     public void combat() {
-    	Carte a = cartes[carteCourantes[Jeu.JoueurA]];
-    	Carte b = cartes[carteCourantes[Jeu.JoueurB]];
+    	Carte a = cartes[carteCourantes[joueurCourant]];
+    	Carte b = cartes[carteCourantes[autreJoueur()]];
     	int joueur;
     	if(a.faction == Jeu.GLOBELINS && b.faction == Jeu.CHEVALIERS) { //seul cas particulier
-    		joueur = Jeu.JoueurB;
+    		joueur = autreJoueur();
     	}
-    	else if(b.faction == Jeu.GLOBELINS && a.faction == Jeu.CHEVALIERS) {
-    		joueur = Jeu.JoueurA;
+    	else if(b.faction != Jeu.DOPPELGANGERS && a.faction != b.faction) {
+    		joueur = joueurCourant;
     	}
     	else { //poids de plus hautes valeurs l'emporte
     		if(a.poid == b.poid) {
-    			if(joueurCourant == Jeu.JoueurA) {//joueur courant a jouer en deuxieme (pas la main) donc perd
-    				joueur = Jeu.JoueurB;
-    			}
-    			else {
-    				joueur = Jeu.JoueurA;
-    			}
+    			joueur = joueurCourant;
     		}
     		else if(a.poid < b.poid) {
-    			joueur = Jeu.JoueurB;
+    			joueur = autreJoueur();
     		}
     		else {
-    			joueur = Jeu.JoueurA;
+    			joueur = joueurCourant;
     		}
     	}
     	if(phase == 1) {
@@ -233,7 +228,7 @@ public class Niveau extends Historique<Action>{
     	
     	partisans[joueur].insereTete(carteAJouer);
     	carteAJouer = -1;
-    	partisans[autreJoueur(joueur)].insereTete(piocheCarte());
+    	partisans[autreJoueur()].insereTete(piocheCarte());
     	
     	//defausse
     	if(a.faction == Jeu.MORTSVIVANTS && b.faction == Jeu.MORTSVIVANTS) {
@@ -261,15 +256,15 @@ public class Niveau extends Historique<Action>{
     	
     	//score
     	if(a.faction == Jeu.NAINS && b.faction == Jeu.NAINS) {
-    		scores[autreJoueur(joueur)].insereTete(carteCourantes[Jeu.JoueurA]);
-    		scores[autreJoueur(joueur)].insereTete(carteCourantes[Jeu.JoueurB]);
+    		scores[autreJoueur()].insereTete(carteCourantes[Jeu.JoueurA]);
+    		scores[autreJoueur()].insereTete(carteCourantes[Jeu.JoueurB]);
     	}
     	else if(a.faction == Jeu.NAINS){
-    		scores[autreJoueur(joueur)].insereTete(carteCourantes[Jeu.JoueurA]);
+    		scores[autreJoueur()].insereTete(carteCourantes[Jeu.JoueurA]);
     		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
     	}
     	else if (b.faction == Jeu.NAINS) {
-    		scores[autreJoueur(joueur)].insereTete(carteCourantes[Jeu.JoueurB]);
+    		scores[autreJoueur()].insereTete(carteCourantes[Jeu.JoueurB]);
     		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
     	}
     	else {

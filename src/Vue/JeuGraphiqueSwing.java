@@ -7,8 +7,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JComponent;
 
-import Modele.*;
-import Patterns.*;
+import Modele.Jeu;
+
 
 public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 	int largeur, hauteur;
@@ -44,9 +44,25 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		return hauteur;
 	}
 	
+	public int largeurCase() {
+		return vue.largeurCase();
+	}
+	
+	public int hauteurCase() {
+		return vue.hauteurCase();
+	}
+	
 	@Override
 	public void tracerImage(ImageClaim img, int x, int y, int largeur, int hauteur) {
 		drawable.drawImage(img.image(), x, y, largeur, hauteur, null);
+	}
+	
+	public int determinerCarte(int l, int c) {
+		return vue.determinerCarte(l,c);
+	}
+	
+	public int joueurCourant() {
+		return vue.joueurCourant();
 	}
 	
 }

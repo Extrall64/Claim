@@ -1,8 +1,9 @@
 package Vue;
 
 public interface CollecteurEvenements {
-		void clicSouris(int l, int c);
-		boolean commande(String c);
+		void clicSouris(int carte);
+		void commande(String c);
 		void fixerInterfaceUtilisateur(InterfaceUtilisateur i);
 		void tictac();
+		void jouerCarte(int t);
 }

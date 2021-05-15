@@ -8,9 +8,8 @@ import java.awt.GraphicsEnvironment;
 import javax.swing.*;
 
 import Modele.Jeu;
-import Patterns.Observateur;
 
-public class InterfaceGraphique implements Runnable, Observateur, InterfaceUtilisateur{
+public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	Jeu jeu;
 	CollecteurEvenements controle;
 	JeuGraphiqueSwing jg;

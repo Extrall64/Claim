@@ -1,8 +1,6 @@
 package Controleur;
 
-import Global.Configuration;
 import Modele.Jeu;
-import Structures.Sequence;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceUtilisateur;
 
@@ -13,16 +11,33 @@ public class ControleurMediateur implements CollecteurEvenements{
 	public ControleurMediateur(Jeu j) {
 		jeu = j;
 	}
+	
 	@Override
-	public void clicSouris(int l, int c) {
-		// TODO Auto-generated method stub
+	public void clicSouris(int carte) {
+		
+		
+	}
+	
+	public void jouerCarte(int carte) {
+		int x = jeu.carteJouable(carte);
+		if (x != -1) {
+			jeu.joueCarte(carte);
+			//animation carte
+		}
+	}
+	
+	public void nouvelle_partie() {
 		
 	}
 
-	@Override
-	public boolean commande(String c) {
-		// TODO Auto-generated method stub
-		return false;
+	public void commande(String c) {
+		switch (c) {
+			case "nouvelle_partie":
+				
+				break;
+			default:
+			
+		}
 	}
 
 	@Override

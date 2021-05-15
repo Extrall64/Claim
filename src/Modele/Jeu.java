@@ -5,78 +5,116 @@ import java.util.Random;
 import IA.IA;
 
 public class Jeu {
-    public static final int nbCarte = 52;
-    public static final int GLOBELINS = 1;
-    public static final int NAINS = 2;
-    public static final int MORTSVIVANTS = 3;
-    public static final int DOPPELGANGERS = 4;
-    public static final int CHEVALIERS = 5;
-    public Niveau niv;
-    IA [] joueurs;
-    int nbFaction;
-    // variables qui changent a chaque nouveau gagneur de plis
-    int leaderCourant;
-    // variables qui changent a chaque tour
-    int joueurCourant, factionDemander;
-    Random rand;
-
+	public static final int nbCarte = 52;
+    
+	public static final int nbFaction = 5;
+    // les diffirentes valeur que l'attr faction de carte peut prendre
+    public static final int GLOBELINS = 0;
+    public static final int NAINS = 1;
+    public static final int MORTSVIVANTS = 2;
+    public static final int DOPPELGANGERS = 3;
+    public static final int CHEVALIERS = 4;
+    
+    public static final int JoueurA = 0;
+    public static final int JoueurB = 1;
+    // les diffirentes valeur que l'attr categorie de carte peut prendre pour les sauvegardes
+    public static final int nbPile = 11;
+    public static final int Pioche = 0;
+    public static final int ScoreA = 1;
+    public static final int ScoreB = 2;
+    public static final int Defausse = 3;
+    public static final int MainA = 4;
+    public static final int MainB = 5;
+    public static final int PartisansA = 6;
+    public static final int PartisansB = 7;
+    public static final int CarteAGagner = 8;
+    public static final int CarteJouerA = 9;
+    public static final int CarteJouerB = 10;
+    
+    // les diffirentes valeur des modes de jeu
+    public static final int HUMAIN_VS_HUMAIN = 1;
+    public static final int HUMAIN_VS_IA = 2;
+    public static final int IA_VS_IA = 3;
+    public static final int HUMAIN_VS_HUMAIN_RESEAU = 4;
+    
+    
+    Niveau niveau;
+    int mode;
+    boolean menu;
+    IA[] joueurs;
+    
     public Jeu() {
-        rand = new Random();
-        niv = new Niveau();
-        joueurCourant = 0;
-        leaderCourant = rand.nextInt(2); 
+        niveau = new Niveau();
+        menu = false;
+        joueurs = new IA[2];
+        lancerUnePartie(HUMAIN_VS_HUMAIN,null,null);
+        niveau.initialiserPhase1();
+        niveau.determinerJoueurCommence();
+        niveau.retournerNouvelleCarteEnJeu();
     }
+    
+    public boolean estSurMenu() {
+    	return menu;
+    }
+    
+    public void lancerUnePartie(int m, IA jA, IA jB) {
+    	mode = m;
+    	joueurs[JoueurA] = jA;
+    	joueurs[JoueurB] = jB;
+    	niveau.initialiser();
+    }
+ 
+    public int carteJouable(int carte) {
+    	return niveau.jouerCarteValide(carte);
+    }
+    
+    public void joueCarte(int carte) {
+    	niveau.jouerCarte(carte);
+    	if(niveau.combatPret()) {
+    		niveau.combat();
+    		if(niveau.finDePhase1()) {
+    			niveau.initialiserPhase2();
+    		}
+    		if(niveau.finDePhase2()) {
+    			int x = niveau.joueurGagant();
+    			if(x == JoueurA)
+    				System.out.println("Joueur 1 a gagne");
+    			else if(x == JoueurB)
+    				System.out.println("Joueur 2 a gagne");
+    			else
+    				System.out.println("Match nul");
+    		}
+    		if(niveau.phase() == 1) {
+    			 niveau.retournerNouvelleCarteEnJeu();
+    		}
+    	}
+    }
+    
+    public Action annule() {
+		return null;
+	}
 
-    public void changerJoueur() {
-        joueurCourant = (joueurCourant + 1) % 2;
-    }
-    // si le joueur A emporte le plis
-    public boolean estJoueurAEmporte(Carte carteB) {
-        Carte carteA = niv.cartePrecedenteA;
-        // si la carte de A est DOPPERLGANERS ou
-        // si la carte de A a plus de poid A gagne , si les poids egaux,
-        // A gagne si c'est lui le leader
-        if (carteA.faction == carteB.faction || carteA.faction == DOPPELGANGERS) {
-            return carteA.poid > carteB.poid || (carteA.poid == carteB.poid && leaderCourant == 0);
-        }
-        return false;
-    }
-    public void jouerCarte(Carte carte) {
-        if (estJoueurAEmporte(carte)) {
-            // A FAIRE mettre a jour le plis et le defausser
-            // le joueur qui l'emporte devient un leader
-            switch(carte.faction) {
-                // aucun pourvoir
-                case GLOBELINS: break;
-                case NAINS: break;
-                // ces cartes ne sont pas defausser lors de la 1ere phase
-                case MORTSVIVANTS:
-                break;
-                // ces cartes peuvents passer avec toutes les factions
-                // si le leader a joueur une doppelgangers alors
-                // l'autre joueur doit le jouer s'il peut
-                case DOPPELGANGERS: break;
-                //lorsqu'un chevalier est joué apres un globelins
-                // il emporte automatiquement le plis
-                case CHEVALIERS: break;
-            }
-        }
-    }
+	public Action refaire() {
+		return null;
+	}
+    
 
-    public boolean estPhase1Fini() {
-        return false;
-    }
-    public boolean estPhase2Fini() {
-        return false;
-    }
-    public void jouerPhase1() {
-        while(!estPhase1Fini()) {
-            Carte carte = new Carte(0, 0);
-            jouerCarte( carte );
-            changerJoueur();
-        }
-    }
-    public void jouerPhase2() { }
+    /* sauvegarder le tableau de carte et aussi le leader
+        * un tableau de taille nbCarte
+            chaque case est un quadriplet (faction, poid, categorie estCache)
+        * l'indice de leader
+        * le joueur courant de cette config
+    */
+    public void sauvegarder() {
 
-    public void tictac() { }
+    }
+    // charger la partie sauvegarder
+    public void charger() {
+
+    }
+    
+    public Niveau niveau() {
+    	return niveau;
+    }
 }
+

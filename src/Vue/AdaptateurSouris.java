@@ -15,8 +15,12 @@ public class AdaptateurSouris extends MouseAdapter {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		//int c = e.getX() / jg.largeurCase();
-		//int l = e.getY() / jg.hauteurCase();
+		int c = e.getX() / jg.largeurCase();
+		int l = e.getY() / jg.hauteurCase();
+		int t = jg.determinerCarte(l,c);
+		if (t != -1) {
+			controle.jouerCarte(t);
+		}
 	}
 	
 	@Override

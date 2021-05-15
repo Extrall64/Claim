@@ -3,7 +3,6 @@ package IA;
 
 import java.util.*;
 import Modele.*;
-import Patterns.*;
 
 public class IAAleatoire extends IA{
     int [] main;

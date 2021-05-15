@@ -2,7 +2,6 @@ package IA;
 
 import java.util.*;
 import Modele.*;
-import Patterns.*;
 
 public class IAHeuristique extends IA{
     int [] main;

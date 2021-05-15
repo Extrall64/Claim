@@ -13,7 +13,6 @@ public class Historique<E extends Commande> {
 
 	void nouveau(E c) {
 		passe.insereTete(c);
-		c.execute();
 		while (!futur.estVide())
 			futur.extraitTete();
 	}
@@ -25,7 +24,7 @@ public class Historique<E extends Commande> {
 	E annuler() {
 		if (peutAnnuler()) {
 			E c = passe.extraitTete();
-			c.desexecute();
+			c.remplace();
 			futur.insereTete(c);
 			return c;
 		} else {
@@ -40,7 +39,7 @@ public class Historique<E extends Commande> {
 	E refaire() {
 		if (peutRefaire()) {
 			E c = futur.extraitTete();
-			c.execute();
+			c.remplace();
 			passe.insereTete(c);
 			return c;
 		} else {

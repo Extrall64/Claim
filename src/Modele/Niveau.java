@@ -111,11 +111,13 @@ public class Niveau extends Historique<Action>{
     }
     
     public void jouerCarte(int carte) {
+    	nouveau(new Action(this, this.clone()));//mise a jour historique
     	carteCourantes[joueurCourant] = carte;
     	retirerCarteMainCourante(carte);
     	if(carteCourantes[autreJoueur(joueurCourant)] == -1) {
     		inverserJoueur();
     	}
+    	
     }
     
     public int jouerCarteValide(int carte) {
@@ -383,10 +385,6 @@ public class Niveau extends Historique<Action>{
     	return cartes[carte].faction;
     }
     
-    public Sequence<Integer> getMain(int joueur){
-    	return mains[joueur];
-    }
-    
     public int phase() {
     	return phase;
     }
@@ -415,5 +413,93 @@ public class Niveau extends Historique<Action>{
     		k++;
     	}
     	return x;
+    }
+    
+    public void remplace(Niveau n) { //appel de l'historique
+    	joueurCourant = n.joueurCourant();
+    	phase = n.phase();
+    	carteAJouer = n.carteAJouer();
+    	carteCourantes[0] = n.carteCourante(0);
+    	carteCourantes[1] = n.carteCourante(1);
+    	pioche = n.getPioche();
+    	defausse = n.getDefausse();
+    	scores[0] = n.getScore(0);
+    	partisans[0] = n.getPartisans(0);
+    	mains[0] = n.getMain(0);
+    	scores[1] = n.getScore(1);
+    	partisans[1] = n.getPartisans(1);
+    	mains[1] = n.getMain(1);
+    }
+    
+    public Sequence<Integer> getPioche(){
+    	return pioche;
+    }
+    public Sequence<Integer> getDefausse(){
+    	return defausse;
+    }
+    public Sequence<Integer> getScore(int joueur){
+    	return scores[joueur];
+    }
+    public Sequence<Integer> getPartisans(int joueur){
+    	return partisans[joueur];
+    }
+    public Sequence<Integer> getMain(int joueur){
+    	return mains[joueur];
+    }
+    
+    public void setPhase(int p) {
+    	phase = p;
+    }
+    public void setJoueur(int j) {
+    	joueurCourant = j;
+    }
+    public void setPioche(Sequence<Integer> p){
+    	pioche = p;
+    }
+    public void setCarteCourante(int j, int c) {
+		carteCourantes[j] = c;
+    }
+    public void setCarteAJouer(int c) {
+    	carteAJouer = c;
+    }
+    public void setDefausse(Sequence<Integer> d){
+    	defausse = d;
+    }
+    public void setScore(int joueur, Sequence<Integer> s){
+    	scores[joueur] = s;
+    }
+    public void setPartisans(int joueur, Sequence<Integer> p){
+    	partisans[joueur] = p;
+    }
+    public void setMain(int joueur,Sequence<Integer> m){
+    	mains[joueur] = m;
+    }
+
+    public Niveau clone() {
+    	Niveau n = new Niveau();
+    	n.setPhase(phase);
+    	n.setJoueur(joueurCourant);
+    	n.setPioche(this.cloneSequence(pioche));
+    	n.setCarteCourante(0, carteCourantes[0]);
+    	n.setCarteCourante(1, carteCourantes[1]);
+    	n.setPioche(this.cloneSequence(pioche));
+    	n.setCarteAJouer(carteAJouer);
+    	n.setDefausse(this.cloneSequence(defausse));
+    	n.setScore(0,this.cloneSequence(scores[0]));
+    	n.setScore(1,this.cloneSequence(scores[1]));
+    	n.setPartisans(0,this.cloneSequence(partisans[0]));
+    	n.setPartisans(1,this.cloneSequence(partisans[1]));
+    	n.setMain(0,this.cloneSequence(mains[0]));
+    	n.setMain(1,this.cloneSequence(mains[1]));
+    	return n;
+    }
+    
+    private Sequence<Integer> cloneSequence(Sequence<Integer> s){
+    	Sequence<Integer> c = Configuration.instance().nouvelleSequence();
+    	Iterateur<Integer> i = s.iterateur();
+    	while(i.aProchain()) {
+    		c.insereTete(i.prochain());
+    	}
+    	return c;
     }
 }

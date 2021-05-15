@@ -24,7 +24,7 @@ public class Niveau extends Historique<Action>{
         initialiserPiles();
     }
     
-    private void initialiserPiles(){
+    public void initialiserPiles(){
     	//initialisation des piles
     	carteAJouer = -1;
     	carteCourantes = new int[2];
@@ -477,6 +477,7 @@ public class Niveau extends Historique<Action>{
 
     public Niveau clone() {
     	Niveau n = new Niveau();
+    	n.initialiserPiles();
     	n.setPhase(phase);
     	n.setJoueur(joueurCourant);
     	n.setPioche(this.cloneSequence(pioche));

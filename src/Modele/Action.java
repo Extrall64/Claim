@@ -5,15 +5,17 @@ import Structures.Iterateur;
 import Structures.Sequence;
 
 public class Action extends Commande {
-	Plateau courant;
-	Plateau copie;
 	
-	public Action(Plateau courant, Plateau copie) {
-		this.courant = courant;
-		this.copie = copie;
+
+	public Action() {
+		
 	}
 
-	void remplace() {
-		courant.remplace(copie);
+	void execute() {
+		
+	}
+
+	void desexecute() {
+		
 	}
 }

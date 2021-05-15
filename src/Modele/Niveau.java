@@ -1,117 +1,419 @@
 package Modele;
-import java.util.*;
 
-public class Niveau {
-	public static final int nbCarte = 52;
-    public static final int GLOBELINS = 1;
-    public static final int NAINS = 2;
-    public static final int MORTSVIVANTS = 3;
-    public static final int DOPPELGANGERS = 4;
-    public static final int CHEVALIERS = 5;
-    int iCartes, iScoreA, iScoreB, iPlis, iDefausser, iMainA, iMainB;
-    int cur;
-    Carte [] T;
-    int nbFaction;
-    Random rand;
-    Carte cartePrecedenteA, cartePrecedenteB, carteDePlis;
+import java.util.Random;
 
-    public Niveau() {
-        initialiser();
-    }
+import Global.Configuration;
+import Structures.Iterateur;
+import Structures.Sequence;
+
+public class Niveau extends Historique<Action>{
+  
+	private Carte[] cartes;
+	private Random rand;
+    private int joueurCourant,phase;
+	private Sequence<Integer>[] scores,partisans,mains;
+	private Sequence<Integer> pioche,defausse;
+	private int[] carteCourantes;
+	private int carteAJouer;
+    
     public void initialiser() {
         rand = new Random();
-        T = new Carte[nbCarte];
-        iCartes = 0;
-        iScoreA = 1;
-        iScoreB = 2;
-        iPlis = 3;
-        iDefausser = 4;
-        iMainA = 5;
-        iMainB = 6;
-        cur = 0;
+        cartes = new Carte[Jeu.nbCarte];
         initialiserCartes();
         melanger();
-    }
-    public List<Carte> initialiserPlis() {
-        int nb = 13;
-        List<Carte> r = new ArrayList<Carte>();
-        for(int i = 0; i < nb; i++) {
-            T[i].categorie = iPlis; 
-            r.add( T[i] );
-        }
-        return r;
-    }
-    public void initialiserCartes() {
-        // construire les 4 carte globelins de poid 0
-        for (int i = 0; i < 4; i ++) {
-            Carte g = new Carte(GLOBELINS, 0);
-            T[cur] = g; cur++;
-        }
-        // constuire nains, mort-vivant, doppelgangers
-        for (int i = 0; i < 10; i++) {
-            Carte g = new Carte(GLOBELINS, i); 
-            Carte n = new Carte(NAINS, i);
-            Carte m = new Carte(MORTSVIVANTS, i);
-            Carte d = new Carte(DOPPELGANGERS, i);
-            T[cur] = g; cur++; T[cur] = n; cur++; T[cur] = m; cur++; T[cur] = d; cur++;
-        }
-        for(int i = 2; i < 10; i++) {
-            Carte c = new Carte(CHEVALIERS, i);
-            T[cur] = c; cur++;
-        }
-    }
-    private List<Carte> filtrer(int categorie) {
-        List<Carte> r = new ArrayList<>();
-        for (int i = 0 ; i < nbCarte; i++) {
-            if (T[i].categorie == categorie)
-                r.add(T[i]);
-        }
-        return r;
-    }
-    // la reference de ces tableau seront passer pour chaque joueur
-    public List<Carte> mainA() {
-        return filtrer(iMainA);
-    }
-    public List<Carte> mainB() {
-        return filtrer(iMainB);
-    }
-    public List<Carte> scoreA() {
-        return filtrer(iScoreA);
+        initialiserPiles();
     }
     
-    public List<Carte> scoreB() {
-        return filtrer(iScoreB);
+    private void initialiserPiles(){
+    	//initialisation des piles
+    	carteAJouer = -1;
+    	carteCourantes = new int[2];
+    	carteCourantes[0] = -1; carteCourantes[1] = -1;
+    	pioche = Configuration.instance().nouvelleSequence();
+    	defausse = Configuration.instance().nouvelleSequence();
+    	scores = new Sequence[2];
+    	partisans = new Sequence[2];
+    	mains = new Sequence[2];
+	    for(int i=0;i<2;i++) { //initialisations des piles vides
+	    	Sequence<Integer> s = Configuration.instance().nouvelleSequence();
+	    	scores[i] = s;
+	    }
+	    for(int i=0;i<2;i++) { //initialisations des piles vides
+	    	Sequence<Integer> s = Configuration.instance().nouvelleSequence();
+	    	partisans[i] = s;
+	    }
+	    for(int i=0;i<2;i++) { //initialisations des piles vides
+	    	Sequence<Integer> s = Configuration.instance().nouvelleSequence();
+	    	mains[i] = s;
+	    }
     }
-    public List<Carte> plis() {
-        return filtrer(iPlis);
+    
+    private void initialiserCartes() {
+    	int x = 0;
+        for (int i = 0; i < 4; i ++) { // construire les 4 carte globelins de poid 0
+        	cartes[x] = new Carte(Jeu.GLOBELINS, 0);
+            x++;
+        }
+        for (int i = 0; i < 10; i++) { // constuire nains, mort-vivant, doppelgangers,chevalier
+        	cartes[x] = new Carte(Jeu.GLOBELINS, i); 
+            x++;
+            cartes[x] = new Carte(Jeu.NAINS, i);
+            x++;
+            cartes[x] = new Carte(Jeu.MORTSVIVANTS, i);
+            x++;
+            cartes[x] = new Carte(Jeu.DOPPELGANGERS, i);
+            x++;
+            if(i >= 2) {
+            	cartes[x] = new Carte(Jeu.CHEVALIERS, i);
+            	x++;
+            }
+        }
     }
-    public List<Carte> defausser() {
-        return filtrer(iDefausser);
-    }
-    public Carte [] cartes() { return T; }
-
-    public void melanger() {
-        for (int x = 0; x < nbCarte; x++) {
-            int i = rand.nextInt(nbCarte);
-            int j = rand.nextInt(nbCarte);
-            Carte t = T[i];
-            T[i] = T[j];
-            T[j] = t;
+    
+    private void melanger() {
+        for (int x = 0; x < Jeu.nbCarte*2; x++) {
+            int i = rand.nextInt(Jeu.nbCarte);
+            int j = rand.nextInt(Jeu.nbCarte);
+            Carte t = cartes[i];
+            cartes[i] = cartes[j];
+            cartes[j] = t;
         } 
     }
-    public void afficher() {
-        for(Carte c : T) {
-            System.out.printf("(%d, %d)\n", c.faction , c.poid);
-        }    
+    
+    public void initialiserPhase1(){
+    	for(int i = 0;i<13;i++) {
+    		mains[Jeu.JoueurA].insereQueue(i);
+    		mains[Jeu.JoueurB].insereQueue(i+13);
+    		pioche.insereQueue(i+26);
+    		pioche.insereQueue(i+39);
+    	}
+    	phase = 1;
     }
-	public Niveau clone() {
-		Niveau clone = new Niveau();
-        for(int j = 0; j < nbCarte; j++)
-            clone.T[j] = T[j];
-		return clone;
-	}
-    public int hash() {
-        return Arrays.deepHashCode(T);
+    
+    public void determinerJoueurCommence(){ 
+    	joueurCourant = rand.nextInt(2);
     }
-
+    
+    public void initialiserPhase2(){ //bouger les cartes partisans dans les mains
+    	for(int i = 0;i<13;i++) {
+    		mains[Jeu.JoueurA].insereQueue(partisans[Jeu.JoueurA].extraitTete());
+    		mains[Jeu.JoueurB].insereQueue(partisans[Jeu.JoueurB].extraitTete());
+    	}
+    	phase = 2;
+    }
+    
+    private int piocheCarte() {
+    	return pioche.extraitTete();
+    }
+    
+    public void retournerNouvelleCarteEnJeu() {
+    	carteAJouer = piocheCarte();
+    }
+    
+    public void jouerCarte(int carte) {
+    	carteCourantes[joueurCourant] = carte;
+    	retirerCarteMainCourante(carte);
+    	if(carteCourantes[autreJoueur(joueurCourant)] == -1) {
+    		inverserJoueur();
+    	}
+    }
+    
+    public int jouerCarteValide(int carte) {
+    	if( estCarteDansMainCourante(carte) && carteJouable(carte)) {
+    		return carte;
+    	}
+    	else {
+    		return -1;
+    	}
+    }
+    
+    public boolean estCarteDansMainCourante(int carte) {
+    	Iterateur<Integer> i = mains[joueurCourant].iterateur();
+    	while(i.aProchain()) {
+    		if(carte == i.prochain()) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public boolean carteJouable(int carte) {
+    	if(carteCourantes[Jeu.JoueurA] == -1 && carteCourantes[Jeu.JoueurB] == -1) {
+    		return true;
+    	}else if (!(carteCourantes[Jeu.JoueurA] == -1) && !(carteCourantes[Jeu.JoueurB] == -1)) {
+    		return false;
+    	}else{
+    		int x;
+    		if(carteCourantes[Jeu.JoueurA] == -1) {
+    			x = carteCourantes[Jeu.JoueurB];
+    		}else {
+    			x = carteCourantes[Jeu.JoueurA];
+    		}
+    		
+    		if(cartes[x].faction == cartes[carte].faction || cartes[carte].faction == Jeu.DOPPELGANGERS) {
+    			return true;
+    		}
+    		else {
+    			if(aucuneCarteFaction(cartes[x].faction))
+    				return true;
+    			else
+    				return false;
+    		}
+    	}
+    }
+    
+    private boolean aucuneCarteFaction(int faction) {
+    	Iterateur<Integer> i = mains[joueurCourant].iterateur();
+    	while(i.aProchain()) {
+    		if(faction(i.prochain()) == faction)
+    			return false;
+    	}
+    	return true;
+    }
+    
+    private void retirerCarteMainCourante(int carte) {
+    	Iterateur<Integer> i = mains[joueurCourant].iterateur();
+    	while(i.aProchain() && carte != i.prochain());
+    	i.supprime();
+    }
+    
+    private void inverserJoueur() {
+    	joueurCourant = (joueurCourant + 1) % 2;
+    }
+    
+    public boolean combatPret() {
+    	return carteCourantes[Jeu.JoueurA] != -1 && carteCourantes[Jeu.JoueurB] != -1;
+    }
+    
+    public int autreJoueur(int j) {
+    	return (j+1)%2;
+    }
+    
+    public void combat() {
+    	Carte a = cartes[carteCourantes[Jeu.JoueurA]];
+    	Carte b = cartes[carteCourantes[Jeu.JoueurB]];
+    	int joueur;
+    	if(a.faction == Jeu.GLOBELINS && b.faction == Jeu.CHEVALIERS) { //seul cas particulier
+    		joueur = Jeu.JoueurB;
+    	}
+    	else if(b.faction == Jeu.GLOBELINS && a.faction == Jeu.CHEVALIERS) {
+    		joueur = Jeu.JoueurA;
+    	}
+    	else { //poids de plus hautes valeurs l'emporte
+    		if(a.poid == b.poid) {
+    			if(joueurCourant == Jeu.JoueurA) {//joueur courant a jouer en deuxieme (pas la main) donc perd
+    				joueur = Jeu.JoueurB;
+    			}
+    			else {
+    				joueur = Jeu.JoueurA;
+    			}
+    		}
+    		else if(a.poid < b.poid) {
+    			joueur = Jeu.JoueurB;
+    		}
+    		else {
+    			joueur = Jeu.JoueurA;
+    		}
+    	}
+    	if(phase == 1) {
+    		joueurCourant = combatPhase1(joueur);
+    	}
+    	else {
+    		joueurCourant = combatPhase2(joueur);
+    	}
+    	carteCourantes[Jeu.JoueurA] = -1;
+    	carteCourantes[Jeu.JoueurB] = -1;
+    }
+    
+    private int combatPhase1(int joueur) {
+    	Carte a = cartes[carteCourantes[Jeu.JoueurA]];
+    	Carte b = cartes[carteCourantes[Jeu.JoueurB]];
+    	
+    	partisans[joueur].insereTete(carteAJouer);
+    	carteAJouer = -1;
+    	partisans[autreJoueur(joueur)].insereTete(piocheCarte());
+    	
+    	//defausse
+    	if(a.faction == Jeu.MORTSVIVANTS && b.faction == Jeu.MORTSVIVANTS) {
+    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
+    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
+    	}
+    	else if(a.faction == Jeu.MORTSVIVANTS){
+    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
+    		defausse.insereTete(carteCourantes[Jeu.JoueurB]); 
+    	}
+    	else if (b.faction == Jeu.MORTSVIVANTS) {
+    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
+    		defausse.insereTete(carteCourantes[Jeu.JoueurA]);
+    	}
+    	else {
+    		defausse.insereTete(carteCourantes[Jeu.JoueurA]);
+    		defausse.insereTete(carteCourantes[Jeu.JoueurB]);
+    	}
+    	return joueur;
+    }
+    
+    private int combatPhase2(int joueur) {
+    	Carte a = cartes[carteCourantes[Jeu.JoueurA]];
+    	Carte b = cartes[carteCourantes[Jeu.JoueurB]];
+    	
+    	//score
+    	if(a.faction == Jeu.NAINS && b.faction == Jeu.NAINS) {
+    		scores[autreJoueur(joueur)].insereTete(carteCourantes[Jeu.JoueurA]);
+    		scores[autreJoueur(joueur)].insereTete(carteCourantes[Jeu.JoueurB]);
+    	}
+    	else if(a.faction == Jeu.NAINS){
+    		scores[autreJoueur(joueur)].insereTete(carteCourantes[Jeu.JoueurA]);
+    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
+    	}
+    	else if (b.faction == Jeu.NAINS) {
+    		scores[autreJoueur(joueur)].insereTete(carteCourantes[Jeu.JoueurB]);
+    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
+    	}
+    	else {
+    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
+    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
+    	}
+    	return joueur;
+    }
+    	
+    public boolean finDePhase1() {
+    	return phase == 1 && pioche.estVide();
+    }
+    
+    public boolean finDePhase2() {
+    	return phase == 2 && mains[Jeu.JoueurA].estVide() && mains[Jeu.JoueurB].estVide() && carteCourantes[Jeu.JoueurA] == -1;
+    }
+    
+    public int score(int joueur, int faction) {
+    	Iterateur<Integer> i = scores[joueur].iterateur();
+    	int s = 0;
+    	while(i.aProchain()) {
+    		if(faction == cartes[i.prochain()].faction) {
+    			s++;
+    		}
+    	}
+    	return s;
+    }
+    
+    public int joueurAVote(int faction) {
+    	if(score(Jeu.JoueurA,faction) > score(Jeu.JoueurB,faction))
+    		return Jeu.JoueurA;
+    	else if(score(Jeu.JoueurA,faction) < score(Jeu.JoueurB,faction))
+    		return Jeu.JoueurB;
+    	else
+    		return plusGros(faction);
+    }
+    
+    public int plusGros(int faction) {
+    	Iterateur<Integer> a = scores[Jeu.JoueurA].iterateur();
+    	Iterateur<Integer> b = scores[Jeu.JoueurB].iterateur();
+    	int sa = -1;
+    	int sb = -1;
+    	while(a.aProchain()) {
+    		int tmp = cartes[a.prochain()].poid;
+    		if(sa < tmp) {
+    			sa = tmp;
+    		}
+    	}
+    	while(b.aProchain()) {
+    		int tmp = cartes[b.prochain()].poid;
+    		if(sb < tmp) {
+    			sb = tmp;
+    		}
+    	}
+    	if(sa < sb)
+    		return Jeu.JoueurB;
+    	else if(sa > sb)
+    		return Jeu.JoueurA;
+    	else
+    		return -1;
+  
+    }
+    
+    public int joueurGagant() {
+    	int a = 0;
+    	int b = 0;
+    	if(joueurAVote(Jeu.CHEVALIERS) == Jeu.JoueurA)
+    		a++;
+    	else if(joueurAVote(Jeu.CHEVALIERS) == Jeu.JoueurB)
+    		b++;
+    	if(joueurAVote(Jeu.NAINS) == Jeu.JoueurA)
+    		a++;
+    	else if(joueurAVote(Jeu.NAINS) == Jeu.JoueurB)
+    		b++;
+    	if(joueurAVote(Jeu.DOPPELGANGERS) == Jeu.JoueurA)
+    		a++;
+    	else if(joueurAVote(Jeu.DOPPELGANGERS) == Jeu.JoueurB)
+    		b++;
+    	if(joueurAVote(Jeu.MORTSVIVANTS) == Jeu.JoueurA)
+    		a++;
+    	else if(joueurAVote(Jeu.MORTSVIVANTS) == Jeu.JoueurB)
+    		b++;
+    	if(joueurAVote(Jeu.GLOBELINS) == Jeu.JoueurA)
+    		a++;
+    	else if(joueurAVote(Jeu.GLOBELINS) == Jeu.JoueurB)
+    		b++;
+    	if(a>b)
+    		return Jeu.JoueurA;
+    	else if(a<b)
+    		return Jeu.JoueurB;
+    	else
+    		return -1;//egalite
+    	
+    }
+    
+    public int joueurCourant() {
+    	return joueurCourant;
+    }
+    
+    public NiveauIAPhase1 passerEnNiveauIAPhase1() {
+    	return null;
+    }
+    
+    public NiveauIAPhase2 passerEnNiveauIAPhase2() {
+    	return null;
+    }
+    
+    public int poid(int carte) {
+    	return cartes[carte].poid;
+    }
+    
+    public int faction(int carte) {
+    	return cartes[carte].faction;
+    }
+    
+    public Sequence<Integer> getMain(int joueur){
+    	return mains[joueur];
+    }
+    
+    public int phase() {
+    	return phase;
+    }
+    
+    public int carteAJouer() {
+    	return carteAJouer;
+    }
+    
+    public int carteCourante(int joueur) {
+    	return carteCourantes[joueur];
+    }
+    
+    public int cartePosMain(int pos,int j) {
+    	Iterateur<Integer> i = mains[j].iterateur();
+    	int k = -1;
+    	int x = -1;
+    	while(k != pos) {
+    		if(i.aProchain()) {
+    			x = i.prochain();
+    		}
+    		else {
+    			System.err.println("Niveau/cartePosMain erreur main ne contient pas la carte");
+    			x = -1;
+    			break;
+    		}
+    		k++;
+    	}
+    	return x;
+    }
 }

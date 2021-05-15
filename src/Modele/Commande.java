@@ -1,5 +1,6 @@
 package Modele;
 
 public abstract class Commande {
-	abstract void remplace();
+	abstract void execute();
+	abstract void desexecute();
 }

@@ -1,8 +1,7 @@
 package Structures;
 
-import Structures.Iterateur;
-
 public interface Sequence<Toto> {
+	int taille();
 	void insereTete(Toto element);
 	void insereQueue(Toto element);
 	Toto extraitTete();

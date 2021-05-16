@@ -1,8 +1,12 @@
 package Vue;
 
+import java.awt.Component;
 import java.awt.Image;
 import java.io.File;
 import java.io.InputStream;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import Global.Configuration;
 import Modele.Jeu;
@@ -22,7 +26,7 @@ public class VueJeu {
 	private ImageClaim chargeImage(String nom) {
 		ImageClaim img = null;
 		InputStream in = Configuration.charge("carte_JPEG" + File.separator + nom + ".jpg");
-		return ImageClaim.getImageSokoban(in);
+		return ImageClaim.getImageClaim(in);
 	}
 
 	public VueJeu(Jeu j, JeuGraphique n) {
@@ -42,6 +46,12 @@ public class VueJeu {
 	}
 
 	void tracerNiveau() {
+		if(!jeu.estSurMenu()) {
+			tracerPartie();
+		}
+	}
+	
+	public void tracerPartie() {
 		Niveau niv = jeu.niveau();
 		largeurCase = jg.largeur() / nbCaseL;
 		hauteurCase = jg.hauteur() / nbCaseH;
@@ -65,6 +75,7 @@ public class VueJeu {
 		if(niv.phase() == 1) {
 			jg.tracerImage(dos,largeurCase, hauteurCase, largeurCase*4, hauteurCase*6);
 			int x = niv.carteAJouer();
+			if(niv.carteAJouer() == -1) {System.out.println(""+niv.phase());System.exit(0);}
 			int poid = niv.poid(x);
 			int faction = niv.faction(x);
 			jg.tracerImage(images[faction][poid],largeurCase * 6, hauteurCase, largeurCase*4, hauteurCase*6);
@@ -97,18 +108,18 @@ public class VueJeu {
 	}
 	
 	public int determinerCarte(int l, int c) {
-		Niveau niv = jeu.niveau();
-		Sequence<Integer> main = niv.getMain(niv.joueurCourant());
-		int nbCarte = main.taille();
-		int debut = (13-nbCarte)/2 * 2;
-		int h = nbCaseH - 3;
-		if(l >= h && c < debut + 2*nbCarte && c >= debut) {
-			int posCarte = c/2 - debut/2;
-			return niv.cartePosMain(posCarte,joueurCourant);
+		if(!jeu.estSurMenu()) {
+			Niveau niv = jeu.niveau();
+			Sequence<Integer> main = niv.getMain(niv.joueurCourant());
+			int nbCarte = main.taille();
+			int debut = (13-nbCarte)/2 * 2;
+			int h = nbCaseH - 3;
+			if(l >= h && c < debut + 2*nbCarte && c >= debut) {
+				int posCarte = c/2 - debut/2;
+				return niv.cartePosMain(posCarte,joueurCourant);
+			}
 		}
-		else {
-			return -1;
-		}
+		return -1;
 	}
 	
 }

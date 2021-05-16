@@ -31,36 +31,27 @@ public class Jeu {
     public static final int CarteJouerA = 9;
     public static final int CarteJouerB = 10;
     
-    // les diffirentes valeur des modes de jeu
-    public static final int HUMAIN_VS_HUMAIN = 1;
-    public static final int HUMAIN_VS_IA = 2;
-    public static final int IA_VS_IA = 3;
-    public static final int HUMAIN_VS_HUMAIN_RESEAU = 4;
-    
-    
     Niveau niveau;
-    int mode;
     boolean menu;
-    IA[] joueurs;
     
     public Jeu() {
         niveau = new Niveau();
-        menu = false;
-        joueurs = new IA[2];
-        lancerUnePartie(HUMAIN_VS_HUMAIN,null,null);
+        menu = true;
+    }
+    
+    public void nouvellePartie() {
+    	lancerUnePartie();
         niveau.initialiserPhase1();
         niveau.determinerJoueurCommence();
         niveau.retournerNouvelleCarteEnJeu();
+        menu = false;
     }
     
     public boolean estSurMenu() {
     	return menu;
     }
     
-    public void lancerUnePartie(int m, IA jA, IA jB) {
-    	mode = m;
-    	joueurs[JoueurA] = jA;
-    	joueurs[JoueurB] = jB;
+    public void lancerUnePartie() {
     	niveau.initialiser();
     }
  
@@ -90,12 +81,12 @@ public class Jeu {
     	}
     }
     
-    public Action annule() {
-		return null;
+    public void annule() {
+		
 	}
 
-	public Action refaire() {
-		return null;
+	public void refaire() {
+		
 	}
     
 

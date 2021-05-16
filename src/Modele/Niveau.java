@@ -192,86 +192,85 @@ public class Niveau extends Historique<Action>{
     }
     
     public void combat() {
-    	Carte a = cartes[carteCourantes[joueurCourant]];
-    	Carte b = cartes[carteCourantes[autreJoueur()]];
+    	Carte a = cartes[carteCourantes[autreJoueur()]];
+    	Carte b = cartes[carteCourantes[joueurCourant]];
     	int joueur;
     	if(a.faction == Jeu.GLOBELINS && b.faction == Jeu.CHEVALIERS) { //seul cas particulier
-    		joueur = autreJoueur();
+    		joueur = joueurCourant;
     	}
     	else if(b.faction != Jeu.DOPPELGANGERS && a.faction != b.faction) {
-    		joueur = joueurCourant;
+    		joueur = autreJoueur();
     	}
     	else { //poids de plus hautes valeurs l'emporte
     		if(a.poid == b.poid) {
-    			joueur = joueurCourant;
-    		}
-    		else if(a.poid < b.poid) {
     			joueur = autreJoueur();
     		}
-    		else {
+    		else if(a.poid < b.poid) {
     			joueur = joueurCourant;
     		}
+    		else {
+    			joueur = autreJoueur();
+    		}
     	}
+    	joueurCourant = joueur;
     	if(phase == 1) {
-    		joueurCourant = combatPhase1(joueur);
+    		combatPhase1();
     	}
     	else {
-    		joueurCourant = combatPhase2(joueur);
+    		combatPhase2();
     	}
     	carteCourantes[Jeu.JoueurA] = -1;
     	carteCourantes[Jeu.JoueurB] = -1;
     }
     
-    private int combatPhase1(int joueur) {
-    	Carte a = cartes[carteCourantes[Jeu.JoueurA]];
-    	Carte b = cartes[carteCourantes[Jeu.JoueurB]];
+    private void combatPhase1() {
+    	Carte a = cartes[carteCourantes[joueurCourant]];
+    	Carte b = cartes[carteCourantes[autreJoueur()]];
     	
-    	partisans[joueur].insereTete(carteAJouer);
+    	partisans[joueurCourant].insereTete(carteAJouer);
     	carteAJouer = -1;
     	partisans[autreJoueur()].insereTete(piocheCarte());
     	
     	//defausse
     	if(a.faction == Jeu.MORTSVIVANTS && b.faction == Jeu.MORTSVIVANTS) {
-    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
-    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
+    		scores[joueurCourant].insereTete(carteCourantes[joueurCourant]);
+    		scores[joueurCourant].insereTete(carteCourantes[autreJoueur()]);
     	}
     	else if(a.faction == Jeu.MORTSVIVANTS){
-    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
-    		defausse.insereTete(carteCourantes[Jeu.JoueurB]); 
+    		scores[joueurCourant].insereTete(carteCourantes[joueurCourant]);
+    		defausse.insereTete(carteCourantes[autreJoueur()]); 
     	}
     	else if (b.faction == Jeu.MORTSVIVANTS) {
-    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
-    		defausse.insereTete(carteCourantes[Jeu.JoueurA]);
+    		scores[joueurCourant].insereTete(carteCourantes[autreJoueur()]);
+    		defausse.insereTete(carteCourantes[joueurCourant]);
     	}
     	else {
-    		defausse.insereTete(carteCourantes[Jeu.JoueurA]);
-    		defausse.insereTete(carteCourantes[Jeu.JoueurB]);
+    		defausse.insereTete(carteCourantes[joueurCourant]);
+    		defausse.insereTete(carteCourantes[autreJoueur()]);
     	}
-    	return joueur;
     }
     
-    private int combatPhase2(int joueur) {
-    	Carte a = cartes[carteCourantes[Jeu.JoueurA]];
-    	Carte b = cartes[carteCourantes[Jeu.JoueurB]];
+    private void combatPhase2() {
+    	Carte a = cartes[carteCourantes[joueurCourant]];
+    	Carte b = cartes[carteCourantes[autreJoueur()]];
     	
     	//score
     	if(a.faction == Jeu.NAINS && b.faction == Jeu.NAINS) {
-    		scores[autreJoueur()].insereTete(carteCourantes[Jeu.JoueurA]);
-    		scores[autreJoueur()].insereTete(carteCourantes[Jeu.JoueurB]);
+    		scores[autreJoueur()].insereTete(carteCourantes[joueurCourant]);
+    		scores[autreJoueur()].insereTete(carteCourantes[autreJoueur()]);
     	}
     	else if(a.faction == Jeu.NAINS){
-    		scores[autreJoueur()].insereTete(carteCourantes[Jeu.JoueurA]);
-    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
+    		scores[autreJoueur()].insereTete(carteCourantes[joueurCourant]);
+    		scores[joueurCourant].insereTete(carteCourantes[autreJoueur()]);
     	}
     	else if (b.faction == Jeu.NAINS) {
-    		scores[autreJoueur()].insereTete(carteCourantes[Jeu.JoueurB]);
-    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
+    		scores[autreJoueur()].insereTete(carteCourantes[autreJoueur()]);
+    		scores[joueurCourant].insereTete(carteCourantes[joueurCourant]);
     	}
     	else {
-    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurA]);
-    		scores[joueur].insereTete(carteCourantes[Jeu.JoueurB]);
+    		scores[joueurCourant].insereTete(carteCourantes[joueurCourant]);
+    		scores[joueurCourant].insereTete(carteCourantes[autreJoueur()]);
     	}
-    	return joueur;
     }
     	
     public boolean finDePhase1() {
@@ -442,31 +441,31 @@ public class Niveau extends Historique<Action>{
     	return mains[joueur];
     }
     
-    public void setPhase(int p) {
+    private void setPhase(int p) {
     	phase = p;
     }
-    public void setJoueur(int j) {
+    private void setJoueur(int j) {
     	joueurCourant = j;
     }
-    public void setPioche(Sequence<Integer> p){
+    private void setPioche(Sequence<Integer> p){
     	pioche = p;
     }
-    public void setCarteCourante(int j, int c) {
+    private void setCarteCourante(int j, int c) {
 		carteCourantes[j] = c;
     }
-    public void setCarteAJouer(int c) {
+    private void setCarteAJouer(int c) {
     	carteAJouer = c;
     }
-    public void setDefausse(Sequence<Integer> d){
+    private void setDefausse(Sequence<Integer> d){
     	defausse = d;
     }
-    public void setScore(int joueur, Sequence<Integer> s){
+    private void setScore(int joueur, Sequence<Integer> s){
     	scores[joueur] = s;
     }
-    public void setPartisans(int joueur, Sequence<Integer> p){
+    private void setPartisans(int joueur, Sequence<Integer> p){
     	partisans[joueur] = p;
     }
-    public void setMain(int joueur,Sequence<Integer> m){
+    private void setMain(int joueur,Sequence<Integer> m){
     	mains[joueur] = m;
     }
 

@@ -1,6 +1,7 @@
 package Vue;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -15,6 +16,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	JeuGraphiqueSwing jg;
 	boolean maximized;
 	JFrame frame;
+	JPanel menu;//differents affichage
 	JLabel joueurCourant;
 	JButton nouvellePartie;
 	
@@ -45,7 +47,13 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	public void run() {	
 		frame = new JFrame("Claim");
 		jg = new JeuGraphiqueSwing(jeu);
+		menu = new JPanel();
 		frame.add(jg);
+		
+		nouvellePartie = createButton("Nouvelle Partie", "nouvelle_partie");
+		nouvellePartie.setBounds(240, 20, 125, 50);
+		menu.add(nouvellePartie);
+		frame.add(menu);
 		
 		jg.addMouseListener(new AdaptateurSouris(jg, controle));
 		//frame.addKeyListener(new AdaptateurClavier(controle));
@@ -56,13 +64,16 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(500, 300);
 		frame.setVisible(true);
+		
+		afficherMenu();
+		masquerPlateau();
 	}
 
 	@Override
 	public void metAJour() {
 		jg.repaint();
 	}
-
+	
 	@Override
 	public void basculePleinEcran() {
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -74,6 +85,23 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 			device.setFullScreenWindow(frame);
 			maximized = true;
 		}
+	}
+	
+	public void afficherMenu() {
+		menu.setVisible(true);
+	}
+	
+	public void masquerMenu() {
+		menu.setVisible(false);
+	}
+	
+	public void afficherPlateau() {
+		jg.setVisible(true);
+		frame.add(jg);
+	}
+	
+	public void masquerPlateau() {
+		jg.setVisible(false);
 	}
 	
 }

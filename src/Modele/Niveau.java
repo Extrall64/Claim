@@ -1,12 +1,16 @@
 package Modele;
 
-import java.util.Random;
-
 import Global.Configuration;
 import Structures.Iterateur;
 import Structures.Sequence;
 
-public class Niveau extends Historique<Action>{
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Random;
+
+public class Niveau extends Historique<Action> implements Serializable {
   
 	private Carte[] cartes;
 	private Random rand;
@@ -497,4 +501,11 @@ public class Niveau extends Historique<Action>{
     	}
     	return c;
     }
+
+	// writeObject est celui par defaut
+	// readObject doit appeler initialiserPiles d'abord pour que les sequences soient du bon type
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+    	initialiserPiles();
+    	ois.defaultReadObject();
+	}
 }

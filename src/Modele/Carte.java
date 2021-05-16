@@ -1,6 +1,8 @@
 package Modele;
 
-public class Carte {
+import java.io.Serializable;
+
+public class Carte implements Serializable {
     public int poid, faction;
 
     public Carte(int faction, int poid) {

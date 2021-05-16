@@ -1,8 +1,9 @@
 package Modele;
 
-import java.util.Random;
-
-import IA.IA;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class Jeu {
 	public static final int nbCarte = 52;
@@ -52,7 +53,11 @@ public class Jeu {
     }
     
     public void lancerUnePartie() {
-    	niveau.initialiser();
+        niveau.initialiser();
+
+        // Pour tester sauve/charge:1)mettre que sauvegarder 2)mettre que charger sans meme initialiser avant
+        //sauvegarder();
+       	//charger();
     }
  
     public int carteJouable(int carte) {
@@ -90,18 +95,32 @@ public class Jeu {
 	}
     
 
-    /* sauvegarder le tableau de carte et aussi le leader
-        * un tableau de taille nbCarte
-            chaque case est un quadriplet (faction, poid, categorie estCache)
-        * l'indice de leader
-        * le joueur courant de cette config
+	public static final String fichierSauvegarde="sauvegarde"; //TODO:pouvoir choisir la partie sauvegardée
+    /* sauvegarder le niveau dans un fichier
     */
     public void sauvegarder() {
+       try {
+           FileOutputStream fileOutputStream = new FileOutputStream(fichierSauvegarde);
+           ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+           objectOutputStream.writeObject(niveau);
+           objectOutputStream.flush();
+           objectOutputStream.close();
+       }catch(Exception e){
+           System.err.println("erreur sauvegarde"+e.toString());
+
+       }
+    }
+    // charger la partie depuis un fichier
+    public void charger() {
+        try{
+            FileInputStream fileInputStream = new FileInputStream(fichierSauvegarde);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            niveau = (Niveau) objectInputStream.readObject();
+            objectInputStream.close();
+        }catch(Exception e){
+         System.err.println("erreur chargement"+e.toString());
 
     }
-    // charger la partie sauvegarder
-    public void charger() {
-
     }
     
     public Niveau niveau() {

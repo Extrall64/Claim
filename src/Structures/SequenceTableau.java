@@ -1,5 +1,9 @@
 package Structures;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class SequenceTableau<Loulou> implements Sequence<Loulou> {
 	Object [] elements;
 	int debut, taille;
@@ -73,4 +77,5 @@ public class SequenceTableau<Loulou> implements Sequence<Loulou> {
 	public int taille() {
 		return taille;
 	}
+
 }

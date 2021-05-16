@@ -1,5 +1,9 @@
 package Structures;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 class Maillon<Tutu> {
 	Tutu element;
 	Maillon<Tutu> suivant;
@@ -76,4 +80,27 @@ public class SequenceListe<Titi> implements Sequence<Titi> {
 	public void decrementeTaille() {
 		taille--;
 	}
+
+
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.writeObject(taille);
+		IterateurListe<Titi> it=new IterateurListe<>(this);
+		while(it.aProchain()){
+			oos.writeObject(it.prochain());
+		}
+	}
+
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		taille=0;
+		tete=null;
+		queue=null;
+
+		int t=(int)ois.readObject();
+
+		for(int i=0;i<t;i++){
+			Titi o=(Titi) ois.readObject();
+			insereQueue(o);
+		}
+	}
+
 }

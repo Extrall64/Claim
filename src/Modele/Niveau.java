@@ -359,8 +359,8 @@ public class Niveau extends Historique<Action> implements Serializable {
     }
 
     public int quiGagneCombat() {
-    	Carte a = carteCourante[joueurCourant()];
-    	Carte b = carteCourante[autreJoueur()];
+    	Carte a = carteCourante[autreJoueur()];
+    	Carte b = carteCourante[joueurCourant()];
     	int joueur;
     	if(a.getFaction() == GLOBELINS && b.getFaction() == CHEVALIERS) { //seul cas particulier
     		joueur = joueurCourant();

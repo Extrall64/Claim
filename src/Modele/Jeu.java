@@ -17,6 +17,7 @@ public class Jeu {
     
     public void nouvellePartie() {
     	lancerUnePartie();
+    	niveau.melanger();
         niveau.initialiserPhase1();
         niveau.joueurCommenceAleatoire();
         niveau.retournerNouvelleCarteEnJeu();

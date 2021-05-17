@@ -1,5 +1,7 @@
 package Vue;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -15,7 +17,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	
 	boolean maximized;
 	JFrame frame;
-	JPanel menu,finPhase1,finDeJeu;//differents affichage
+	JPanel menu,hautDePlateau,finPhase1,finDeJeu;//differents affichage
 	
 	JLabel joueurCourant;
 	JButton nouvellePartie_vs_humain,nouvellePartie_vs_ia_aleatoire,nouvellePartie_vs_ia_normale,nouvellePartie_vs_ia_difficile;
@@ -48,7 +50,13 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame = new JFrame("Claim");
 		jg = new JeuGraphiqueSwing(jeu);
 		menu = new JPanel();
+		
 		frame.add(jg);
+		
+		hautDePlateau = new JPanel();
+		hautDePlateau.setBackground(Color.GRAY);
+		hautDePlateau.setVisible(true);
+		jg.add(hautDePlateau,BorderLayout.PAGE_START);
 		
 		nouvellePartie_vs_humain = createButton("Humain VS Humain", "humain_vs_humain");
 		nouvellePartie_vs_humain.setBounds(240, 20, 125, 50);
@@ -99,6 +107,8 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	}
 	
 	public void afficherPlateau() {
+		hautDePlateau.setVisible(true);
+		jg.add(hautDePlateau,BorderLayout.PAGE_START);
 		jg.setVisible(true);
 		frame.add(jg);
 	}

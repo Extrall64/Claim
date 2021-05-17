@@ -4,7 +4,7 @@ import java.util.Random;
 
 import Modele.Carte;
 import Modele.Jeu;
-import Modele.Niveau;
+import Modele.Plateau;
 
 public class IAAleatoire implements IA {
 	int joueur;
@@ -18,7 +18,7 @@ public class IAAleatoire implements IA {
     }
     
     public Carte determineCoup() {
-    	Niveau niv = config.niveau();
+    	Plateau niv = config.plateau();
     	Carte c = null;
     	while (c == null) {
     		System.out.println("c");

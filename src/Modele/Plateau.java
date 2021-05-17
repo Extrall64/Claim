@@ -39,11 +39,11 @@ public class Plateau extends Historique<Action> implements Serializable {
 	private Carte[] cartes;
 	private Random rand;
     private int joueurCourant,phase;
-	public Carte[] carteCourante;
+	private Carte[] carteCourante;
 	private Carte carteAJouer;
-	public List<Carte> pioche, defausse;
+	private List<Carte> pioche, defausse;
 	private List <List<Carte>> partisans, scores, mains;
-
+	
 	public void initialiser() {
         rand = new Random();
         cartes = new Carte[nbCarte];
@@ -57,7 +57,7 @@ public class Plateau extends Historique<Action> implements Serializable {
 		int cur = 0;
         // construire les 4 carte globelins de poid 0
         for (int i = 0; i < 4; i ++) {
-        	cartes[cur] = new Carte(GLOBELINS, 0, i + 1);
+        	cartes[cur] = new Carte(GLOBELINS, 0);
             cur++;
         }
         // constuire nains, mort-vivant, doppelgangers
@@ -107,7 +107,6 @@ public class Plateau extends Historique<Action> implements Serializable {
     }
 
     public void initialiserPhase2(){ //bouger les cartes partisans dans les mains
-    	if (partisans.get(JoueurA).size() == 13 && partisans.get(JoueurB).size() == 13)
     	for(int i = 0;i<13;i++) {
     		Carte c = partisans.get(JoueurA).remove(0);
     		c.setCategorie(iMainA);
@@ -134,14 +133,14 @@ public class Plateau extends Historique<Action> implements Serializable {
         initialiserPiles();
         for (int i = 0; i < nbCarte; i++) {
             switch( cartes[i].getCategorie()) {
-                case Plateau.iScoreA: scores.get(JoueurA).add( cartes[i] ); break;
-                case Plateau.iScoreB: scores.get(JoueurB).add( cartes[i] );break;
-                case Plateau.iPioche: pioche.add( cartes[i] );break;
-                case Plateau.iDefausser: defausse.add( cartes[i] );break;
-                case Plateau.iMainA: mains.get(JoueurA).add( cartes[i] );break;
-                case Plateau.iMainB: mains.get(JoueurB).add( cartes[i] );break;
-                case Plateau.iPartisansA: partisans.get(JoueurA).add( cartes[i] );break;
-                case Plateau.iPartisansB: partisans.get(JoueurB).add( cartes[i] );break;
+                case Plateau.iScoreA: scores.get(JoueurA).add( cartes[i] );
+                case Plateau.iScoreB: scores.get(JoueurB).add( cartes[i] );
+                case Plateau.iPioche: pioche.add( cartes[i] );
+                case Plateau.iDefausser: defausse.add( cartes[i] );
+                case Plateau.iMainA: mains.get(JoueurA).add( cartes[i] );
+                case Plateau.iMainB: mains.get(JoueurB).add( cartes[i] );
+                case Plateau.iPartisansA: partisans.get(JoueurA).add( cartes[i] );
+                case Plateau.iPartisansB: partisans.get(JoueurB).add( cartes[i] );
             }
         }
     }
@@ -207,22 +206,13 @@ public class Plateau extends Historique<Action> implements Serializable {
     public void jouerCarte(Carte carte) {
     	nouveau(new Action(this, this.clone()));//mise a jour historique
     	carteCourante[joueurCourant] = carte;
+    	carte.setCategorie(courantJoueur(joueurCourant)); 
+    	carte.setCategorie(mainJoueur(joueurCourant));
     	retirerCarteMainCourante(carte);
     }
    
-   // il faut boucler pour supprimer la carte identique
-   // car la variable carte est une carte clonné d'une configuration d'IA
-   // elle peut pas etre supprimer par remove(carte)
     private void retirerCarteMainCourante(Carte carte) {
-    	List<Carte> l = mains.get(joueurCourant);
-    	for (int i = 0; i < l.size(); i++ ) {
-    		if (l.get(i).estEgale(carte)) {
-    			l.get(i).setCategorie( courantJoueur(joueurCourant) );
-    			l.remove(i);
-    			return;
-    		}
-    	}
-		System.out.printf("[%d] On ne peut pas supprimer %s\n",joueurCourant(), carte);
+    	mains.get(joueurCourant()).remove(carte);
     }
     
     public int score(int joueur, int faction) {
@@ -263,7 +253,7 @@ public class Plateau extends Historique<Action> implements Serializable {
     }
     
     public boolean finDePhase2() {
-    	return phase() == 2 && mains.get(JoueurA).isEmpty() && mains.get(JoueurB).isEmpty() && carteCourante[JoueurA] == null && partisans.get(0).size() == 0 && partisans.get(1).size() == 0;
+    	return phase() == 2 && mains.get(JoueurA).isEmpty() && mains.get(JoueurB).isEmpty() && carteCourante[JoueurA] == null;
     }
 
     public int joueurGagant() {
@@ -442,14 +432,8 @@ public class Plateau extends Historique<Action> implements Serializable {
         for(Carte c : cartes) System.out.println(c);
     }
     
-    public List<Carte> getMain(int j) {
+    public List<Carte> getMain(int j){
     	return mains.get(j);
-    }
-    public List<Carte> getScore(int j) {
-    	return scores.get(j);
-    }
-    public List<Carte> getPartisans(int j) {
-    	return partisans.get(j);
     }
     
     public void melanger() {
@@ -476,42 +460,30 @@ public class Plateau extends Historique<Action> implements Serializable {
     
     public void setJoueur(int j) {
     	joueurCourant = j;
-    }
+    }	
     
     public Plateau clone() {
 		Plateau clone = new Plateau();
 		clone.initialiser();
-    	if (carteCourante[0] != null) clone.carteCourante[0] = carteCourante[0].clone();
-    	if (carteCourante[1] != null) clone.carteCourante[1] = carteCourante[1].clone();
-    	if (carteAJouer != null) clone.carteAJouer = carteAJouer.clone();
-        for(int j = 0; j < nbCarte; j++) {
-            clone.cartes[j] = cartes[j].clone();
-        }
-        clone.reconstruirePiles();
 		clone.setJoueur(joueurCourant);
     	clone.setPhase(phase);
+        for(int j = 0; j < nbCarte; j++) {
+            clone.cartes[j] = new Carte(cartes[j].getFaction(), cartes[j].getPoid());
+            clone.cartes[j].setCategorie(cartes[j].getCategorie());
+            clone.cartes[j].setEstCachee(JoueurA,cartes[j].estCachee(JoueurA));
+            clone.cartes[j].setEstCachee(JoueurB,cartes[j].estCachee(JoueurB));
+        }
 		return clone;
 	}
     
     public int hash() {
-        int r = 1	;
-        for (int i = 0; i < nbCarte; i++)
-        	r = r + i * cartes[i].hash();
-        	r = r % 20000;
-        return r;
+        return Arrays.deepHashCode(cartes);
     }
 
-	public boolean equals(Object o) {
-		Plateau p = (Plateau) o;
-		return hash() == p.hash();
-	}
     public void remplace(Plateau n) { //appel de l'historique
     	cartes = n.cartes();
      	phase = n.phase();
     	joueurCourant = n.joueurCourant();
-    	carteCourante[0] = n.carteCourante[0];
-    	carteCourante[1] = n.carteCourante[1];
-    	carteAJouer = n.carteAJouer;
     	reconstruirePiles();
     }
 

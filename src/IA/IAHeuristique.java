@@ -13,9 +13,4 @@ public class IAHeuristique implements IA{
         int carte = 0;
         return  null;
     }
-	@Override
-	public int typeJoeur() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

@@ -12,6 +12,7 @@ public class IAMinMax implements IA {
 	Hashtable<Integer, Carte> coupGagnant;
     // represente le tour de A ou de B, utilisé pour determiner l'evaluation()
     Jeu config;
+    Random rand;
     // la main de joueur adversaire contient tt les cartes possible qu'il peut avoir
     List<Carte> mainA, mainB;
     boolean estJoueurA;
@@ -24,7 +25,7 @@ public class IAMinMax implements IA {
     @Override
     // renvoyer une carte a jouer a chaque fois la fonction appelée
     public Carte determineCoup() {
-    	// constuire les mainde joueur, la main de l'adversaire sera
+    	/*// constuire les mainde joueur, la main de l'adversaire sera
     	// ttes les cartes sauf les carte de A et celles dans defausser, score , partisans ...
     	for(Carte c: jeu.niveau().cartes()) {
     		if ( mainJoueur(jeu.joueurCourant()) == c.categorie)
@@ -37,10 +38,11 @@ public class IAMinMax implements IA {
         // le coup a faire apres cette configuration (la grille courante)
         Carte carte = coupGagnant.get( config.niveau().hash() );
         System.out.printf("Carte jouer par l'IA: %d\n", carte);
-        return carte;
+        return carte;*/
+    	return null;
     }
 	int calculJoueurA(Jeu config, int horizon) {
-		estJoueurA = true;
+		/*estJoueurA = true;
 		if (estFeuille(config) || horizon == 0)
 			return evaluation(config);
 		
@@ -56,11 +58,12 @@ public class IAMinMax implements IA {
 				coupGagnant.put( config.niveau().hash() , c);
 			}
 		}
-		return valeur;
+		return valeur;*/
+		return 0;
 	}
 
 	int calculJoueurB(Jeu config, int horizon) {
-		estJoueurA = false;
+		/*estJoueurA = false;
 		if (estFeuille(config) || horizon == 0)
 			return evaluation(config);
 		
@@ -76,23 +79,19 @@ public class IAMinMax implements IA {
 				valeur = temp;
 			}
 		}
-		return valeur;
+		return valeur;*/
+		return 0;
 	}
 	List <Carte> coup(Jeu config) {
-		List<Carte> r = new ArrayList<>();
+		//List<Carte> r = new ArrayList<>();
 		// enumerer l'ensemble de coup possible
-		return r;
+		return null;
 	}
 	boolean estFeuille(Jeu config) {
-		return main.size() == 0;
+		return true;
 	}
 
 	int evaluation(Jeu config) {
         return 0;
-	}
-	@Override
-	public int typeJoeur() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }

@@ -424,6 +424,13 @@ public class Plateau extends Historique<Action> implements Serializable {
         return cartes[i];
     }
     
+    public List<Carte> getScore(int j) {
+        return scores.get(j);
+    }
+    public List<Carte> getPartisans(int j) {
+        return partisans.get(j);
+    }
+    
     public Carte [] cartes() { return cartes; }
 
 

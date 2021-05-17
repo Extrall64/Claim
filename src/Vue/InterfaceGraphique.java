@@ -1,7 +1,5 @@
 package Vue;
 
-import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -14,11 +12,13 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	Jeu jeu;
 	CollecteurEvenements controle;
 	JeuGraphiqueSwing jg;
+	
 	boolean maximized;
 	JFrame frame;
-	JPanel menu;//differents affichage
+	JPanel menu,finPhase1,finDeJeu;//differents affichage
+	
 	JLabel joueurCourant;
-	JButton nouvellePartie;
+	JButton nouvellePartie_vs_humain,nouvellePartie_vs_ia_aleatoire,nouvellePartie_vs_ia_normale,nouvellePartie_vs_ia_difficile;
 	
 
 	InterfaceGraphique(Jeu j, CollecteurEvenements c) {
@@ -50,9 +50,12 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		menu = new JPanel();
 		frame.add(jg);
 		
-		nouvellePartie = createButton("Nouvelle Partie", "nouvelle_partie");
-		nouvellePartie.setBounds(240, 20, 125, 50);
-		menu.add(nouvellePartie);
+		nouvellePartie_vs_humain = createButton("Humain VS Humain", "humain_vs_humain");
+		nouvellePartie_vs_humain.setBounds(240, 20, 125, 50);
+		menu.add(nouvellePartie_vs_humain);
+		nouvellePartie_vs_ia_aleatoire = createButton("Humain VS IA Aleatoire", "humain_vs_ia_alea");
+		nouvellePartie_vs_ia_aleatoire.setBounds(240, 20, 125, 50);
+		menu.add(nouvellePartie_vs_ia_aleatoire);
 		frame.add(menu);
 		
 		jg.addMouseListener(new AdaptateurSouris(jg, controle));

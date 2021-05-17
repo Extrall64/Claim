@@ -1,48 +1,95 @@
 package IA;
 
-import java.util.*;
-import java.lang.Math;
+import Modele.Carte;
+import Modele.Jeu;
 
-public class IAMinMax extends IA {
-    /*int [] main;
-	Hashtable<Integer, List<Point>> coupGagnant;
+import java.lang.Math;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Random;
+
+public class IAMinMax implements IA {
+	Hashtable<Integer, Carte> coupGagnant;
     // represente le tour de A ou de B, utilisé pour determiner l'evaluation()
+    Jeu config;
+    // la main de joueur adversaire contient tt les cartes possible qu'il peut avoir
+    List<Carte> mainA, mainB;
     boolean estJoueurA;
-    public IAMinMax( int [] ref_main) {
+    public IAMinMax(Jeu config) {
+    	this.config = config;
         rand = new Random();
-		coupGagnant = new Hashtable<Integer, List<Point> >(); 
+		coupGagnant = new Hashtable<Integer, Carte>(); 
         estJoueurA = true;
-    }*/
+    }
     @Override
     // renvoyer une carte a jouer a chaque fois la fonction appelée
-    public int determineCoup() {
-       /* //s'il y a un coup gagnant renvoyé le sinon jouer un coup aleatoire
-        calculJoueurA(n);
+    public Carte determineCoup() {
+    	// constuire les mainde joueur, la main de l'adversaire sera
+    	// ttes les cartes sauf les carte de A et celles dans defausser, score , partisans ...
+    	for(Carte c: jeu.niveau().cartes()) {
+    		if ( mainJoueur(jeu.joueurCourant()) == c.categorie)
+    			mainA.add( c );
+    		else if ( c.categorie == niv.iCarte || c.categorie == niv.iPioche || c.categorie == mainJoueur(jeu.autreJoueur())
+    		mainB.add( c );
+    	}
+       	//s'il y a un coup gagnant renvoyé le sinon jouer un coup aleatoire
+        calculJoueurA(config);
         // le coup a faire apres cette configuration (la grille courante)
-        int carte = coupGagnant.get(n.hash()).get(0);
+        Carte carte = coupGagnant.get( config.niveau().hash() );
         System.out.printf("Carte jouer par l'IA: %d\n", carte);
-        return carte;*/
-    	return 0;
+        return carte;
     }
-	/*int calculJoueurA(Niveau config) {
-		return 0;
+	int calculJoueurA(Jeu config, int horizon) {
+		estJoueurA = true;
+		if (estFeuille(config) || horizon == 0)
+			return evaluation(config);
+		
+		// represente -oo
+		int valeur = - Integer.MAX_VALUE;
+		List<Carte> c = coup(config);
+		for(Carte c: C) {
+			Jeu nconfig = config.clone();
+			nconfig.joueCarte(c);
+			int temp = calculJoueurB(nconfig, horizon-1);
+			if (valeur < temp) {
+				valeur = temp;
+				coupGagnant.put( config.niveau().hash() , c);
+			}
+		}
+		return valeur;
 	}
 
-	int calculJoueurB(InterfaceNiveau config) {
-		return 0;
+	int calculJoueurB(Jeu config, int horizon) {
+		estJoueurA = false;
+		if (estFeuille(config) || horizon == 0)
+			return evaluation(config);
+		
+		// represente +oo
+		int valeur = Integer.MAX_VALUE;
+		List<Carte> c = coup(config);
+		for(Carte c: C) {
+			Jeu nconfig = config.clone();
+			// fonction applique le coup joueur dans config
+			nconfig.joueCarte(c);
+			int temp = calculJoueurA(nconfig, horizon-1);
+			if (valeur > temp) {
+				valeur = temp;
+			}
+		}
+		return valeur;
 	}
-	List <Point> coup(Niveau niv) {
-		List<Point> r = new ArrayList<>();
+	List <Carte> coup(Jeu config) {
+		List<Carte> r = new ArrayList<>();
 		// enumerer l'ensemble de coup possible
 		return r;
 	}
-	boolean estFeuille(Niveau niv) {
-		return false;
+	boolean estFeuille(Jeu config) {
+		return main.size() == 0;
 	}
 
-	int evaluation(Niveau niv) {
+	int evaluation(Jeu config) {
         return 0;
-	}*/
+	}
 	@Override
 	public int typeJoeur() {
 		// TODO Auto-generated method stub

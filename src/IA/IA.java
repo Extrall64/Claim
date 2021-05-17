@@ -1,6 +1,7 @@
 package IA;
 
-public abstract class IA {
-	abstract int determineCoup();
-	abstract int typeJoeur();
+import Modele.Carte;
+
+public interface IA {
+	public Carte determineCoup();
 }

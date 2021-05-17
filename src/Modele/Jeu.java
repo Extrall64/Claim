@@ -6,34 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Jeu {
-	public static final int nbCarte = 52;
-    
-	public static final int nbFaction = 5;
-    // les diffirentes valeur que l'attr faction de carte peut prendre
-    public static final int GLOBELINS = 0;
-    public static final int NAINS = 1;
-    public static final int MORTSVIVANTS = 2;
-    public static final int DOPPELGANGERS = 3;
-    public static final int CHEVALIERS = 4;
-    
-    public static final int JoueurA = 0;
-    public static final int JoueurB = 1;
-    // les diffirentes valeur que l'attr categorie de carte peut prendre pour les sauvegardes
-    public static final int nbPile = 11;
-    public static final int Pioche = 0;
-    public static final int ScoreA = 1;
-    public static final int ScoreB = 2;
-    public static final int Defausse = 3;
-    public static final int MainA = 4;
-    public static final int MainB = 5;
-    public static final int PartisansA = 6;
-    public static final int PartisansB = 7;
-    public static final int CarteAGagner = 8;
-    public static final int CarteJouerA = 9;
-    public static final int CarteJouerB = 10;
-    
-    Niveau niveau;
-    boolean menu;
+
+    private Niveau niveau;
+    private boolean menu;
     
     public Jeu() {
         niveau = new Niveau();
@@ -43,13 +18,17 @@ public class Jeu {
     public void nouvellePartie() {
     	lancerUnePartie();
         niveau.initialiserPhase1();
-        niveau.determinerJoueurCommence();
+        niveau.joueurCommenceAleatoire();
         niveau.retournerNouvelleCarteEnJeu();
         menu = false;
     }
     
     public boolean estSurMenu() {
     	return menu;
+    }
+    
+    public boolean finDePartie() {
+    	return niveau.finDePhase2();
     }
     
     public void lancerUnePartie() {
@@ -60,22 +39,30 @@ public class Jeu {
        	//charger();
     }
  
-    public int carteJouable(int carte) {
-    	return niveau.jouerCarteValide(carte);
+    public boolean carteJouable(Carte carte) {
+    	return niveau.estCarteValide(carte);
     }
     
-    public void joueCarte(int carte) {
+    public void joueCarte(Carte carte) {
     	niveau.jouerCarte(carte);
     	if(niveau.combatPret()) {
-    		niveau.combat();
+    		int j = niveau.quiGagneCombat();
+    		niveau.setJoueur(j);
+    		if(niveau.phase() == 1) {
+    			niveau.combatPhase1();
+    		}
+    		else {
+    			niveau.combatPhase2();
+    		}
+    		niveau.reinitialiserCarteCourante();
     		if(niveau.finDePhase1()) {
     			niveau.initialiserPhase2();
     		}
     		if(niveau.finDePhase2()) {
     			int x = niveau.joueurGagant();
-    			if(x == JoueurA)
+    			if(x == Niveau.JoueurA)
     				System.out.println("Joueur 1 a gagne");
-    			else if(x == JoueurB)
+    			else if(x == Niveau.JoueurB)
     				System.out.println("Joueur 2 a gagne");
     			else
     				System.out.println("Match nul");
@@ -84,14 +71,21 @@ public class Jeu {
     			 niveau.retournerNouvelleCarteEnJeu();
     		}
     	}
+    	else {
+    		niveau.changerJoueur();
+    	}
+    }
+    
+    public int joueurCourant() {
+    	return niveau.joueurCourant();
     }
     
     public void annule() {
-		
+		niveau.annuler();
 	}
 
 	public void refaire() {
-		
+		niveau.refaire();
 	}
     
 
@@ -118,9 +112,8 @@ public class Jeu {
             niveau = (Niveau) objectInputStream.readObject();
             objectInputStream.close();
         }catch(Exception e){
-         System.err.println("erreur chargement"+e.toString());
-
-    }
+        	System.err.println("erreur chargement"+e.toString());
+        }
     }
     
     public Niveau niveau() {

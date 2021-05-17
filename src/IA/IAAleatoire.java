@@ -1,24 +1,32 @@
 package IA;
 
+import java.util.Random;
 
-import java.util.*;
-import Modele.*;
+import Modele.Carte;
+import Modele.Jeu;
+import Modele.Niveau;
 
-public class IAAleatoire extends IA{
-    int [] main;
+public class IAAleatoire implements IA {
+	int joueur;
     Random rand;
-    public IAAleatoire(int [] ref_main) {
-        main = ref_main;
+    Jeu config;
+    
+    public IAAleatoire(Jeu config, int j) {
+    	this.config = config;
+        joueur = j;
         rand = new Random();
     }
-    // renvoyer une carte a jouer a chaque fois la fonction appelée
-    public int determineCoup() {
-        int carte = rand.nextInt( main.length );
-        return carte;
+    
+    public Carte determineCoup() {
+    	Niveau niv = config.niveau();
+    	Carte c = null;
+    	while (c == null) {
+    		System.out.println("c");
+    		Carte x = niv.getMain(joueur).get( rand.nextInt( niv.getMain(joueur).size() ) );
+    		if (config.carteJouable(x))
+    			c = x;
+    	}
+        System.out.print("IA joue:"); System.out.println(c);
+        return c;
     }
-	@Override
-	public int typeJoeur() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import Modele.Carte;
 import Modele.Jeu;
 
 
@@ -62,7 +63,7 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		drawable.drawImage(img.image(), x, y, largeur, hauteur, null);
 	}
 	
-	public int determinerCarte(int l, int c) {
+	public Carte determinerCarte(int l, int c) {
 		return vue.determinerCarte(l,c);
 	}
 	

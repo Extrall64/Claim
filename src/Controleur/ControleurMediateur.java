@@ -1,6 +1,8 @@
 package Controleur;
 
 import IA.IA;
+import IA.IAAleatoire;
+import Modele.Carte;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceUtilisateur;
@@ -19,6 +21,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 	
 	public ControleurMediateur(Jeu j) {
 		jeu = j;
+		joueurs = new IA[2];
 	}
 	
 	@Override
@@ -27,11 +30,11 @@ public class ControleurMediateur implements CollecteurEvenements{
 		
 	}
 	
-	public void jouerCarte(int carte) {
-		int x = jeu.carteJouable(carte);
-		if (x != -1) {
+	public void jouerCarte(Carte carte) {
+		boolean x = jeu.carteJouable(carte);
+		if (x) {
 			jeu.joueCarte(carte);
-			//animation carte
+			tourIA();
 		}
 	}
 	
@@ -40,11 +43,28 @@ public class ControleurMediateur implements CollecteurEvenements{
 		inter.afficherPlateau();
 		jeu.nouvellePartie();
 	}
+	
+	public void nouvelle_partie_ia() {
+		joueurs[1] = new IAAleatoire(jeu,1);
+		inter.masquerMenu();
+		inter.afficherPlateau();
+		jeu.nouvellePartie();
+		tourIA();
+	}
+	
+	public void tourIA() {
+		if(!jeu.finDePartie() && joueurs[jeu.joueurCourant()] != null) {//tour de l'ia
+			jeu.joueCarte(joueurs[jeu.joueurCourant()].determineCoup());
+		}
+	}
 
 	public void commande(String c) {
 		switch (c) {
-			case "nouvelle_partie":
+			case "humain_vs_humain":
 				nouvelle_partie();
+				break;
+			case "humain_vs_ia_alea":
+				nouvelle_partie_ia();
 				break;
 			default:
 			

@@ -120,5 +120,11 @@ public class Jeu {
     public Plateau plateau() {
     	return plateau;
     }
+    
+    public Jeu clone() {
+        Jeu clone = new Jeu();
+        clone.plateau = plateau.clone();
+        return clone;
+    }
 }
 

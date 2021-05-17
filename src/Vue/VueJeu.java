@@ -1,20 +1,13 @@
 package Vue;
 
-import java.awt.Component;
-import java.awt.Image;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-
 import Global.Configuration;
 import Modele.Carte;
 import Modele.Jeu;
-import Modele.Niveau;
-import Structures.Iterateur;
-import Structures.Sequence;
+import Modele.Plateau;
 
 public class VueJeu {
 	public static final int nbCaseH = 12;
@@ -26,7 +19,6 @@ public class VueJeu {
 	JeuGraphique jg;
 
 	private ImageClaim chargeImage(String nom) {
-		ImageClaim img = null;
 		InputStream in = Configuration.charge("carte_JPEG" + File.separator + nom + ".jpg");
 		return ImageClaim.getImageClaim(in);
 	}
@@ -34,12 +26,12 @@ public class VueJeu {
 	public VueJeu(Jeu j, JeuGraphique n) {
 		images = new ImageClaim[5][10];
 		for(int i=0;i<10;i++) {
-			images[Niveau.NAINS][i] = chargeImage("nain_"+i);
-			images[Niveau.MORTSVIVANTS][i] = chargeImage("mort-vivant_"+i);
-			images[Niveau.DOPPELGANGERS][i] = chargeImage("doppel_"+i);
-			images[Niveau.GLOBELINS][i] = chargeImage("gobelin_"+i);
+			images[Plateau.NAINS][i] = chargeImage("nain_"+i);
+			images[Plateau.MORTSVIVANTS][i] = chargeImage("mort-vivant_"+i);
+			images[Plateau.DOPPELGANGERS][i] = chargeImage("doppel_"+i);
+			images[Plateau.GLOBELINS][i] = chargeImage("gobelin_"+i);
 			if(i>=2) {
-				images[Niveau.CHEVALIERS][i] = chargeImage("chevalier_"+i);
+				images[Plateau.CHEVALIERS][i] = chargeImage("chevalier_"+i);
 			}
 		}
 		dos = chargeImage("carte_dos");
@@ -54,14 +46,14 @@ public class VueJeu {
 	}
 	
 	public void tracerPartie() {
-		Niveau niv = jeu.niveau();
+		Plateau plateau = jeu.plateau();
 		largeurCase = jg.largeur() / nbCaseL;
 		hauteurCase = jg.hauteur() / nbCaseH;
 		//largeurCase = Math.min(largeurCase, hauteurCase);
 		//hauteurCase = largeurCase;
-		joueurCourant = niv.joueurCourant();
+		joueurCourant = plateau.joueurCourant();
 		
-		List<Carte> main = niv.getMain(joueurCourant);
+		List<Carte> main = plateau.getMain(joueurCourant);
 		int nbCarte = main.size();
 		int debut = (13-nbCarte)/2 * 2;
 		int h = nbCaseH - 3;
@@ -70,18 +62,18 @@ public class VueJeu {
 			debut = debut + 2;
 		}
 		
-		if(niv.phase() == 1) {
+		if(plateau.phase() == 1) {
 			jg.tracerImage(dos,largeurCase, hauteurCase, largeurCase*4, hauteurCase*6);
-			Carte x = niv.carteAJouer();
-			if(niv.carteAJouer() == null) {System.out.println(""+ niv.phase());System.exit(0);}
+			Carte x = plateau.carteAJouer();
+			if(plateau.carteAJouer() == null) {System.out.println(""+ plateau.phase());System.exit(0);}
 			jg.tracerImage(images[x.getFaction()][x.getPoid()],largeurCase * 6, hauteurCase, largeurCase*4, hauteurCase*6);
 		}
 		
-		Carte a = niv.carteCourante(0);
+		Carte a = plateau.carteCourante(0);
 		if(a != null) {
 			jg.tracerImage(images[a.getFaction()][a.getPoid()],largeurCase * 13, hauteurCase, largeurCase*4, hauteurCase*6);
 		}
-		Carte b = niv.carteCourante(1);
+		Carte b = plateau.carteCourante(1);
 		if(b != null) {
 			jg.tracerImage(images[b.getFaction()][b.getPoid()],largeurCase * 19, hauteurCase, largeurCase*4, hauteurCase*6);
 		}
@@ -102,14 +94,14 @@ public class VueJeu {
 	
 	public Carte determinerCarte(int l, int c) {
 		if(!jeu.estSurMenu()) {
-			Niveau niv = jeu.niveau();
-			List<Carte> main = niv.getMain(joueurCourant);
+			Plateau plateau = jeu.plateau();
+			List<Carte> main = plateau.getMain(joueurCourant);
 			int nbCarte = main.size();
 			int debut = (13-nbCarte)/2 * 2;
 			int h = nbCaseH - 3;
 			if(l >= h && c < debut + 2*nbCarte && c >= debut) {
 				int posCarte = c/2 - debut/2;
-				return niv.cartePosMain(posCarte,joueurCourant);
+				return plateau.cartePosMain(posCarte,joueurCourant);
 			}
 		}
 		return null;

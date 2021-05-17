@@ -5,10 +5,10 @@ import Structures.Iterateur;
 import Structures.Sequence;
 
 public class Action extends Commande {
-	Niveau courant;
-	Niveau copie;
+	Plateau courant;
+	Plateau copie;
 	
-	public Action(Niveau courant, Niveau copie) {
+	public Action(Plateau courant, Plateau copie) {
 		this.courant = courant;
 		this.copie = copie;
 	}

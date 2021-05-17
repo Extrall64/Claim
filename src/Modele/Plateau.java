@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class Niveau extends Historique<Action> implements Serializable {
+public class Plateau extends Historique<Action> implements Serializable {
 	public static final int nbCarte = 52;
     
 	public static final int nbFaction = 5;
@@ -133,14 +133,14 @@ public class Niveau extends Historique<Action> implements Serializable {
         initialiserPiles();
         for (int i = 0; i < nbCarte; i++) {
             switch( cartes[i].getCategorie()) {
-                case Niveau.iScoreA: scores.get(JoueurA).add( cartes[i] );
-                case Niveau.iScoreB: scores.get(JoueurB).add( cartes[i] );
-                case Niveau.iPioche: pioche.add( cartes[i] );
-                case Niveau.iDefausser: defausse.add( cartes[i] );
-                case Niveau.iMainA: mains.get(JoueurA).add( cartes[i] );
-                case Niveau.iMainB: mains.get(JoueurB).add( cartes[i] );
-                case Niveau.iPartisansA: partisans.get(JoueurA).add( cartes[i] );
-                case Niveau.iPartisansB: partisans.get(JoueurB).add( cartes[i] );
+                case Plateau.iScoreA: scores.get(JoueurA).add( cartes[i] );
+                case Plateau.iScoreB: scores.get(JoueurB).add( cartes[i] );
+                case Plateau.iPioche: pioche.add( cartes[i] );
+                case Plateau.iDefausser: defausse.add( cartes[i] );
+                case Plateau.iMainA: mains.get(JoueurA).add( cartes[i] );
+                case Plateau.iMainB: mains.get(JoueurB).add( cartes[i] );
+                case Plateau.iPartisansA: partisans.get(JoueurA).add( cartes[i] );
+                case Plateau.iPartisansB: partisans.get(JoueurB).add( cartes[i] );
             }
         }
     }
@@ -462,8 +462,8 @@ public class Niveau extends Historique<Action> implements Serializable {
     	joueurCourant = j;
     }	
     
-    public Niveau clone() {
-		Niveau clone = new Niveau();
+    public Plateau clone() {
+		Plateau clone = new Plateau();
 		clone.initialiser();
 		clone.setJoueur(joueurCourant);
     	clone.setPhase(phase);
@@ -480,7 +480,7 @@ public class Niveau extends Historique<Action> implements Serializable {
         return Arrays.deepHashCode(cartes);
     }
 
-    public void remplace(Niveau n) { //appel de l'historique
+    public void remplace(Plateau n) { //appel de l'historique
     	cartes = n.cartes();
      	phase = n.phase();
     	joueurCourant = n.joueurCourant();

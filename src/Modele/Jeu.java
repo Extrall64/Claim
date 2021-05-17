@@ -7,20 +7,20 @@ import java.io.ObjectOutputStream;
 
 public class Jeu {
 
-    private Niveau niveau;
+    private Plateau plateau;
     private boolean menu;
     
     public Jeu() {
-        niveau = new Niveau();
+        plateau = new Plateau();
         menu = true;
     }
     
     public void nouvellePartie() {
     	lancerUnePartie();
-    	niveau.melanger();
-        niveau.initialiserPhase1();
-        niveau.joueurCommenceAleatoire();
-        niveau.retournerNouvelleCarteEnJeu();
+    	plateau.melanger();
+        plateau.initialiserPhase1();
+        plateau.joueurCommenceAleatoire();
+        plateau.retournerNouvelleCarteEnJeu();
         menu = false;
     }
     
@@ -29,11 +29,11 @@ public class Jeu {
     }
     
     public boolean finDePartie() {
-    	return niveau.finDePhase2();
+    	return plateau.finDePhase2();
     }
     
     public void lancerUnePartie() {
-        niveau.initialiser();
+        plateau.initialiser();
 
         // Pour tester sauve/charge:1)mettre que sauvegarder 2)mettre que charger sans meme initialiser avant
         //sauvegarder();
@@ -41,63 +41,63 @@ public class Jeu {
     }
  
     public boolean carteJouable(Carte carte) {
-    	return niveau.estCarteValide(carte);
+    	return plateau.estCarteValide(carte);
     }
     
     public void joueCarte(Carte carte) {
-    	niveau.jouerCarte(carte);
-    	if(niveau.combatPret()) {
-    		int j = niveau.quiGagneCombat();
-    		niveau.setJoueur(j);
-    		if(niveau.phase() == 1) {
-    			niveau.combatPhase1();
+    	plateau.jouerCarte(carte);
+    	if(plateau.combatPret()) {
+    		int j = plateau.quiGagneCombat();
+    		plateau.setJoueur(j);
+    		if(plateau.phase() == 1) {
+    			plateau.combatPhase1();
     		}
     		else {
-    			niveau.combatPhase2();
+    			plateau.combatPhase2();
     		}
-    		niveau.reinitialiserCarteCourante();
-    		if(niveau.finDePhase1()) {
-    			niveau.initialiserPhase2();
+    		plateau.reinitialiserCarteCourante();
+    		if(plateau.finDePhase1()) {
+    			plateau.initialiserPhase2();
     		}
-    		if(niveau.finDePhase2()) {
-    			int x = niveau.joueurGagant();
-    			if(x == Niveau.JoueurA)
+    		if(plateau.finDePhase2()) {
+    			int x = plateau.joueurGagant();
+    			if(x == plateau.JoueurA)
     				System.out.println("Joueur 1 a gagne");
-    			else if(x == Niveau.JoueurB)
+    			else if(x == plateau.JoueurB)
     				System.out.println("Joueur 2 a gagne");
     			else
     				System.out.println("Match nul");
     		}
-    		if(niveau.phase() == 1) {
-    			 niveau.retournerNouvelleCarteEnJeu();
+    		if(plateau.phase() == 1) {
+    			 plateau.retournerNouvelleCarteEnJeu();
     		}
     	}
     	else {
-    		niveau.changerJoueur();
+    		plateau.changerJoueur();
     	}
     }
     
     public int joueurCourant() {
-    	return niveau.joueurCourant();
+    	return plateau.joueurCourant();
     }
     
     public void annule() {
-		niveau.annuler();
+		plateau.annuler();
 	}
 
 	public void refaire() {
-		niveau.refaire();
+		plateau.refaire();
 	}
     
 
 	public static final String fichierSauvegarde="sauvegarde"; //TODO:pouvoir choisir la partie sauvegardée
-    /* sauvegarder le niveau dans un fichier
+    /* sauvegarder le plateau dans un fichier
     */
     public void sauvegarder() {
        try {
            FileOutputStream fileOutputStream = new FileOutputStream(fichierSauvegarde);
            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-           objectOutputStream.writeObject(niveau);
+           objectOutputStream.writeObject(plateau);
            objectOutputStream.flush();
            objectOutputStream.close();
        }catch(Exception e){
@@ -110,15 +110,15 @@ public class Jeu {
         try{
             FileInputStream fileInputStream = new FileInputStream(fichierSauvegarde);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            niveau = (Niveau) objectInputStream.readObject();
+            plateau = (Plateau) objectInputStream.readObject();
             objectInputStream.close();
         }catch(Exception e){
         	System.err.println("erreur chargement"+e.toString());
         }
     }
     
-    public Niveau niveau() {
-    	return niveau;
+    public Plateau plateau() {
+    	return plateau;
     }
 }
 

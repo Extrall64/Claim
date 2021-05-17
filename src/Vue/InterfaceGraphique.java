@@ -55,6 +55,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		
 		hautDePlateau = new JPanel();
 		hautDePlateau.setBackground(Color.GRAY);
+		jg.setBackground(Color.GRAY);
 		hautDePlateau.setVisible(true);
 		jg.add(hautDePlateau,BorderLayout.PAGE_START);
 		

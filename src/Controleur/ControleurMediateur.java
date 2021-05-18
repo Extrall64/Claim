@@ -41,13 +41,11 @@ public class ControleurMediateur implements CollecteurEvenements{
 	}
 	
 	public void nouvelle_partie() {
-		inter.masquerMenu();
 		inter.afficherPlateau();
 		jeu.nouvellePartie();
 	}
 	
 	public void nouvelle_partie_ia() {
-		inter.masquerMenu();
 		inter.afficherPlateau();
 		jeu.nouvellePartie();
 		tourIA();
@@ -79,7 +77,6 @@ public class ControleurMediateur implements CollecteurEvenements{
 	
 	public void menu() {
 		jeu.setSurMenu();
-		inter.masquerPlateau();
 		inter.afficherMenu();
 	}
 

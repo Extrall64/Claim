@@ -5,6 +5,4 @@ public interface InterfaceUtilisateur {
 	void metAJour();
 	void afficherMenu();
 	void afficherPlateau();
-	void masquerMenu();
-	void masquerPlateau();
 }

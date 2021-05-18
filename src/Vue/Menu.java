@@ -78,13 +78,4 @@ public class Menu extends JComponent{
 		this.add(nouvellePartie_vs_ia_minmax);
 		
 	}	
-	
-	public void afficher() {
-		this.setVisible(true);
-	}
-
-	public void masquer() {
-		this.setVisible(false);
-	}
-	
 }

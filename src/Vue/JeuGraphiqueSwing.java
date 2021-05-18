@@ -57,6 +57,10 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		drawable.drawImage(img.image(), x, y, largeur, hauteur, null);
 	}
 	
+	public void tracerFond(ImageClaim img) {
+		drawable.drawImage(img.image(), 0, 0, largeur, hauteur, null);
+	}
+	
 	public Carte determinerCarte(int l, int c) {
 		return vue.determinerCarte(l,c);
 	}

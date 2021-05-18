@@ -16,31 +16,39 @@ public class VueJeu {
 	Jeu jeu;
 	ImageClaim images[][]; //ex images[0][1] image gobelin de force 1
 	ImageClaim dos;
+	ImageClaim fond;
 	JeuGraphique jg;
 
-	private ImageClaim chargeImage(String nom) {
+	private ImageClaim chargeCartes(String nom) {
 		InputStream in = Configuration.charge("carte_JPEG" + File.separator + nom + ".jpg");
+		return ImageClaim.getImageClaim(in);
+	}
+	
+	private ImageClaim chargeImage(String nom) {
+		InputStream in = Configuration.charge("Image" + File.separator + nom + ".jpg");
 		return ImageClaim.getImageClaim(in);
 	}
 
 	public VueJeu(Jeu j, JeuGraphique n) {
 		images = new ImageClaim[5][10];
 		for(int i=0;i<10;i++) {
-			images[Plateau.NAINS][i] = chargeImage("nain_"+i);
-			images[Plateau.MORTSVIVANTS][i] = chargeImage("mort-vivant_"+i);
-			images[Plateau.DOPPELGANGERS][i] = chargeImage("doppel_"+i);
-			images[Plateau.GLOBELINS][i] = chargeImage("gobelin_"+i);
+			images[Plateau.NAINS][i] = chargeCartes("nain_"+i);
+			images[Plateau.MORTSVIVANTS][i] = chargeCartes("mort-vivant_"+i);
+			images[Plateau.DOPPELGANGERS][i] = chargeCartes("doppel_"+i);
+			images[Plateau.GLOBELINS][i] = chargeCartes("gobelin_"+i);
 			if(i>=2) {
-				images[Plateau.CHEVALIERS][i] = chargeImage("chevalier_"+i);
+				images[Plateau.CHEVALIERS][i] = chargeCartes("chevalier_"+i);
 			}
 		}
-		dos = chargeImage("carte_dos");
+		dos = chargeCartes("carte_dos");
+		fond = chargeImage("fond");
 		jeu = j;
 		jg = n;
 	}
 
 	void tracerNiveau() {
 		if(!jeu.estSurMenu()) {
+			jg.tracerFond(fond);
 			tracerPartie();
 		}
 	}

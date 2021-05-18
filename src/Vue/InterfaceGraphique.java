@@ -14,14 +14,16 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	Jeu jeu;
 	CollecteurEvenements controle;
 	JeuGraphiqueSwing jg;
+	Menu menu;
 	
 	boolean maximized;
 	JFrame frame;
-	JPanel menu,hautDePlateau,finPhase1,finDeJeu;//differents affichage
+	JPanel plateau,hautDePlateau,finPhase1,finDeJeu;//differents affichage
 	
+	JMenu bMenu;
 	JLabel joueurCourant;
-	JButton nouvellePartie_vs_humain,nouvellePartie_vs_ia_aleatoire,nouvellePartie_vs_ia_normale,nouvellePartie_vs_ia_difficile;
 	
+	Box haut;
 
 	InterfaceGraphique(Jeu j, CollecteurEvenements c) {
 		jeu = j;
@@ -45,27 +47,19 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		but.setFocusable(false);
 		return but;
 	}
+	
+	private JMenu createMenu() {
+		JMenu m = new JMenu();
+		return m;
+	}
 
 	public void run() {	
 		frame = new JFrame("Claim");
 		jg = new JeuGraphiqueSwing(jeu);
-		menu = new JPanel();
 		
-		frame.add(jg);
 		
-		hautDePlateau = new JPanel();
-		hautDePlateau.setBackground(Color.GRAY);
-		jg.setBackground(Color.GRAY);
-		hautDePlateau.setVisible(true);
-		jg.add(hautDePlateau,BorderLayout.PAGE_START);
-		
-		nouvellePartie_vs_humain = createButton("Humain VS Humain", "humain_vs_humain");
-		nouvellePartie_vs_humain.setBounds(240, 20, 125, 50);
-		menu.add(nouvellePartie_vs_humain);
-		nouvellePartie_vs_ia_aleatoire = createButton("Humain VS IA Aleatoire", "humain_vs_ia_alea");
-		nouvellePartie_vs_ia_aleatoire.setBounds(240, 20, 125, 50);
-		menu.add(nouvellePartie_vs_ia_aleatoire);
-		frame.add(menu);
+		creationDuPlateau();
+		menu = new Menu(controle);
 		
 		jg.addMouseListener(new AdaptateurSouris(jg, controle));
 		//frame.addKeyListener(new AdaptateurClavier(controle));
@@ -77,6 +71,10 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame.setSize(500, 300);
 		frame.setVisible(true);
 		
+		frame.add(jg);
+		frame.add(menu);
+		
+		
 		afficherMenu();
 		masquerPlateau();
 	}
@@ -84,6 +82,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	@Override
 	public void metAJour() {
 		jg.repaint();
+		menu.repaint();
 	}
 	
 	@Override
@@ -100,22 +99,43 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	}
 	
 	public void afficherMenu() {
-		menu.setVisible(true);
+		menu.afficher();
 	}
 	
 	public void masquerMenu() {
-		menu.setVisible(false);
+		menu.masquer();
 	}
 	
 	public void afficherPlateau() {
-		hautDePlateau.setVisible(true);
-		jg.add(hautDePlateau,BorderLayout.PAGE_START);
+		haut.setVisible(true);
 		jg.setVisible(true);
 		frame.add(jg);
+		//creationDuPlateau();
+		/*plateau.setVisible(true);
+		frame.add(plateau);*/
 	}
 	
 	public void masquerPlateau() {
+		haut.setVisible(false);
 		jg.setVisible(false);
+	}
+	
+	private void creationDuPlateau() {
+		plateau = new JPanel();
+		hautDePlateau = new JPanel();
+		hautDePlateau.setBackground(Color.GRAY);
+		plateau.add(hautDePlateau,BorderLayout.PAGE_START);
+		haut = Box.createHorizontalBox();
+		haut.add(createButton("Menu", "menu"));
+		haut.add(Box.createGlue());
+		haut.setVisible(false);
+		
+		bMenu = createMenu();
+		haut.add(bMenu);
+		
+		frame.add(haut, BorderLayout.PAGE_START);
+		
+		frame.setVisible(true);
 	}
 	
 }

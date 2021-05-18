@@ -88,6 +88,10 @@ public class Jeu {
 	public void refaire() {
 		plateau.refaire();
 	}
+	
+	public void setSurMenu() {
+		menu = true;
+	}
     
 
 	public static final String fichierSauvegarde="sauvegarde"; //TODO:pouvoir choisir la partie sauvegardée

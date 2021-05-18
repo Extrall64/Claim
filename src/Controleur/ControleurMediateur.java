@@ -2,6 +2,8 @@ package Controleur;
 
 import IA.IA;
 import IA.IAAleatoire;
+import IA.IAHeuristique;
+import IA.IAMinMax;
 import Modele.Carte;
 import Modele.Jeu;
 import Vue.CollecteurEvenements;
@@ -45,17 +47,40 @@ public class ControleurMediateur implements CollecteurEvenements{
 	}
 	
 	public void nouvelle_partie_ia() {
-		joueurs[1] = new IAAleatoire(jeu,1);
 		inter.masquerMenu();
 		inter.afficherPlateau();
 		jeu.nouvellePartie();
 		tourIA();
 	}
 	
+	public void nouvelle_ia_alea() {
+		joueurs[1] = new IAAleatoire(jeu,1);
+		nouvelle_partie_ia();
+	}
+	
+	public void nouvelle_ia_h() {
+		//joueurs[1] = new IAHeuristique(jeu,1);
+	}
+	
+	public void nouvelle_ia_minmax() {
+		joueurs[1] = new IAMinMax(jeu,1,5);
+		nouvelle_partie_ia();
+	}
+	
 	public void tourIA() {
 		if(!jeu.finDePartie() && joueurs[jeu.joueurCourant()] != null) {//tour de l'ia
-			jeu.joueCarte(joueurs[jeu.joueurCourant()].determineCoup());
+			Carte c = joueurs[jeu.joueurCourant()].determineCoup();
+			if(jeu.carteJouable(c))
+					jeu.joueCarte(c);
+			else
+				System.err.println("erreur l'ia joue une carte qui n'est pas dans sa main");
 		}
+	}
+	
+	public void menu() {
+		jeu.setSurMenu();
+		inter.masquerPlateau();
+		inter.afficherMenu();
 	}
 
 	public void commande(String c) {
@@ -64,7 +89,16 @@ public class ControleurMediateur implements CollecteurEvenements{
 				nouvelle_partie();
 				break;
 			case "humain_vs_ia_alea":
-				nouvelle_partie_ia();
+				nouvelle_ia_alea();
+				break;
+			case "humain_vs_ia_heuristique":
+				nouvelle_ia_h();
+				break;
+			case "humain_vs_ia_minmax":
+				nouvelle_ia_minmax();
+				break;
+			case "menu":
+				menu();
 				break;
 			default:
 			

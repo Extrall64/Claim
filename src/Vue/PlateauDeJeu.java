@@ -32,6 +32,7 @@ public class PlateauDeJeu  extends JComponent{
 	}
 	
 	public void afficher() {
+		this.removeAll();
 		haut.setVisible(true);
 		jg.setVisible(true);
 		this.add(haut,BorderLayout.PAGE_START);

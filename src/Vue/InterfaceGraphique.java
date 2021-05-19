@@ -4,6 +4,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -44,9 +45,6 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame.setSize(500, 300);
 		frame.setVisible(true);
 		
-		frame.getContentPane().add(menu);
-		frame.getContentPane().add(plateau);
-		
 		afficherMenu();
 	}
 
@@ -72,16 +70,19 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	public void afficherMenu() {
 		masquer();
 		menu.setVisible(true);
+		frame.getContentPane().add(menu);
 	}
 	
 	public void afficherPlateau() {
 		masquer();
 		plateau.afficher();
 		plateau.setVisible(true);
+		frame.getContentPane().add(plateau);
 	}
 	
 	public void masquer() {
 		menu.setVisible(false);
 		plateau.setVisible(false);
+		frame.getContentPane().removeAll();
 	}	
 }

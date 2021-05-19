@@ -88,10 +88,6 @@ public class Jeu {
 	public void refaire() {
 		plateau.refaire();
 	}
-	
-	public void setSurMenu() {
-		menu = true;
-	}
     
 
 	public static final String fichierSauvegarde="sauvegarde"; //TODO:pouvoir choisir la partie sauvegardée
@@ -109,6 +105,11 @@ public class Jeu {
 
        }
     }
+    public Jeu clone() {
+    	Jeu clone = new Jeu();
+    	clone.plateau = plateau.clone();
+    	return clone;
+    }
     // charger la partie depuis un fichier
     public void charger() {
         try{
@@ -123,12 +124,6 @@ public class Jeu {
     
     public Plateau plateau() {
     	return plateau;
-    }
-    
-    public Jeu clone() {
-        Jeu clone = new Jeu();
-        clone.plateau = plateau.clone();
-        return clone;
     }
 }
 

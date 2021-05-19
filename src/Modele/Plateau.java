@@ -43,7 +43,7 @@ public class Plateau extends Historique<Action> implements Serializable {
 	private Carte carteAJouer;
 	private List<Carte> pioche, defausse;
 	private List <List<Carte>> partisans, scores, mains;
-	
+
 	public void initialiser() {
         rand = new Random();
         cartes = new Carte[nbCarte];
@@ -133,14 +133,14 @@ public class Plateau extends Historique<Action> implements Serializable {
         initialiserPiles();
         for (int i = 0; i < nbCarte; i++) {
             switch( cartes[i].getCategorie()) {
-                case Plateau.iScoreA: scores.get(JoueurA).add( cartes[i] );
-                case Plateau.iScoreB: scores.get(JoueurB).add( cartes[i] );
-                case Plateau.iPioche: pioche.add( cartes[i] );
-                case Plateau.iDefausser: defausse.add( cartes[i] );
-                case Plateau.iMainA: mains.get(JoueurA).add( cartes[i] );
-                case Plateau.iMainB: mains.get(JoueurB).add( cartes[i] );
-                case Plateau.iPartisansA: partisans.get(JoueurA).add( cartes[i] );
-                case Plateau.iPartisansB: partisans.get(JoueurB).add( cartes[i] );
+                case Plateau.iScoreA: scores.get(JoueurA).add( cartes[i] ); break;
+                case Plateau.iScoreB: scores.get(JoueurB).add( cartes[i] );break;
+                case Plateau.iPioche: pioche.add( cartes[i] );break;
+                case Plateau.iDefausser: defausse.add( cartes[i] );break;
+                case Plateau.iMainA: mains.get(JoueurA).add( cartes[i] );break;
+                case Plateau.iMainB: mains.get(JoueurB).add( cartes[i] );break;
+                case Plateau.iPartisansA: partisans.get(JoueurA).add( cartes[i] );break;
+                case Plateau.iPartisansB: partisans.get(JoueurB).add( cartes[i] );break;
             }
         }
     }
@@ -424,13 +424,6 @@ public class Plateau extends Historique<Action> implements Serializable {
         return cartes[i];
     }
     
-    public List<Carte> getScore(int j) {
-        return scores.get(j);
-    }
-    public List<Carte> getPartisans(int j) {
-        return partisans.get(j);
-    }
-    
     public Carte [] cartes() { return cartes; }
 
 
@@ -439,8 +432,14 @@ public class Plateau extends Historique<Action> implements Serializable {
         for(Carte c : cartes) System.out.println(c);
     }
     
-    public List<Carte> getMain(int j){
+    public List<Carte> getMain(int j) {
     	return mains.get(j);
+    }
+    public List<Carte> getScore(int j) {
+    	return scores.get(j);
+    }
+    public List<Carte> getPartisans(int j) {
+    	return partisans.get(j);
     }
     
     public void melanger() {
@@ -467,7 +466,7 @@ public class Plateau extends Historique<Action> implements Serializable {
     
     public void setJoueur(int j) {
     	joueurCourant = j;
-    }	
+    }
     
     public Plateau clone() {
 		Plateau clone = new Plateau();
@@ -480,6 +479,7 @@ public class Plateau extends Historique<Action> implements Serializable {
             clone.cartes[j].setEstCachee(JoueurA,cartes[j].estCachee(JoueurA));
             clone.cartes[j].setEstCachee(JoueurB,cartes[j].estCachee(JoueurB));
         }
+        clone.reconstruirePiles();
 		return clone;
 	}
     

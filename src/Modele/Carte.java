@@ -2,7 +2,7 @@ package Modele;
 
 import java.io.Serializable;
 
-public class Carte implements Serializable {
+public class Carte implements Serializable, Comparable {
     private int poid, faction, categorie;
     private boolean estCachee[];
 
@@ -14,6 +14,14 @@ public class Carte implements Serializable {
         estCachee[0] = true;
         estCachee[1] = true;
     }
+
+	@Override
+	public int compareTo(Object o) {
+		Carte c = (Carte) o;
+		if ( faction < c.getFaction()) return -1;
+		if ( faction == c.getFaction() && poid < c.getPoid()) return -1;
+		return 1;
+	}
 
     public String toString() {
         String str = "(faction:" + Integer.toString(faction) + ", poid:" + Integer.toString(poid) + ", categorie:" + Integer.toString(categorie) +  ")";

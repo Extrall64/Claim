@@ -20,7 +20,7 @@ public class VueJeu {
 	JeuGraphique jg;
 
 	private ImageClaim chargeCartes(String nom) {
-		InputStream in = Configuration.charge("carte_JPEG" + File.separator + nom + ".jpg");
+		InputStream in = Configuration.charge("carte" + File.separator + nom + ".jpg");
 		return ImageClaim.getImageClaim(in);
 	}
 	

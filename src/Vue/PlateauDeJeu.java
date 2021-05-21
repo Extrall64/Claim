@@ -1,13 +1,14 @@
 package Vue;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 
 import javax.swing.JComponent;
 
 import Modele.Jeu;
 
 public class PlateauDeJeu  extends JComponent{
-	
+
 	Jeu jeu;
 	CollecteurEvenements controle;
 	
@@ -24,15 +25,16 @@ public class PlateauDeJeu  extends JComponent{
 		//frame.addKeyListener(new AdaptateurClavier(controle));
 		
 		haut = new HautDePlateau(controle);
+		
 	}
-
+	
 	public void metAJour() {
 		jg.repaint();
 		haut.repaint();
 	}
 	
 	public void afficher() {
-		this.removeAll();
+		//this.removeAll();
 		haut.setVisible(true);
 		jg.setVisible(true);
 		this.add(haut,BorderLayout.PAGE_START);

@@ -20,6 +20,7 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 
 	@Override
 	public void paintComponent(Graphics g) {
+		
 		drawable = (Graphics2D) g;
 
 		largeur = getSize().width;

@@ -1,47 +1,51 @@
 package IA;
 
-import Modele.Carte;
-import Modele.Jeu;
-import Modele.Plateau;
+import java.util.*;
+import Modele.*;
+import Structures.*;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Random;
-
+/*pour chaque configuration, l'ia a une liste de meilleur cartes a jouer,
+les cores de toutes les cartes sont equivalents
+*/
 public class IAMinMax implements IA {
 	Hashtable<Integer, List<Carte>> coupGagnant;
-    Jeu configPremiere;
+    Jeu config;
     Random rand;
     int joueur, autreJoueur, horizon;
     float infini, betaInitial;
+    Strategie strategie1, strategie2;
     public IAMinMax(Jeu config, int j, int h) {
-    	configPremiere = config;
+    	this.config = config;
 		coupGagnant = new Hashtable<Integer, List<Carte>> (); 
     	joueur = j;
     	autreJoueur = (joueur + 1) % 2;
     	horizon = h;
     	infini = Float.MAX_VALUE;
-    	betaInitial = Float.MAX_VALUE;
-        rand = new Random();		
+    	betaInitial = + infini;
+        rand = new Random();
+        
+        strategie1 = new StrategiePhase1();
+        strategie1.fixerStrategie("moyenne");
+        strategie2 = new StrategiePhase2();
+        strategie2.fixerStrategie("difference");
     }
     @Override
     public Carte determineCoup() {
-    	int idConfig = configPremiere.plateau().hash();
-    	calculJoueurA(configPremiere, horizon, betaInitial);
+    	int idConfig = config.plateau().hash();
+    	calculJoueurA(config, horizon, betaInitial);
 
         List<Carte> meilleursCoup = coupGagnant.get( idConfig );
         int aleatoire = rand.nextInt( meilleursCoup.size() );
         Carte carte = meilleursCoup.get( aleatoire );
-        System.out.printf("IA a joué son coup: [%d], %s\n", aleatoire, carte);
+        System.out.printf("[IA MinMax] a joué son coup: [%d], %s\n", aleatoire, carte);
         return carte;
     }
 
-	float calculJoueurA(Jeu config, int h, float beta) {
+	float calculJoueurA(Jeu config, int horizon, float beta) {
 		Plateau plateau = config.plateau();
 		int hash = plateau.hash();
 
-		if (estFeuille(plateau) || h == 0) {
+		if (estFeuille(plateau) || horizon == 0) {
 			System.out.printf("Evaluation A\n");
 			return evaluation(plateau);
 		}
@@ -53,7 +57,7 @@ public class IAMinMax implements IA {
 			if (joueur == plateau.joueurCourant() && plateau.carteJouable(c)) {
 				Jeu nconfig = config.clone();
 				nconfig.joueCarte(c);
-				float temp = calculJoueurB(nconfig, h -1, beta);
+				float temp = calculJoueurB(nconfig, horizon -1, beta);
 				if (valeur <= temp) {
 
 					List<Carte> l;
@@ -72,10 +76,10 @@ public class IAMinMax implements IA {
 		return valeur;
 	}
 
-	float calculJoueurB(Jeu config, int h, float betaAncetre) {
+	float calculJoueurB(Jeu config, int horizon, float betaAncetre) {
 		Plateau plateau = config.plateau();
 
-		if (estFeuille(plateau) || h == 0) {
+		if (estFeuille(plateau) || horizon == 0) {
 				System.out.printf("Evaluation B\n");
 				return evaluation(plateau);
 		}
@@ -97,7 +101,7 @@ public class IAMinMax implements IA {
 					System.out.printf("Beta coupure !!!\n");
 					return valeur;
 				}
-				float temp = calculJoueurA(nconfig, h-1, beta);
+				float temp = calculJoueurA(nconfig, horizon-1, beta);
 				if (valeur > temp) {
 					valeur = temp;
 				}
@@ -106,20 +110,24 @@ public class IAMinMax implements IA {
 		return valeur;
 	}
 
-   	// constuire la main de l'IA ou de l'adversaire
+   	// constuire la liste des coups possible pour le joueur courant
 	List <Carte> coup(Plateau plateau) {
-		// si IA joue, retourner sa main
-		if (plateau.joueurCourant() == joueur) return new ArrayList(plateau.getMain(joueur));
-		// si l'adversaire, retourner l'ensemble des cartes possibles que l'adversaire peut avoir
-		List<Carte> r = new ArrayList<>();
-    	for(Carte c: plateau.cartes()) {
-    			int cat = c.getCategorie();
-				if (cat != plateau.mainJoueur(joueur) && cat != plateau.scoreJoueur(joueur)
-					&& cat != plateau.partisansJoueur(joueur) && cat != plateau.iDefausser)
-					r.add( c );
-    	}
-		return r;
+		// Cas particulier: si phase 1 et le de l'adversiare
+		// retourner l'ensemble des cartes possibles que l'adversaire peut avoir
+		if (plateau.phase() == 1 && plateau.joueurCourant() == autreJoueur) {
+			List<Carte> r = new ArrayList<>();
+			for(Carte c: plateau.cartes()) {
+				int cat = c.getCategorie();
+				if (cat != plateau.mainJoueur(joueur) && cat != plateau.iDefausser
+					&& cat != plateau.partisansJoueur(joueur)&& cat != plateau.partisansJoueur(autreJoueur))
+					r.add( c );	
+			}
+			return r;
+		}
+		//sinon retourner la main de joueur courant
+		return new ArrayList(plateau.getMain(plateau.joueurCourant()));
 	}
+
 	boolean estFeuille(Plateau plateau) {
 		return (plateau.phase() == 1 && plateau.finDePhase1()) || (plateau.phase() == 2 && plateau.finDePhase2());
 	}
@@ -129,47 +137,20 @@ public class IAMinMax implements IA {
 	}
 	
 	float score(Plateau plateau) {
-		int nbFaction = 5;
 		float scoreParDefaut = 10;
 		float res = scoreParDefaut;
-		int phase = plateau.phase();
 		int joueur = plateau.joueurCourant();
-		int autreJoueur = plateau.autreJoueur();
 
 		// IA arrive au feuilles, elle retourne le scoreParDefaut
-		if (plateau.phase() == 2 && plateau.finDePhase2()) {
+		if (plateau.finDePhase2())
 			System.out.println("Arrive au bout");
-			if (plateau.joueurGagant() == joueur) return res;
-			return - res;
-		}
 		// sinon l'IA calcule le score via une fonction heuristique
-		switch(phase) {
-			case 1:
-				// la moyenne entre les cartes de poid fort de chaque faction dans la pile partisans
-				// permet de evaluer la config qui donne les cartes de poid fort et de different faction
-				int [] max = new int[nbFaction + 1];
-				for(Carte c: plateau.getPartisans(joueur)) {
-					if (max[c.getFaction()] < c.getPoid()) max[c.getFaction()] = c.getPoid();
-				}
-				for(int n: max) res += n;
-				res = res / nbFaction;
-			break;
-			
-			case 2:
-				// le score sera la difference entre nombre de carte de chaque faction
-				int [] A = new int [nbFaction + 1];
-				int [] B = new int [nbFaction + 1];
-				for(Carte c: plateau.getScore(joueur))
-					A[c.getFaction()] += 1;
-				for(Carte c: plateau.getScore(autreJoueur))
-					B[c.getFaction()] += 1;
-				for(int i = 0; i < nbFaction; i++)
-					res += A[i] - B[i];
-			break;
+		else switch(plateau.phase()) {
+			case 1: res = strategie1.score( plateau, joueur ); break;
+			case 2:	res = res = strategie2.score( plateau, joueur ); break;
 		}
-		// retourner le max pour le joueurA et le min pour le joueur
-		if (plateau.joueurCourant() == joueur) return res;
+		// retourner le max pour le joueurA et le min pour le joueurB
+		if (joueur == this.joueur) return res;
 		return - res;
 	}
-
 }

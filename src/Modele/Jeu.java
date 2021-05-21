@@ -125,5 +125,9 @@ public class Jeu {
     public Plateau plateau() {
     	return plateau;
     }
+    
+    public void setSurMenu() {
+    	menu = true;
+    }
 }
 

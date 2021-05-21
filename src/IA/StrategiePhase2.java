@@ -1,52 +1,58 @@
 package IA;
 
-import Modele.Carte;
-import Modele.Plateau;
+import Modele.*;
 
 public class StrategiePhase2 implements Strategie {
 	String strategie;
-	int joueur, autreJoueur;
+	public StrategiePhase2() {}
 	public void fixerStrategie(String nom) {
 		strategie = nom;
 	}
-	/*
-	 * retourner le score de la strategie choisie par l'IA
-	 */
-	public float score(Plateau plateau) {
-		joueur = plateau.joueurCourant();
-		autreJoueur = plateau.autreJoueur();
+
+	public float score(Plateau plateau, int joueur) {
 		switch(strategie) {
-			case "difference": return difference(plateau);
-			case "difference2": return difference2(plateau);
-			default: System.err.println("Stategie non reconnue !"); break;
+			case "difference": return difference(plateau, joueur);
+			default: System.out.println("Stategie non reconnue !"); break;
 		}
 		return 0;
 	}
 
-	/*
-	 *  le score sera la difference entre nombre de carte de chaque faction de chaque joueur
-	 */
-	public float difference(Plateau plateau) {
-		float res = 0;
-		int [] R = new int [nbFaction ];
+	// le score sera la difference entre nombre de carte de chaque faction
+	public float difference(Plateau plateau, int joueur) {
+		int res = 0;
+		int nbFaction = 5;
+		int autreJoueur = plateau.autreJoueur();
+		
+		int [] A = new int [nbFaction + 1];
+		int [] B = new int [nbFaction + 1];
 		for(Carte c: plateau.getScore(joueur))
-			R[c.getFaction()] += 1;
+			A[c.getFaction()] += 1;
 		for(Carte c: plateau.getScore(autreJoueur))
-			R[c.getFaction()] -= 1;
+			B[c.getFaction()] += 1;
 		for(int i = 0; i < nbFaction; i++)
-			res += R[i];
+			res += A[i] - B[i];
 		return res;
 	}
-	/*
-	 *  meme score que "difference" mais deviser par la difference de poid entre la carte de joueur et son advzesaire
-	 *  joueur le coup ayant une minimum diffirence entre la carte de joueur et son adversaire quand c'est possible
-	 */
-	public float difference2(Plateau plateau) {
-		Carte a = plateau.carteCourante[joueur];
-		Carte b = plateau.carteCourante[ autreJoueur ];
-		float res = difference(plateau);
+	
+	// le score sera la difference entre nombre de carte de chaque faction
+	// avec poid de carte, le faction avec un pouvoir special est plus importante que d'autre
+	public float differencePoidFaction(Plateau plateau, int joueur) {
 		
-		if (a != null && b != null) res /= a.getPoid() - b.getPoid();
+		int res = 0;
+		int nbFaction = 5;
+		int autreJoueur = plateau.autreJoueur();
+
+		// definir un tableau de 5 faction avec leur poid
+		float [] P = new float [] {0, 1, 1, 1, 1, 1};
+		int [] A = new int [nbFaction + 1];
+		int [] B = new int [nbFaction + 1];
+
+		for(Carte c: plateau.getScore(joueur))
+			A[c.getFaction()] += 1;
+		for(Carte c: plateau.getScore(autreJoueur))
+			B[c.getFaction()] += 1;
+		for(int i = 0; i < nbFaction; i++)
+			res += A[i] - B[i];
 		return res;
 	}
 }

@@ -64,7 +64,7 @@ public class Menu extends JComponent{
 		nouvellePartie_vs_humain = createButton("Humain VS Humain", "humain_vs_humain");
 		nouvellePartie_vs_humain.setBounds(100, 20, 125, 50);
 		this.add(nouvellePartie_vs_humain);
-		
+	
 		nouvellePartie_vs_ia_aleatoire = createButton("Humain VS IA Aleatoire", "humain_vs_ia_alea");
 		nouvellePartie_vs_ia_aleatoire.setBounds(200, 20, 125, 50);
 		this.add(nouvellePartie_vs_ia_aleatoire);

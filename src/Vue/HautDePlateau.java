@@ -52,7 +52,7 @@ public class HautDePlateau  extends JComponent{
 		largeur = getSize().width;
 		hauteur = getSize().height;
 
-		drawable.clearRect(0, 0, largeur, hauteur); //efface tout
+		//drawable.clearRect(0, 0, largeur, hauteur); //efface tout
 	}
 	
 	private void initilaiser() {

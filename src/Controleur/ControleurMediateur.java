@@ -61,7 +61,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 	}
 	
 	public void nouvelle_ia_minmax() {
-		joueurs[1] = new IAMinMax(jeu,1,5);
+		joueurs[1] = new IAMinMax(jeu,1,6);
 		nouvelle_partie_ia();
 	}
 	

@@ -62,19 +62,19 @@ public class Menu extends JComponent{
 		fond = chargeImage("fond");
 		
 		nouvellePartie_vs_humain = createButton("Humain VS Humain", "humain_vs_humain");
-		nouvellePartie_vs_humain.setBounds(100, 20, 125, 50);
+		nouvellePartie_vs_humain.setBounds(100, 20, 200, 50);
 		this.add(nouvellePartie_vs_humain);
 	
 		nouvellePartie_vs_ia_aleatoire = createButton("Humain VS IA Aleatoire", "humain_vs_ia_alea");
-		nouvellePartie_vs_ia_aleatoire.setBounds(200, 20, 125, 50);
+		nouvellePartie_vs_ia_aleatoire.setBounds(100, 90, 200, 50);
 		this.add(nouvellePartie_vs_ia_aleatoire);
 		
 		nouvellePartie_vs_ia_heuristique = createButton("Humain VS IA Heuristique", "humain_vs_ia_heuristique");
-		nouvellePartie_vs_ia_heuristique.setBounds(300, 20, 125, 50);
+		nouvellePartie_vs_ia_heuristique.setBounds(100, 150, 200, 50);
 		this.add(nouvellePartie_vs_ia_heuristique);
 		
 		nouvellePartie_vs_ia_minmax = createButton("Humain VS IA MinMax", "humain_vs_ia_minmax");
-		nouvellePartie_vs_ia_minmax.setBounds(400, 20, 125, 50);
+		nouvellePartie_vs_ia_minmax.setBounds(100, 210, 200, 50);
 		this.add(nouvellePartie_vs_ia_minmax);
 		
 	}	

@@ -1,5 +1,6 @@
 package Vue;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -7,13 +8,15 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.io.InputStream;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import Global.Configuration;
 
-public class HautDePlateau  extends JComponent{
+public class HautDePlateau extends Box{
 	int largeur, hauteur;
 	Graphics2D drawable;
 
@@ -23,6 +26,7 @@ public class HautDePlateau  extends JComponent{
 	//JLabel titre,nouvelle_partie;
 	
 	public HautDePlateau(CollecteurEvenements c) {
+		super(BoxLayout.LINE_AXIS);
 		controle = c;
 		initilaiser();
 	}
@@ -56,7 +60,7 @@ public class HautDePlateau  extends JComponent{
 	}
 	
 	private void initilaiser() {
-		this.setBackground(Color.GRAY);
+		this.setBackground(Color.DARK_GRAY);
 		menu = createButton("Menu", "menu");
 		this.add(menu);
 	}	

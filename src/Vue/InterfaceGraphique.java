@@ -1,5 +1,6 @@
 package Vue;
 
+import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
@@ -13,12 +14,12 @@ import Modele.Jeu;
 public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	Jeu jeu;
 	CollecteurEvenements controle;
-	JeuGraphiqueSwing jg;
 	
 	boolean maximized;
 	
 	Menu menu;
-	PlateauDeJeu plateau;
+	JeuGraphiqueSwing jg;
+	HautDePlateau haut;
 	
 	JPanel panneau;
 	JFrame frame;
@@ -40,6 +41,8 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		jg = new JeuGraphiqueSwing(jeu);
 		jg.addMouseListener(new AdaptateurSouris(jg, controle));
 		
+		haut = new HautDePlateau(controle);
+		
 		Timer time = new Timer(16, new AdaptateurTemps(controle));//timer
 		time.start();
 		controle.fixerInterfaceUtilisateur(this);
@@ -48,16 +51,14 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame.setSize(500, 300);
 		frame.setVisible(true);
 		
-		frame.add(jg);
-		frame.add(menu);
-		
 		afficherMenu();
 	}
 
 	@Override
 	public void metAJour() {
-		jg.repaint();
 		menu.repaint();
+		jg.repaint();
+		haut.repaint();
 	}
 	
 	@Override
@@ -75,23 +76,21 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	
 	public void afficherMenu() {
 		masquer();
-		menu.setVisible(true);
 		frame.add(menu);
-		//frame.add(menu);
+		menu.setVisible(true);
+		frame.setVisible(true);
 	}
 	
 	public void afficherPlateau() {
 		masquer();
-		jg.setVisible(true);
+		frame.add(haut,BorderLayout.PAGE_START);
+		haut.setVisible(true);
 		frame.add(jg);
-		//plateau.setVisible(true);
-		//frame.add(plateau);
-		//plateau.afficher();
+		jg.setVisible(true);
+		frame.setVisible(true);
 	}
 	
 	public void masquer() {
-		menu.setVisible(false);
-		jg.setVisible(false);
-		//frame.getContentPane().removeAll();
+		frame.getContentPane().removeAll();
 	}	
 }

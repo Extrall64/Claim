@@ -35,24 +35,14 @@ public class ControleurMediateur implements CollecteurEvenements{
 	public void jouerCarte(Carte carte) {
 		boolean x = jeu.carteJouable(carte);
 		if (x) {
-			jeu.joueCarte(carte);
-			if(jeu.combatPret()) {
-				tictac();
-				attendre();  
+			jeu.jouerCarte(carte);
+			if(jeu.combatPret()) { 
 				jeu.combat(); 
 			}
 			else {
 				jeu.changeJoueur();
 			}
 			tourIA();
-		}
-	}
-	
-	public void attendre() {
-		long t= System.currentTimeMillis();
-		
-		while(System.currentTimeMillis() - t<1000) {
-			tictac();
 		}
 	}
 	

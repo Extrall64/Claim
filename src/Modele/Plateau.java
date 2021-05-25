@@ -206,13 +206,24 @@ public class Plateau extends Historique<Action> implements Serializable {
     public void jouerCarte(Carte carte) {
     	nouveau(new Action(this, this.clone()));//mise a jour historique
     	carteCourante[joueurCourant] = carte;
-    	carte.setCategorie(courantJoueur(joueurCourant)); 
+    	
     	retirerCarteMainCourante(carte);
-    }
-   
-    private void retirerCarteMainCourante(Carte carte) {
-    	mains.get(joueurCourant()).remove(carte);
-    }
+    } 
+
+    // il faut boucler pour supprimer la carte identique
+    // car la variable carte est une carte clonné d'une configuration d'IA
+    // elle peut pas etre supprimer par remove(carte)
+     private void retirerCarteMainCourante(Carte carte) {
+     	List<Carte> l = mains.get(joueurCourant);
+     	for (int i = 0; i < l.size(); i++ ) {
+     		if (l.get(i).estEgale(carte)) {
+     			l.get(i).setCategorie( courantJoueur(joueurCourant) );
+     			l.remove(i);
+     			return;
+     		}
+     	}
+ 		System.out.printf("[%d] On ne peut pas supprimer %s\n",joueurCourant(), carte);
+     }    
     
     public int score(int joueur, int faction) {
     	List<Carte> l = scores.get(joueur);
@@ -469,22 +480,28 @@ public class Plateau extends Historique<Action> implements Serializable {
     }
     
     public Plateau clone() {
-		Plateau clone = new Plateau();
+    	Plateau clone = new Plateau();
 		clone.initialiser();
-		clone.setJoueur(joueurCourant);
-    	clone.setPhase(phase);
+    	if (carteCourante[0] != null) clone.carteCourante[0] = carteCourante[0].clone();
+    	if (carteCourante[1] != null) clone.carteCourante[1] = carteCourante[1].clone();
+    	if (carteAJouer != null) clone.carteAJouer = carteAJouer.clone();
         for(int j = 0; j < nbCarte; j++) {
-            clone.cartes[j] = new Carte(cartes[j].getFaction(), cartes[j].getPoid());
-            clone.cartes[j].setCategorie(cartes[j].getCategorie());
-            clone.cartes[j].setEstCachee(JoueurA,cartes[j].estCachee(JoueurA));
-            clone.cartes[j].setEstCachee(JoueurB,cartes[j].estCachee(JoueurB));
+            clone.cartes[j] = cartes[j].clone();
         }
         clone.reconstruirePiles();
+		clone.setJoueur(joueurCourant);
+    	clone.setPhase(phase);
 		return clone;
+
 	}
     
     public int hash() {
-        return Arrays.deepHashCode(cartes);
+    	int r = 1	;
+        for (int i = 0; i < nbCarte; i++)
+        	r = r + i * cartes[i].hash();
+        	r = r % 20000;
+        return r;
+
     }
 
     public void remplace(Plateau n) { //appel de l'historique

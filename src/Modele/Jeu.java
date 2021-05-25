@@ -44,7 +44,7 @@ public class Jeu {
     	return plateau.estCarteValide(carte);
     }
     
-    public void joueCarte(Carte carte) {
+    public void jouerCarte(Carte carte) {
     	plateau.jouerCarte(carte);
     }
     
@@ -79,7 +79,14 @@ public class Jeu {
     			 plateau.retournerNouvelleCarteEnJeu();
     		}
     	}
-    	
+    }
+    
+    public void joueCarte(Carte carte) {
+    	jouerCarte(carte);
+    	if(combatPret())
+    		combat();
+    	else
+    		changeJoueur();
     }
     
     public void changeJoueur() {

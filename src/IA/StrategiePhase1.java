@@ -21,7 +21,7 @@ public class StrategiePhase1 implements Strategie {
 	// la moyenne entre les cartes de poid fort de chaque faction dans la pile partisans
 	// permet de evaluer la config qui donne les cartes de poid fort et de different faction
 	public float moyenne(Plateau plateau, int joueur) {
-		int res = 0;
+		float res = 0;
 		int nbFaction = 5;
 		int [] max = new int[nbFaction + 1];
 		for(Carte c: plateau.getPartisans(joueur))
@@ -34,7 +34,7 @@ public class StrategiePhase1 implements Strategie {
 	// calculer la moyenne de poid de 3 faction majoritaire
 	public float moyenne3Faction(Plateau plateau, int joueur) {
 		int x = 0;
-		int res = 0;
+		float res = 0;
 		int nbFaction = 5;
 
 		int [] max = new int[nbFaction + 1];

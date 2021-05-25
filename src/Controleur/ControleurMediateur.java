@@ -1,8 +1,8 @@
 package Controleur;
 
+
 import IA.IA;
 import IA.IAAleatoire;
-import IA.IAHeuristique;
 import IA.IAMinMax;
 import Modele.Carte;
 import Modele.Jeu;
@@ -36,7 +36,23 @@ public class ControleurMediateur implements CollecteurEvenements{
 		boolean x = jeu.carteJouable(carte);
 		if (x) {
 			jeu.joueCarte(carte);
+			if(jeu.combatPret()) {
+				tictac();
+				attendre();  
+				jeu.combat(); 
+			}
+			else {
+				jeu.changeJoueur();
+			}
 			tourIA();
+		}
+	}
+	
+	public void attendre() {
+		long t= System.currentTimeMillis();
+		
+		while(System.currentTimeMillis() - t<1000) {
+			tictac();
 		}
 	}
 	
@@ -68,10 +84,12 @@ public class ControleurMediateur implements CollecteurEvenements{
 	public void tourIA() {
 		if(!jeu.finDePartie() && joueurs[jeu.joueurCourant()] != null) {//tour de l'ia
 			Carte c = joueurs[jeu.joueurCourant()].determineCoup();
-			if(jeu.carteJouable(c))
-					jeu.joueCarte(c);
-			else
+			if(jeu.carteJouable(c)) {
+				jouerCarte(c);
+			}
+			else {
 				System.err.println("erreur l'ia joue une carte qui n'est pas dans sa main");
+			}
 		}
 	}
 	

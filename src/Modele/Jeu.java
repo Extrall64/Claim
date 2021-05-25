@@ -46,6 +46,13 @@ public class Jeu {
     
     public void joueCarte(Carte carte) {
     	plateau.jouerCarte(carte);
+    }
+    
+    public boolean combatPret(){
+    	return plateau.combatPret();
+    }
+    
+    public void combat() {
     	if(plateau.combatPret()) {
     		int j = plateau.quiGagneCombat();
     		plateau.setJoueur(j);
@@ -72,10 +79,12 @@ public class Jeu {
     			 plateau.retournerNouvelleCarteEnJeu();
     		}
     	}
-    	else {
-    		plateau.changerJoueur();
-    	}
+    	
     }
+    
+    public void changeJoueur() {
+		plateau.changerJoueur();
+	}
     
     public int joueurCourant() {
     	return plateau.joueurCourant();
@@ -102,7 +111,6 @@ public class Jeu {
            objectOutputStream.close();
        }catch(Exception e){
            System.err.println("erreur sauvegarde"+e.toString());
-
        }
     }
     public Jeu clone() {

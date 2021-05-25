@@ -85,7 +85,6 @@ public class VueJeu {
 		if(b != null) {
 			jg.tracerImage(images[b.getFaction()][b.getPoid()],largeurCase * 19, hauteurCase, largeurCase*4, hauteurCase*6);
 		}
-
 	}
 	
 	public int largeurCase() {

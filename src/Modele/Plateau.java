@@ -207,7 +207,6 @@ public class Plateau extends Historique<Action> implements Serializable {
     	nouveau(new Action(this, this.clone()));//mise a jour historique
     	carteCourante[joueurCourant] = carte;
     	carte.setCategorie(courantJoueur(joueurCourant)); 
-    	carte.setCategorie(mainJoueur(joueurCourant));
     	retirerCarteMainCourante(carte);
     }
    
@@ -390,6 +389,7 @@ public class Plateau extends Historique<Action> implements Serializable {
     
 
     public Carte carteCourante(int j) { return carteCourante[j]; }
+    
     public Carte cartePosMain(int pos,int j) {
     	if(mains.get(j).size() > pos)
     		return mains.get(j).get(pos);

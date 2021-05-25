@@ -105,6 +105,12 @@ public class ControleurMediateur implements CollecteurEvenements{
 			case "menu":
 				menu();
 				break;
+			case "refaire":
+				jeu.refaire();
+				break;
+			case "annuler":
+				jeu.annule();
+				break;
 			default:
 			
 		}

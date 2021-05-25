@@ -13,6 +13,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 import Global.Configuration;
 
@@ -22,8 +25,9 @@ public class HautDePlateau extends Box{
 
 	CollecteurEvenements controle;
 	
-	JButton menu;
-	//JLabel titre,nouvelle_partie;
+	JMenuBar menu;
+	JButton refaire, annuler;
+	
 	
 	public HautDePlateau(CollecteurEvenements c) {
 		super(BoxLayout.LINE_AXIS);
@@ -50,6 +54,30 @@ public class HautDePlateau extends Box{
 		return but;
 	}
 	
+	private JMenuBar createMenu(String s) {
+		JMenuBar menuBar;
+		JMenu m;
+		JMenuItem menuItem;
+
+		menuBar = new JMenuBar();
+		m = new JMenu(s);
+		menuBar.add(m);
+
+		menuItem = new JMenuItem("Menu");
+		menuItem.addActionListener(new AdaptateurCommande(controle, "menu"));
+		m.add(menuItem);
+		
+		menuItem = new JMenuItem("Sauvegarder");
+		menuItem.addActionListener(new AdaptateurCommande(controle, "sauver"));
+		m.add(menuItem);
+		
+		menuItem = new JMenuItem("Charger");
+		menuItem.addActionListener(new AdaptateurCommande(controle, "charger"));
+		m.add(menuItem);
+		
+		return menuBar;
+	}
+	
 	public void paintComponent(Graphics g) {
 		drawable = (Graphics2D) g;
 
@@ -60,8 +88,13 @@ public class HautDePlateau extends Box{
 	}
 	
 	private void initilaiser() {
-		this.setBackground(Color.DARK_GRAY);
-		menu = createButton("Menu", "menu");
-		this.add(menu);
+		setBackground(Color.DARK_GRAY);
+		menu = createMenu("Menu");
+		add(menu);
+		createGlue();
+		annuler = createButton("<-","annuler");
+		refaire = createButton("->","refaire");
+		add(annuler);
+		add(refaire);
 	}	
 }

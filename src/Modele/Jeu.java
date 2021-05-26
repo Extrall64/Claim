@@ -8,24 +8,33 @@ import java.io.ObjectOutputStream;
 public class Jeu {
 
     private Plateau plateau;
-    private boolean menu;
+    private int gagnant;
+    private int mode;
+    private String[] noms;
     
     public Jeu() {
         plateau = new Plateau();
-        menu = true;
+        noms = new String[2];
     }
     
     public void nouvellePartie() {
     	lancerUnePartie();
     	plateau.melanger();
-        plateau.initialiserPhase1();
-        plateau.joueurCommenceAleatoire();
-        plateau.retournerNouvelleCarteEnJeu();
-        menu = false;
+        
+        gagnant = -1;
     }
     
-    public boolean estSurMenu() {
-    	return menu;
+    public void initialiserPhase1() {
+    	plateau.initialiserPhase1();
+        plateau.retournerNouvelleCarteEnJeu();
+    }
+    
+    public void joueurCommence(int j) {
+    	plateau.setJoueur(j);
+    }
+    
+    public void joueurAleatoire() {
+    	plateau.joueurCommenceAleatoire();
     }
     
     public boolean finDePartie() {
@@ -68,12 +77,18 @@ public class Jeu {
     		}
     		if(plateau.finDePhase2()) {
     			int x = plateau.joueurGagant();
-    			if(x == plateau.JoueurA)
+    			if(x == Plateau.JoueurA) {
     				System.out.println("Joueur 1 a gagne");
-    			else if(x == plateau.JoueurB)
+    				gagnant = 1;
+    			}
+    			else if(x == Plateau.JoueurB) {
     				System.out.println("Joueur 2 a gagne");
-    			else
+    				gagnant = 2;
+    			}
+    			else {
     				System.out.println("Match nul");
+    				gagnant = 0;
+    			}
     		}
     		if(plateau.phase() == 1) {
     			 plateau.retournerNouvelleCarteEnJeu();
@@ -141,8 +156,27 @@ public class Jeu {
     	return plateau;
     }
     
-    public void setSurMenu() {
-    	menu = true;
+    public int gagnant() {return gagnant;}
+    
+ // les diffirentes valeur des modes de jeu
+    public static final int HUMAIN_VS_HUMAIN = 1;
+    public static final int HUMAIN_VS_IA = 2;
+    public static final int IA_VS_IA = 3;
+    
+    public void mode(int m) {
+    	mode = m;
+    }
+    
+    public int getMode() {
+    	return mode;
+    }
+    
+    public String getNom(int joueur) {
+    	return noms[joueur];
+    }
+    
+    public void setNom(int joueur, String s) {
+    	noms[joueur] = s;
     }
 }
 

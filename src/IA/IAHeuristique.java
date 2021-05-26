@@ -2,22 +2,21 @@ package IA;
 
 import java.util.*;
 import Modele.*;
-import Structures.*;
 
-/* la meme implementation que MinMax mais les stategie changent dynamiquement si on perd plus souvent
-	chaque coup on met a jour la valeur heuristiquePhase1 OU heuristiquePhase2 selon la phase courante
-	si ces valeur tombe a 0 alors on change la strategie et initialiser ces valeur heuristiquePhase1 et heuristiquePhase2 a biais
+/*
+l'implementation suit la meme structuration et nomenclature de l'algorithme vu en cours
+pour chaque configuration, l'ia a une liste de meilleur cartes a jouer,
+les cores de toutes les cartes sont equivalents
 */
 public class IAHeuristique implements IA {
-	Jeu config;
-	Hashtable<Integer, List<Carte>> coupGagnant;
-	final float biais = 13 / 3;
+	final float biais = 13 / 4;
 	float heuristiquePhase1, heuristiquePhase2;
     Strategie [] strategiesPhase1, strategiesPhase2;
+	Hashtable<Integer, List<Carte>> coupGagnant;
     Random rand;
+    Jeu config;
     int joueur, autreJoueur, horizon;
     float infini;
-
     public IAHeuristique(Jeu config, int j, int h) {
     	this.config = config;
 		coupGagnant = new Hashtable<Integer, List<Carte>> (); 
@@ -26,12 +25,13 @@ public class IAHeuristique implements IA {
     	horizon = h;
     	infini = Float.MAX_VALUE;
         rand = new Random();
+        
         // fixer les strategies et ces alternatives
         strategiesPhase1 = new Strategie [2];
         strategiesPhase1[0] = new StrategiePhase1();
         strategiesPhase1[0].fixerStrategie("moyenne3Faction");
         strategiesPhase1[1] = new StrategiePhase1();        
-        strategiesPhase1[1].fixerStrategie("moyenne");
+        strategiesPhase1[1].fixerStrategie("moyenneAvecPoid");
                 
         strategiesPhase2 = new Strategie [2];
         strategiesPhase2[0] = new StrategiePhase2();
@@ -45,11 +45,22 @@ public class IAHeuristique implements IA {
     @Override
     public Carte determineCoup() {
     	int idConfig = config.plateau().hash();
-    	float scoreCarte = calculJoueurA(config.clone(), horizon, - infini, + infini);
+    	Plateau plateau = config.plateau();
+    	/* DEBUG: affichage
+    	System.out.printf("|Pioche| %d\n", plateau.pioche.size());
+    	System.out.printf("|Main A| %d\n", plateau.getMain(0).size());
+    	System.out.printf("|Main B| %d\n",  plateau.getMain(1).size());
+    	System.out.printf("|Part A| %d\n",  plateau.getPartisans(0).size());
+    	System.out.printf("|Part B| %d\n",  plateau.getPartisans(1).size());)
+		*/		
+		coupGagnant = new Hashtable<>();
+		float scoreCarte = calculJoueurA(config.clone(), horizon, - infini, + infini);
+
         List<Carte> meilleursCoup = coupGagnant.get( idConfig );
         int aleatoire = rand.nextInt( meilleursCoup.size() );
         Carte carte = meilleursCoup.get( aleatoire );
         System.out.printf("[IA Heuristique] a joué son coup: [%d], %s\n", aleatoire, carte);
+
 
         // mise a jour de l'heuristique
         if (scoreCarte < 0) {
@@ -102,7 +113,7 @@ public class IAHeuristique implements IA {
 					// si la liste est vide ou on trouve un meilleur coup
 					// initialser la liste
 					if (!coupGagnant.containsKey( hash ) || temp > valeur) {
-						l = new ArrayList();
+						l = new ArrayList<Carte>();
 						coupGagnant.put(hash, l);
 					}
 					l = coupGagnant.get( hash );
@@ -110,7 +121,7 @@ public class IAHeuristique implements IA {
 					valeur = temp;
 				}
 				// Beta coupure
-				if (valeur >= beta) return valeur;
+				if (valeur > beta) return valeur;
                 if (valeur > alpha) alpha = valeur;
 			}
 		}
@@ -152,9 +163,9 @@ public class IAHeuristique implements IA {
 					valeur = temp;
 					b = temp;
 				}
-				// Alpha coupure
-                if (valeur <= alpha)  return valeur;
-                if (valeur < beta)  beta = valeur;
+			// Alpha coupure
+            if (valeur < alpha)  return valeur;
+            if (valeur < beta)  beta = valeur;
 			}
 		}
 		if (b == - infini) System.out.printf("Evaluation B: -oo\n");
@@ -162,10 +173,11 @@ public class IAHeuristique implements IA {
 		else System.out.printf("Evaluation B: %.2f\n", b);
 		return valeur;
 	}
+
    	// constuire la liste des coups possible pour le joueur courant
 	List <Carte> coup(Plateau plateau) {
 		List<Carte> r = new ArrayList<>();
-		// Cas particulier: si phase 1 et le de l'adversiare
+		// Cas particulier: si phase 1 et le tour de l'adversiare
 		// retourner l'ensemble des cartes possibles que l'adversaire peut avoir
 		if (plateau.phase() == 1 && plateau.joueurCourant() == autreJoueur) {
 			for(Carte c: plateau.cartes()) {
@@ -178,7 +190,7 @@ public class IAHeuristique implements IA {
 		//sinon retourner la main de joueur courant
 		return plateau.getMain( plateau.joueurCourant());
 	}
-	
+
 	boolean estFeuille(Plateau plateau) {
 		return plateau.finDePhase1() || plateau.finDePhase2();
 	}
@@ -190,12 +202,11 @@ public class IAHeuristique implements IA {
 	float score(Plateau plateau) {
 		float scoreParDefaut = 10;
 		float res = scoreParDefaut;
-		int phase = plateau.phase();
 		int joueur = plateau.joueurCourant();
 
-		if (!plateau.finDePhase2()) switch(phase) {
-			case 1: res = strategiesPhase1[0].score( plateau, joueur ); break;
-			case 2:	res = strategiesPhase2[0].score( plateau, joueur ); break;
+		if (!plateau.finDePhase2()) switch(plateau.phase()) {
+			case 1: res = strategiesPhase1[0].score(plateau); break;
+			case 2:	res = strategiesPhase2[0].score(plateau); break;
 		}
 		// retourner le max pour le joueurA et le min pour le joueurB
 		if (joueur == this.joueur) return res;

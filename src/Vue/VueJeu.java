@@ -2,6 +2,7 @@ package Vue;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 import Global.Configuration;
@@ -47,10 +48,8 @@ public class VueJeu {
 	}
 
 	void tracerNiveau() {
-		if(!jeu.estSurMenu()) {
-			jg.tracerFond(fond);
-			tracerPartie();
-		}
+		jg.tracerFond(fond);
+		tracerPartie();
 	}
 	
 	public void tracerPartie() {
@@ -62,6 +61,7 @@ public class VueJeu {
 		joueurCourant = plateau.joueurCourant();
 		
 		List<Carte> main = plateau.getMain(joueurCourant);
+		Collections.sort(main);
 		int nbCarte = main.size();
 		int debut = (13-nbCarte)/2 * 2;
 		int h = nbCaseH - 3;
@@ -100,7 +100,7 @@ public class VueJeu {
 	}
 	
 	public Carte determinerCarte(int l, int c) {
-		if(!jeu.estSurMenu()) {
+		
 			Plateau plateau = jeu.plateau();
 			List<Carte> main = plateau.getMain(joueurCourant);
 			int nbCarte = main.size();
@@ -110,7 +110,7 @@ public class VueJeu {
 				int posCarte = c/2 - debut/2;
 				return plateau.cartePosMain(posCarte,joueurCourant);
 			}
-		}
+		
 		return null;
 
 	}

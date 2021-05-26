@@ -6,13 +6,12 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.io.InputStream;
 
-import javax.swing.JComponent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import Global.Configuration;
 
-public class FinDePartie extends JComponent {
+public class FinDePartie {
 	int largeur, hauteur;
 	Graphics2D drawable;
 
@@ -24,7 +23,7 @@ public class FinDePartie extends JComponent {
 	JButton charger,regle,tutoriel,parametre;
 	JLabel titre,nouvelle_partie;
 	
-	public void Menu(CollecteurEvenements c) {
+	public Menu(CollecteurEvenements c) {
 		controle = c;
 		initilaiser();
 	}

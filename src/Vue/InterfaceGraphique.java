@@ -20,6 +20,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	Menu menu;
 	JeuGraphiqueSwing jg;
 	HautDePlateau haut;
+	NouvellePartie nouv;
 	
 	JPanel panneau;
 	JFrame frame;
@@ -37,6 +38,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame = new JFrame("Claim");
 		
 		menu = new Menu(controle);
+		nouv = new NouvellePartie(controle);
 		
 		jg = new JeuGraphiqueSwing(jeu);
 		jg.addMouseListener(new AdaptateurSouris(jg, controle));
@@ -90,7 +92,20 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame.setVisible(true);
 	}
 	
+	public void afficherNouvellePartie() {
+		masquer();
+		frame.add(nouv);
+		nouv.setVisible(true);
+		frame.setVisible(true);
+	}
+	
 	public void masquer() {
 		frame.getContentPane().removeAll();
-	}	
+		frame.setVisible(false);
+	}
+	
+	public void nouvellePartie(int mode) {
+		nouv.init(mode);
+		afficherNouvellePartie();
+	}
 }

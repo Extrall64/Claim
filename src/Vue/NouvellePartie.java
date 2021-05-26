@@ -132,7 +132,7 @@ public class NouvellePartie extends JComponent {
 		joueur2 = createLabel("Joueur 2");
 		this.add(joueur2);
 		
-		String[] ia = { "Aleatoire", "Heuristique", "MinMax", "Monte Carlo" };
+		String[] ia = { "Aleatoire", "Heuristique", "MinMax" };
 		choixia1 = new JComboBox(ia);
 		choixia1.setSelectedIndex(0);
 		this.add(choixia1);

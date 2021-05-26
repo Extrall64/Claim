@@ -39,9 +39,9 @@ public class Plateau extends Historique<Action> implements Serializable {
 	private Carte[] cartes;
 	private Random rand;
     private int joueurCourant,phase;
-	private Carte[] carteCourante;
+	public Carte[] carteCourante;
 	private Carte carteAJouer;
-	private List<Carte> pioche, defausse;
+	public List<Carte> pioche, defausse;
 	private List <List<Carte>> partisans, scores, mains;
 
 	public void initialiser() {
@@ -57,7 +57,7 @@ public class Plateau extends Historique<Action> implements Serializable {
 		int cur = 0;
         // construire les 4 carte globelins de poid 0
         for (int i = 0; i < 4; i ++) {
-        	cartes[cur] = new Carte(GLOBELINS, 0);
+        	cartes[cur] = new Carte(GLOBELINS, 0, i + 1);
             cur++;
         }
         // constuire nains, mort-vivant, doppelgangers
@@ -107,6 +107,7 @@ public class Plateau extends Historique<Action> implements Serializable {
     }
 
     public void initialiserPhase2(){ //bouger les cartes partisans dans les mains
+    	if (partisans.get(JoueurA).size() == 13 && partisans.get(JoueurB).size() == 13)
     	for(int i = 0;i<13;i++) {
     		Carte c = partisans.get(JoueurA).remove(0);
     		c.setCategorie(iMainA);
@@ -206,24 +207,23 @@ public class Plateau extends Historique<Action> implements Serializable {
     public void jouerCarte(Carte carte) {
     	nouveau(new Action(this, this.clone()));//mise a jour historique
     	carteCourante[joueurCourant] = carte;
-    	
     	retirerCarteMainCourante(carte);
-    } 
-
-    // il faut boucler pour supprimer la carte identique
-    // car la variable carte est une carte clonné d'une configuration d'IA
-    // elle peut pas etre supprimer par remove(carte)
-     private void retirerCarteMainCourante(Carte carte) {
-     	List<Carte> l = mains.get(joueurCourant);
-     	for (int i = 0; i < l.size(); i++ ) {
-     		if (l.get(i).estEgale(carte)) {
-     			l.get(i).setCategorie( courantJoueur(joueurCourant) );
-     			l.remove(i);
-     			return;
-     		}
-     	}
- 		System.out.printf("[%d] On ne peut pas supprimer %s\n",joueurCourant(), carte);
-     }    
+    }
+   
+   // il faut boucler pour supprimer la carte identique
+   // car la variable carte est une carte clonné d'une configuration d'IA
+   // elle peut pas etre supprimer par remove(carte)
+    private void retirerCarteMainCourante(Carte carte) {
+    	List<Carte> l = mains.get(joueurCourant);
+    	for (int i = 0; i < l.size(); i++ ) {
+    		if (l.get(i).estEgale(carte)) {
+    			l.get(i).setCategorie( courantJoueur(joueurCourant) );
+    			l.remove(i);
+    			return;
+    		}
+    	}
+		System.out.printf("[%d] On ne peut pas supprimer %s\n",joueurCourant(), carte);
+    }
     
     public int score(int joueur, int faction) {
     	List<Carte> l = scores.get(joueur);
@@ -263,7 +263,7 @@ public class Plateau extends Historique<Action> implements Serializable {
     }
     
     public boolean finDePhase2() {
-    	return phase() == 2 && mains.get(JoueurA).isEmpty() && mains.get(JoueurB).isEmpty() && carteCourante[JoueurA] == null;
+    	return phase() == 2 && mains.get(JoueurA).isEmpty() && mains.get(JoueurB).isEmpty() && carteCourante[JoueurA] == null && partisans.get(0).size() == 0 && partisans.get(1).size() == 0;
     }
 
     public int joueurGagant() {
@@ -400,7 +400,6 @@ public class Plateau extends Historique<Action> implements Serializable {
     
 
     public Carte carteCourante(int j) { return carteCourante[j]; }
-    
     public Carte cartePosMain(int pos,int j) {
     	if(mains.get(j).size() > pos)
     		return mains.get(j).get(pos);
@@ -480,7 +479,7 @@ public class Plateau extends Historique<Action> implements Serializable {
     }
     
     public Plateau clone() {
-    	Plateau clone = new Plateau();
+		Plateau clone = new Plateau();
 		clone.initialiser();
     	if (carteCourante[0] != null) clone.carteCourante[0] = carteCourante[0].clone();
     	if (carteCourante[1] != null) clone.carteCourante[1] = carteCourante[1].clone();
@@ -492,18 +491,20 @@ public class Plateau extends Historique<Action> implements Serializable {
 		clone.setJoueur(joueurCourant);
     	clone.setPhase(phase);
 		return clone;
-
 	}
     
     public int hash() {
-    	int r = 1	;
+        int r = 1	;
         for (int i = 0; i < nbCarte; i++)
         	r = r + i * cartes[i].hash();
         	r = r % 20000;
         return r;
-
     }
 
+	public boolean equals(Object o) {
+		Plateau p = (Plateau) o;
+		return hash() == p.hash();
+	}
     public void remplace(Plateau n) { //appel de l'historique
     	cartes = n.cartes();
      	phase = n.phase();

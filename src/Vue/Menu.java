@@ -19,8 +19,8 @@ public class Menu extends JComponent{
 	CollecteurEvenements controle;
 	
 	ImageClaim fond;
-	JButton nouvellePartie_vs_humain,nouvellePartie_vs_ia_aleatoire,nouvellePartie_vs_ia_heuristique,nouvellePartie_vs_ia_minmax;
-	JButton charger,regle,tutoriel,parametre;
+	JButton nouvellePartie_h_vs_h,nouvellePartie_ia_vs_ia,nouvellePartie_h_vs_ia,test_ia;
+	JButton charger,regle,aide,parametre;
 	JLabel titre,nouvelle_partie;
 	
 	public Menu(CollecteurEvenements c) {
@@ -55,27 +55,61 @@ public class Menu extends JComponent{
 
 		drawable.clearRect(0, 0, largeur, hauteur); //efface tout
 		drawable.drawImage(fond.image(), 0, 0, largeur, hauteur, null);
+		ajuster();
 	}
 	
+	private void ajuster() {
+		int btnL = largeur/17 * 3;
+		int btnH = hauteur/12;
+		int orgX = largeur/17 * 2;
+		int orgY = hauteur/24;
+		
+		titre.setBounds(largeur/2 - btnL/2, orgY, btnL, btnH);
+		nouvelle_partie.setBounds(orgX, hauteur/3 - orgY, btnL, btnH);
+		
+		nouvellePartie_h_vs_h.setBounds(orgX, hauteur/3 + orgY, btnL, btnH);
+		nouvellePartie_h_vs_ia.setBounds(orgX, hauteur/3 + orgY * 2 + btnH, btnL, btnH);
+		nouvellePartie_ia_vs_ia.setBounds(orgX, hauteur/3 + orgY * 3 + btnH *2, btnL, btnH);
+		test_ia.setBounds(orgX,hauteur/3 + orgY * 4 + btnH * 3, btnL, btnH);
+		
+		charger.setBounds(orgX * 2 + btnL, hauteur/3 + orgY, btnL, btnH);
+		
+		regle.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY * 2 + btnH, btnL, btnH);
+		aide.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY * 3 + btnH *2, btnL, btnH);
+		parametre.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY, btnL, btnH);
+	}
 	private void initilaiser() {
 		
 		fond = chargeImage("fond");
-		
-		nouvellePartie_vs_humain = createButton("Humain VS Humain", "humain_vs_humain");
-		nouvellePartie_vs_humain.setBounds(100, 20, 200, 50);
-		this.add(nouvellePartie_vs_humain);
+
+		nouvellePartie_h_vs_h = createButton("Humain VS Humain", "humain_vs_humain");
+		this.add(nouvellePartie_h_vs_h);
 	
-		nouvellePartie_vs_ia_aleatoire = createButton("Humain VS IA Aleatoire", "humain_vs_ia_alea");
-		nouvellePartie_vs_ia_aleatoire.setBounds(100, 90, 200, 50);
-		this.add(nouvellePartie_vs_ia_aleatoire);
+		nouvellePartie_ia_vs_ia = createButton("IA VS IA", "ia_vs_ia");
+		this.add(nouvellePartie_ia_vs_ia);
 		
-		nouvellePartie_vs_ia_heuristique = createButton("Humain VS IA Heuristique", "humain_vs_ia_heuristique");
-		nouvellePartie_vs_ia_heuristique.setBounds(100, 150, 200, 50);
-		this.add(nouvellePartie_vs_ia_heuristique);
+		nouvellePartie_h_vs_ia = createButton("Humain VS IA", "humain_vs_ia");
+		this.add(nouvellePartie_h_vs_ia);
 		
-		nouvellePartie_vs_ia_minmax = createButton("Humain VS IA MinMax", "humain_vs_ia_minmax");
-		nouvellePartie_vs_ia_minmax.setBounds(100, 210, 200, 50);
-		this.add(nouvellePartie_vs_ia_minmax);
+		test_ia = createButton("Test IA VS IA", "test_ia");
+		this.add(test_ia);
+
+		charger = createButton("Charger", "charger");
+		this.add(charger);
 		
+		regle = createButton("Regle", "regle");
+		this.add(regle);
+		
+		aide = createButton("Aide", "aide");
+		this.add(aide);
+		
+		parametre = createButton("Parametre", "parametre");
+		this.add(parametre);
+		
+		titre = createLabel("MENU");
+		this.add(titre);
+		
+		nouvelle_partie = createLabel("Nouvelle Partie :");
+		this.add(nouvelle_partie);
 	}	
 }

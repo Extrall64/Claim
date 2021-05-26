@@ -79,7 +79,7 @@ public class IAMinMax implements IA {
 					// si la liste est vide ou on trouve un meilleur coup
 					// initialser la liste
 					if (!coupGagnant.containsKey( hash ) || temp > valeur) {
-						l = new ArrayList();
+						l = new ArrayList<Carte>();
 						coupGagnant.put(hash, l);
 					}
 					l = coupGagnant.get( hash );
@@ -87,7 +87,7 @@ public class IAMinMax implements IA {
 					valeur = temp;
 				}
 				// Beta coupure
-				if (valeur >= beta) return valeur;
+				if (valeur > beta) return valeur;
                 if (valeur > alpha) alpha = valeur;
 			}
 		}
@@ -130,7 +130,7 @@ public class IAMinMax implements IA {
 					b = temp;
 				}
 			// Alpha coupure
-            if (valeur <= alpha)  return valeur;
+            if (valeur < alpha)  return valeur;
             if (valeur < beta)  beta = valeur;
 			}
 		}
@@ -171,8 +171,8 @@ public class IAMinMax implements IA {
 		int joueur = plateau.joueurCourant();
 
 		if (!plateau.finDePhase2()) switch(plateau.phase()) {
-			case 1: res = strategie1.score( plateau, joueur ); break;
-			case 2:	res = res = strategie2.score( plateau, joueur ); break;
+			case 1: res = strategie1.score(plateau); break;
+			case 2:	res = strategie2.score(plateau); break;
 		}
 		// retourner le max pour le joueurA et le min pour le joueurB
 		if (joueur == this.joueur) return res;

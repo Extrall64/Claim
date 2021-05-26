@@ -3,6 +3,8 @@ package Vue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JComboBox;
+
 public class AdaptateurCommande implements ActionListener {
 		CollecteurEvenements controle;
 		String commande;

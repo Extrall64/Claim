@@ -5,4 +5,5 @@ public interface InterfaceUtilisateur {
 	void metAJour();
 	void afficherMenu();
 	void afficherPlateau();
+	void nouvellePartie(int mode);
 }

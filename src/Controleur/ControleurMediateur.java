@@ -67,7 +67,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 		
 		if(joueur.equals("Aleatoire"))
 			jeu.joueurAleatoire();
-		else if(joueur.equals("Joueur 1"))
+		else if(joueur.equals("Joueur1"))
 			jeu.joueurCommence(0);
 		else
 			jeu.joueurCommence(1);

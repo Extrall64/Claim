@@ -1,7 +1,6 @@
 package Vue;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 import javax.swing.JComponent;
 
@@ -68,6 +67,11 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 	
 	public int joueurCourant() {
 		return vue.joueurCourant();
+	}
+
+	public void tracerRond(int x,int y,int largeur,int hauteur, Color couleur){
+		drawable.setColor(couleur);
+		drawable.fillOval(x,y,largeur,hauteur);
 	}
 	
 }

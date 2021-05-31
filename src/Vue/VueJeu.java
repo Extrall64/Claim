@@ -1,5 +1,6 @@
 package Vue;
 
+import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
@@ -51,7 +52,51 @@ public class VueJeu {
 		jg.tracerFond(fond);
 		tracerPartie();
 	}
-	
+
+	public void tracerPartieV() {
+		Plateau plateau = jeu.plateau();
+		int largeur = jg.largeur();
+		int hauteur = jg.hauteur();
+
+		dessineJoueur(1,0,0,largeur/5,hauteur/3);
+		dessineJoueur(0,0,2*hauteur/3,largeur/5,hauteur);
+
+		dessinePioche(0,hauteur/3,largeur/3,2*hauteur/3);
+		dessineMain(1,largeur/5,0,4*largeur/5,hauteur/3);
+		dessineMain(0,largeur/5,2*hauteur/3,4*largeur/5,hauteur);
+		dessinePartisansScore(1,4*largeur/5,0,largeur,hauteur/3);
+		dessinePartisansScore(0,4*largeur/5,2*hauteur/3,largeur,hauteur);
+		dessineCartesCourantes(largeur/3,hauteur/3,2*largeur/3,2*hauteur/3);
+		dessineDefausse(2*largeur/3,hauteur/3,largeur,2*hauteur/3);
+	}
+
+	//dessine les perso entre les points
+	private void dessineJoueur(int joueur,int x1,int y1,int x2,int y2){
+		int largeur = x2-x1;
+		int hauteur = y2-y1;
+
+		if(largeur<=0 || hauteur <=0){
+			System.out.println("Largeur ou hauteur a 0 dans VueJeu");
+		}
+
+		Color c;
+		if(joueur == jeu.joueurCourant()){
+			c = Color.YELLOW;
+		}else{
+			c = Color.lightGray;
+		}
+
+		int margeL = largeur/10;
+		int margeH = hauteur/10;
+		System.out.println("Joueur "+jeu.joueurCourant());
+		jg.tracerRond(x1+margeL,y1+margeH,largeur-margeL,hauteur-2*margeH,c);
+	}
+	private void dessinePioche(int x1,int y1,int x2,int y2){}
+	private void dessineMain(int joueur,int x1,int y1,int x2,int y2){}
+	private void dessinePartisansScore(int joueur,int x1,int y1,int x2,int y2){}
+	private void dessineCartesCourantes(int x1,int y1,int x2,int y2){}
+	private void dessineDefausse(int x1,int y1,int x2,int y2){}
+
 	public void tracerPartie() {
 		Plateau plateau = jeu.plateau();
 		largeurCase = jg.largeur() / nbCaseL;

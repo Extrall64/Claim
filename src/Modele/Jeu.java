@@ -93,13 +93,41 @@ public class Jeu {
     		}
     	}
     }
-    
+    // garder l'encienne version (avant temporisation) car ca cause des bugs
     public void joueCarte(Carte carte) {
-    	jouerCarte(carte);
-    	if(combatPret())
-    		combat();
-    	else
-    		changeJoueur();
+    	plateau.jouerCarte(carte);
+    	if(plateau.combatPret()) {
+    		int j = plateau.quiGagneCombat();
+    		plateau.setJoueur(j);
+    		if(plateau.phase() == 1 && !plateau.finDePhase1()) {
+    			plateau.combatPhase1();
+    		}
+    		else if (plateau.phase() == 2 && !plateau.finDePhase2()) {
+    			plateau.combatPhase2();
+    		}
+    		plateau.reinitialiserCarteCourante();
+    		if(plateau.finDePhase1()) {
+    			plateau.initialiserPhase2();
+    		}
+    		if(plateau.finDePhase2()) {
+    			int x = plateau.joueurGagant();
+    			if(x == plateau.JoueurA) {
+    				gagnant = 1;
+    			}
+    			else if(x == plateau.JoueurB) {
+    				gagnant = 2;
+    			}
+    			else {
+    				gagnant = 0;
+    			}
+    		}
+    		if(plateau.phase() == 1) {
+    			 plateau.retournerNouvelleCarteEnJeu();
+    		}
+    	}
+    	else {
+    		plateau.changerJoueur();
+    	}
     }
     
     public void changeJoueur() {

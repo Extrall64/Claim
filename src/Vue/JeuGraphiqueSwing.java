@@ -75,6 +75,7 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 	}
 
 	public void tracerRectArrond(int x,int y,int largeur,int hauteur,int arcL,int arcH){
+		drawable.setColor(Color.darkGray);
 		drawable.drawRoundRect(x,y,largeur,hauteur,arcL,arcH);
 	}
 

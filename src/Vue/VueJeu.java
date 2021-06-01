@@ -20,6 +20,7 @@ public class VueJeu {
 	ImageClaim dos;
 	ImageClaim fond;
 	ImageClaim j1,j2;
+	ImageClaim cadreCarte;
 	JeuGraphique jg;
 
 	private ImageClaim chargeCartes(String nom) {
@@ -49,6 +50,7 @@ public class VueJeu {
 		jg = n;
 		j1 = chargeImage("j1");
 		j2 = chargeImage("j2");
+		cadreCarte = ImageClaim.getImageClaim(Configuration.charge("Image/Fond_carte.png"));
 	}
 
 	void tracerNiveau() {
@@ -61,23 +63,39 @@ public class VueJeu {
 		int largeur = jg.largeur();
 		int hauteur = jg.hauteur();
 
-		dessineJoueur(1,0,0,largeur/5,hauteur/3);
-		dessineJoueur(0,0,2*hauteur/3,largeur/5,hauteur);
+		dessineJoueur(1, 0, 0, largeur / 7, hauteur / 3);
+		dessineJoueur(0, 0, 2 * hauteur / 3, largeur / 7, hauteur);
 
-		dessinePioche(0,hauteur/3,largeur/3,2*hauteur/3);
-		dessineMain(1,largeur/5,0,4*largeur/5,hauteur/3);
-		dessineMain(0,largeur/5,2*hauteur/3,4*largeur/5,hauteur);
-		dessinePartisansScore(1,4*largeur/5,0,largeur,hauteur/3);
-		dessinePartisansScore(0,4*largeur/5,2*hauteur/3,largeur,hauteur);
-		dessineCartesCourantes(largeur/3,hauteur/3,2*largeur/3,2*hauteur/3);
-		dessineDefausse(2*largeur/3,hauteur/3,largeur,2*hauteur/3);
+		dessineMain(1, largeur / 7, 0, 5 * largeur / 7, hauteur / 3);
+		dessineMain(0, largeur / 7, 2 * hauteur / 3, 5 * largeur / 7, hauteur);
+
+		dessineCartesCourantes(largeur / 3, hauteur / 3, 2 * largeur / 3, 2 * hauteur / 3);
+
+		dessineDefausse(2 * largeur / 3, hauteur / 3, largeur, 2 * hauteur / 3);
+		if(plateau.phase()==1) {
+			dessinePioche(0, hauteur / 3, largeur / 3, 2 * hauteur / 3);
+			dessinePartisansScore(1, 5 * largeur / 7, 0, largeur, hauteur / 3);
+			dessinePartisansScore(0, 5 * largeur / 7, 2 * hauteur / 3, largeur, hauteur);
+		}else{
+			dessineScore(1, 5 * largeur / 7, 0, largeur, hauteur / 3);
+			dessineScore(0, 5 * largeur / 7, 2 * hauteur / 3, largeur, hauteur);
+		}
+	}
+
+	private void dessineScore(int joueur,int x1,int y1,int x2,int y2){
+		int largeur = x2-x1;
+		int hauteur = y2-y1;
+
+		int margeL = largeur/7;
+		int margeH = hauteur/20;
+
+		dessineCarteScore(joueur,x1+margeL,y1+joueur*2*margeH,5*margeL,hauteur-3*margeH);
 	}
 
 	//dessine les perso entre les points
 	private void dessineJoueur(int joueur,int x1,int y1,int x2,int y2){
 		int largeur = x2-x1;
 		int hauteur = y2-y1;
-
 		if(largeur<=0 || hauteur <=0){
 			System.out.println("Largeur ou hauteur a 0 dans VueJeu");
 		}
@@ -92,12 +110,12 @@ public class VueJeu {
 		int margeL = largeur/10;
 		int margeH = hauteur/10;
 
-		jg.tracerRond(x1+margeL,y1+margeH,largeur-margeL,hauteur-2*margeH,c);
+		jg.tracerRond(x1+margeL,y1+margeH,largeur-2*margeL,hauteur-2*margeH,c);
 
 		if (joueur==0){
-			jg.tracerImage(j1,x1+3*margeL,y1+3*margeH,largeur-5*margeL,hauteur-6*margeH);
+			jg.tracerImage(j1,x1+3*margeL,y1+3*margeH,largeur-6*margeL,hauteur-6*margeH);
 		}else{
-			jg.tracerImage(j2,x1+3*margeL,y1+3*margeH,largeur-5*margeL,hauteur-6*margeH);
+			jg.tracerImage(j2,x1+3*margeL,y1+3*margeH,largeur-6*margeL,hauteur-6*margeH);
 		}
 	}
 	private void dessinePioche(int x1,int y1,int x2,int y2){
@@ -109,30 +127,87 @@ public class VueJeu {
 		int l = 15*largeur/40;
 		int h = hauteur - 2*margeH;
 
-		jg.tracerImage(dos,x1+2*margeL,y1,l,h);
+		if(jeu.plateau().pioche.size() > 0) {
+			jg.tracerImage(dos, x1 + 2 * margeL, y1, l, h);
+			jg.tracerTxt("Pioche",2*margeL+x1,y1+h+margeH);
+		}
 		Carte aGagner = jeu.plateau().carteAJouer();
-		jg.tracerImage(images[aGagner.getFaction()][aGagner.getPoid()],x1+3*margeL+l,y1,l,h);
-		jg.tracerLigne(x2,y1,x2,y2);
-		jg.tracerTxt("Pioche",2*margeL+x1,y1+h+margeH);
+		if(aGagner != null) {
+			jg.tracerImage(images[aGagner.getFaction()][aGagner.getPoid()], x1 + 3 * margeL + l, y1, l, h);
+		}
 
 	}
 	private void dessineMain(int joueur,int x1,int y1,int x2,int y2){
+		int nbCarteEspace = 6;
 		int largeur = x2-x1;
 		int hauteur = y2-y1;
+
+		int margeH = hauteur/30;
+
+		List<Carte> main = jeu.plateau().getMain(joueur);
+		int nbMain = main.size();
+		int tailleCarte = largeur/nbCarteEspace;
+		int tailleReel = largeur/(nbMain+1);
+
+		int coef = (joueur == 0)? 1:-1;
+
+		Carte c;
+		for (int i = 0;i<nbMain;i++) {
+			c = main.get(i);
+			if(jeu.joueurCourant()==joueur) {
+				jg.tracerImage(images[c.getFaction()][c.getPoid()], x1 + i * tailleReel, y1 + coef*margeH, tailleCarte, hauteur);
+			}else{
+				jg.tracerImage(dos, x1 + i * tailleReel, y1+ coef*margeH, tailleCarte, hauteur);
+			}
+		}
+
+	}
+
+	private void dessineCarteScore(int joueur,int x,int y,int larg,int haut){
+		List<Carte> cartes = jeu.plateau().getScore(joueur);
+		int nbCartes = cartes.size();
+		if(nbCartes > 0) {
+			Carte c = cartes.get(nbCartes-1);
+			jg.tracerImage(images[c.getFaction()][c.getPoid()], x, y, larg, haut);
+		}
 	}
 	private void dessinePartisansScore(int joueur,int x1,int y1,int x2,int y2){
 		int largeur = x2-x1;
 		int hauteur = y2-y1;
 
-		int margeL = largeur/10;
-		int margeH = hauteur/10;
+		int margeL = largeur/20;
+		int margeH = hauteur/20;
+
+		if (joueur==0){
+			jg.tracerImage(dos,x1+2*margeL,y1,8*largeur/20,hauteur-3*margeH);
+			jg.tracerTxt("Partisans",x1+2*margeL,y1+hauteur-2*margeH);
+			dessineCarteScore(0,x1+11*margeL,y1,8*largeur/20,hauteur-3*margeH);
+			jg.tracerTxt("Score",11*margeL+x1,y1+hauteur-2*margeH);
+		}else{
+			jg.tracerImage(dos,x1+2*margeL,3*margeH+y1,8*largeur/20,hauteur-3*margeH);
+			jg.tracerTxt("Partisans",2*margeL+x1,y1+2*margeH);
+			dessineCarteScore(0,x1+11*margeL,3*margeH+y1,8*largeur/20,hauteur-3*margeH);
+			jg.tracerTxt("Score",11*margeL+x1,y1+2*margeH);
+		}
 	}
+
 	private void dessineCartesCourantes(int x1,int y1,int x2,int y2){
 		int largeur = x2-x1;
 		int hauteur = y2-y1;
 
-		int margeL = largeur/10;
-		int margeH = hauteur/10;
+		int margeL = largeur/20;
+		int margeH = hauteur/20;
+
+		Carte a = jeu.plateau().carteCourante(0);
+		if(a != null) {
+			jg.tracerImage(images[a.getFaction()][a.getPoid()],x1+margeL,y1+2*margeH,8*margeL,16*margeH);
+		}
+		Carte b = jeu.plateau().carteCourante(1);
+		if(b != null) {
+			jg.tracerImage(images[b.getFaction()][b.getPoid()],x1+11*margeL,y1+2*margeH,8*margeL,16*margeH);
+		}
+		jg.tracerImage(cadreCarte,x1+margeL,y1+2*margeH,8*margeL,16*margeH);
+		jg.tracerImage(cadreCarte,x1+11*margeL,y1+2*margeH,8*margeL,16*margeH);
 	}
 	private void dessineDefausse(int x1,int y1,int x2,int y2){
 		int largeur = x2-x1;
@@ -140,6 +215,13 @@ public class VueJeu {
 
 		int margeL = largeur/10;
 		int margeH = hauteur/10;
+
+		List<Carte> def = jeu.plateau().defausse;
+		if(def.size() >0){
+			Carte c = def.get(def.size()-1);
+			jg.tracerImage(images[c.getFaction()][c.getPoid()],x1+margeL,y1+margeH,largeur-2*margeL,hauteur-3*margeH);
+		}
+		jg.tracerTxt("Défausse",x1+margeL,y2-2*margeH);
 	}
 
 	public void tracerPartie() {

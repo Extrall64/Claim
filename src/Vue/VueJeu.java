@@ -19,6 +19,7 @@ public class VueJeu {
 	ImageClaim images[][]; //ex images[0][1] image gobelin de force 1
 	ImageClaim dos;
 	ImageClaim fond;
+	ImageClaim j1,j2;
 	JeuGraphique jg;
 
 	private ImageClaim chargeCartes(String nom) {
@@ -46,6 +47,8 @@ public class VueJeu {
 		fond = chargeImage("fond");
 		jeu = j;
 		jg = n;
+		j1 = chargeImage("j1");
+		j2 = chargeImage("j2");
 	}
 
 	void tracerNiveau() {
@@ -53,7 +56,7 @@ public class VueJeu {
 		tracerPartie();
 	}
 
-	public void tracerPartieV() {
+	public void tracerPartie() {
 		Plateau plateau = jeu.plateau();
 		int largeur = jg.largeur();
 		int hauteur = jg.hauteur();
@@ -88,16 +91,58 @@ public class VueJeu {
 
 		int margeL = largeur/10;
 		int margeH = hauteur/10;
-		System.out.println("Joueur "+jeu.joueurCourant());
-		jg.tracerRond(x1+margeL,y1+margeH,largeur-margeL,hauteur-2*margeH,c);
-	}
-	private void dessinePioche(int x1,int y1,int x2,int y2){}
-	private void dessineMain(int joueur,int x1,int y1,int x2,int y2){}
-	private void dessinePartisansScore(int joueur,int x1,int y1,int x2,int y2){}
-	private void dessineCartesCourantes(int x1,int y1,int x2,int y2){}
-	private void dessineDefausse(int x1,int y1,int x2,int y2){}
 
-	public void tracerPartie() {
+		jg.tracerRond(x1+margeL,y1+margeH,largeur-margeL,hauteur-2*margeH,c);
+
+		if (joueur==0){
+			jg.tracerImage(j1,x1+3*margeL,y1+3*margeH,largeur-5*margeL,hauteur-6*margeH);
+		}else{
+			jg.tracerImage(j2,x1+3*margeL,y1+3*margeH,largeur-5*margeL,hauteur-6*margeH);
+		}
+	}
+	private void dessinePioche(int x1,int y1,int x2,int y2){
+		int largeur = x2-x1;
+		int hauteur = y2-y1;
+
+		int margeL = largeur/20;
+		int margeH = hauteur/20;
+		int l = 15*largeur/40;
+		int h = hauteur - 2*margeH;
+
+		jg.tracerImage(dos,x1+2*margeL,y1,l,h);
+		Carte aGagner = jeu.plateau().carteAJouer();
+		jg.tracerImage(images[aGagner.getFaction()][aGagner.getPoid()],x1+3*margeL+l,y1,l,h);
+		jg.tracerLigne(x2,y1,x2,y2);
+		jg.tracerTxt("Pioche",2*margeL+x1,y1+h+margeH);
+
+	}
+	private void dessineMain(int joueur,int x1,int y1,int x2,int y2){
+		int largeur = x2-x1;
+		int hauteur = y2-y1;
+	}
+	private void dessinePartisansScore(int joueur,int x1,int y1,int x2,int y2){
+		int largeur = x2-x1;
+		int hauteur = y2-y1;
+
+		int margeL = largeur/10;
+		int margeH = hauteur/10;
+	}
+	private void dessineCartesCourantes(int x1,int y1,int x2,int y2){
+		int largeur = x2-x1;
+		int hauteur = y2-y1;
+
+		int margeL = largeur/10;
+		int margeH = hauteur/10;
+	}
+	private void dessineDefausse(int x1,int y1,int x2,int y2){
+		int largeur = x2-x1;
+		int hauteur = y2-y1;
+
+		int margeL = largeur/10;
+		int margeH = hauteur/10;
+	}
+
+	public void tracerPartieV() {
 		Plateau plateau = jeu.plateau();
 		largeurCase = jg.largeur() / nbCaseL;
 		hauteurCase = jg.hauteur() / nbCaseH;

@@ -56,7 +56,7 @@ public class VueJeu {
 		tracerPartie();
 	}
 
-	public void tracerPartie() {
+	public void tracerPartieV() {
 		Plateau plateau = jeu.plateau();
 		int largeur = jg.largeur();
 		int hauteur = jg.hauteur();
@@ -142,7 +142,7 @@ public class VueJeu {
 		int margeH = hauteur/10;
 	}
 
-	public void tracerPartieV() {
+	public void tracerPartie() {
 		Plateau plateau = jeu.plateau();
 		largeurCase = jg.largeur() / nbCaseL;
 		hauteurCase = jg.hauteur() / nbCaseH;

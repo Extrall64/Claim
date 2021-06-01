@@ -13,7 +13,7 @@ public class Carte implements Serializable, Comparable {
         this.poid = poid;
         estCachee = new boolean[2];
         categorie = 0;
-        estCachee[0] = true;
+        estCachee[0] = true;	
         estCachee[1] = true;
         this.id = id;
     }

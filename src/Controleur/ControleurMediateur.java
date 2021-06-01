@@ -5,6 +5,7 @@ import IA.IA;
 import IA.IAAleatoire;
 import IA.IAHeuristique;
 import IA.IAMinMax;
+import IA.IAMonteCarlo;
 import IA.Test;
 import Modele.Carte;
 import Modele.Jeu;
@@ -15,11 +16,17 @@ public class ControleurMediateur implements CollecteurEvenements{
     
 	Jeu jeu;
 	InterfaceUtilisateur inter;
-	IA[] joueurs;
-	
+	int decompte;
+	public IA[] joueurs;
+	public int [] etats;
+	public static final int TEMPS = 60;
+    public static final int LIBRE = 0;
+    public static final int OCCUPEE = 1;
+    
 	public ControleurMediateur(Jeu j) {
 		jeu = j;
 		joueurs = new IA[2];
+		etats = new int[2];
 	}
 	
 	@Override
@@ -29,17 +36,15 @@ public class ControleurMediateur implements CollecteurEvenements{
 	}
 	
 	public void jouerCarte(Carte carte) {
-		boolean x = jeu.carteJouable(carte);
-		if (x) {
-			jeu.jouerCarte(carte);
-			if(jeu.combatPret()) { 
-				//temporisation();
-				jeu.combat(); 
+		if (joueurs[jeu.joueurCourant()] == null) {
+			etats[jeu.joueurCourant()] = OCCUPEE;
+			boolean x = jeu.carteJouable(carte);
+			if (x) {
+				jeu.joueCarte(carte);
+		    	System.out.printf("[Humain] a joué son coup: %s\n", carte);
+				etats[jeu.joueurCourant()] = LIBRE;
+				decompte = TEMPS;
 			}
-			else {
-				jeu.changeJoueur();
-			}
-			tourIA();
 		}
 	}
 	
@@ -67,7 +72,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 		
 		if(joueur.equals("Aleatoire"))
 			jeu.joueurAleatoire();
-		else if(joueur.equals("Joueur1"))
+		else if(joueur.equals("Joueur 1"))
 			jeu.joueurCommence(0);
 		else
 			jeu.joueurCommence(1);
@@ -86,18 +91,24 @@ public class ControleurMediateur implements CollecteurEvenements{
 			joueurs[j] = new IAAleatoire(jeu, j);
 		else if(ia.equals("MinMax"))
 			joueurs[j] = new IAMinMax(jeu,j,6);
+		else if(ia.equals("Monte Carlo"))
+			joueurs[j] = new IAMonteCarlo(jeu,j, 20);
 		else
 			joueurs[j] = new IAHeuristique(jeu,j,6);
 	}
 	
 	public void tourIA() {
-		if(!jeu.finDePartie() && joueurs[jeu.joueurCourant()] != null) {//tour de l'ia
-			Carte c = joueurs[jeu.joueurCourant()].determineCoup();
+		if(!jeu.finDePartie() && joueurs[jeu.joueurCourant()] != null) {
+			
+			Carte c = joueurs[jeu.joueurCourant()].determineCoup( );
 			if(jeu.carteJouable(c)) {
-				jouerCarte(c);
+				etats[jeu.joueurCourant()] = OCCUPEE;
+				jeu.joueCarte(c);
+				etats[jeu.joueurCourant()] = LIBRE;
+				decompte = TEMPS;
 			}
-			else {
-				System.err.println("erreur l'ia joue une carte qui n'est pas dans sa main");
+			else { 
+				System.err.printf("E: L'ia joue une carte qui n'est pas dans sa main [%d] %s\n", jeu.joueurCourant(), c);
 			}
 		}
 	}
@@ -160,7 +171,19 @@ public class ControleurMediateur implements CollecteurEvenements{
 
 	@Override
 	public void tictac() {
+		decompte = decompte - 1;
+		// temporisation
+		if (decompte < 0) {
+			decompte = TEMPS;
+			// par defaut appeler la tourIA si le joueur est une "IA" "non occupée" == LIBRE
+			// elle joue son coup, sinon l'appel est ignoré
+			if (!jeu.estSurMenu() && etats[ jeu.joueurCourant() ] == LIBRE )
+				tourIA();
+			if (jeu.finDePartie() && jeu.gagnant() != -1) {
+				jeu.afficherResultat();
+			}
 		inter.metAJour();
+		}
 	}
 	
 	public void temporisation() {

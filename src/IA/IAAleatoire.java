@@ -1,30 +1,28 @@
 package IA;
 
-import java.util.Random;
 
 import Modele.Carte;
 import Modele.Jeu;
-import Modele.Plateau;
+import java.util.List;
+import java.util.ArrayList;
 
 public class IAAleatoire implements IA {
-	 int joueur;
-	    Random rand;
+	 	int joueur;
 	    Jeu config;
-	    public IAAleatoire(Jeu config, int j) {
-	    	this.config = config;
+	    public IAAleatoire(Jeu c, int j) {
+	    	config = c;
 	        joueur = j;
-	        rand = new Random();
 	    }
 	    public Carte determineCoup() {
-	    	Plateau plateau = config.plateau();
-	    	Carte c = null;
-	    	while (c == null) {
-	    		Carte x = plateau.getMain(joueur).get( rand.nextInt( plateau.getMain(joueur).size() ) );
-	    		if (config.carteJouable(x))
-	    			c = x;
-	    	}
-	        plateau.getMain(joueur).remove(c);
-	        System.out.printf("IA a joué son coup: %s\n", c);
+	    	Carte c = carteAleatoire( config.plateau().getMain(joueur) );
+	        System.out.printf("[IA Aleatoire] a joué son coup: %s\n", c);
 	        return c;
 	    }
+	    // selectionner une carte jouable aleatoire
+		public Carte carteAleatoire( List<Carte> main) {
+	    	List<Carte> l = new ArrayList<>();
+	    	for(Carte c: main)
+	    		if (config.carteJouable(c)) l.add(c);
+	    	return l.get( rand.nextInt(l.size()) );
+		}
 }

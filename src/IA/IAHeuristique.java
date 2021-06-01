@@ -12,51 +12,35 @@ public class IAHeuristique implements IA {
 	final float biais = 13 / 4;
 	float heuristiquePhase1, heuristiquePhase2;
     Strategie [] strategiesPhase1, strategiesPhase2;
-	Hashtable<Integer, List<Carte>> coupGagnant;
-    Random rand;
+	List<Carte> meilleursCoup;
     Jeu config;
     int joueur, autreJoueur, horizon;
-    float infini;
-    public IAHeuristique(Jeu config, int j, int h) {
-    	this.config = config;
-		coupGagnant = new Hashtable<Integer, List<Carte>> (); 
+    public IAHeuristique(Jeu c, int j, int h) {
+    	config = c;
     	joueur = j;
-    	autreJoueur = (joueur + 1) % 2;
+    	autreJoueur = (j + 1) % 2;
     	horizon = h;
-    	infini = Float.MAX_VALUE;
-        rand = new Random();
         
         // fixer les strategies et ces alternatives
         strategiesPhase1 = new Strategie [2];
         strategiesPhase1[0] = new StrategiePhase1();
-        strategiesPhase1[0].fixerStrategie("moyenne3Faction");
+        strategiesPhase1[0].fixerStrategie("moyenne3FactionMajoritaire");
         strategiesPhase1[1] = new StrategiePhase1();        
-        strategiesPhase1[1].fixerStrategie("moyenneAvecPoid");
+        strategiesPhase1[1].fixerStrategie("favoriseFactionEnMain");
                 
         strategiesPhase2 = new Strategie [2];
         strategiesPhase2[0] = new StrategiePhase2();
         strategiesPhase2[0].fixerStrategie("difference");
         strategiesPhase2[1] = new StrategiePhase2();
-        strategiesPhase2[1].fixerStrategie("difference");
+        strategiesPhase2[1].fixerStrategie("difference2");
   
         heuristiquePhase1 = biais;
         heuristiquePhase2 = biais;
     }
     @Override
     public Carte determineCoup() {
-    	int idConfig = config.plateau().hash();
-    	Plateau plateau = config.plateau();
-    	/* DEBUG: affichage
-    	System.out.printf("|Pioche| %d\n", plateau.pioche.size());
-    	System.out.printf("|Main A| %d\n", plateau.getMain(0).size());
-    	System.out.printf("|Main B| %d\n",  plateau.getMain(1).size());
-    	System.out.printf("|Part A| %d\n",  plateau.getPartisans(0).size());
-    	System.out.printf("|Part B| %d\n",  plateau.getPartisans(1).size());)
-		*/		
-		coupGagnant = new Hashtable<>();
-		float scoreCarte = calculJoueurA(config.clone(), horizon, - infini, + infini);
-
-        List<Carte> meilleursCoup = coupGagnant.get( idConfig );
+		meilleursCoup = new ArrayList<Carte>();
+		float scoreCarte = calculJoueurA(config.clone(), horizon, -oo, +oo);
         int aleatoire = rand.nextInt( meilleursCoup.size() );
         Carte carte = meilleursCoup.get( aleatoire );
         System.out.printf("[IA Heuristique] a joué son coup: [%d], %s\n", aleatoire, carte);
@@ -87,66 +71,60 @@ public class IAHeuristique implements IA {
 
 	float calculJoueurA(Jeu config, int horizon, float alpha, float beta) {
 		Plateau plateau = config.plateau();
-		int hash = plateau.hash();
-
-		if (estFeuille(plateau) || horizon == 0) {
+		if (estFeuille(plateau) || horizon == 0)
 			return evaluation(plateau);
-		}
-		// represente -oo
-		float valeur = - infini;
-		float a = - infini;
+
+		float valeur = -oo;
+		float a = -oo;
 		List<Carte> C = coup(plateau);
 		for(Carte c: C) {
 			if (plateau.joueurCourant() == joueur && plateau.carteJouable(c)) {
 				Jeu nconfig = config.clone();
-				// jouer la dans la config clonée
-				for(Carte nc: nconfig.plateau().getMain( plateau.joueurCourant())) {
+				// jouer le coup dans la config clonée
+				for(Carte nc: nconfig.plateau().getMain( joueur )) {
 					if (c.estEgale(nc)) {
 						nconfig.joueCarte(nc);
 						break;
 					}
 				}
 				float temp = calculJoueurB(nconfig, horizon-1, alpha, beta);
+				// actualisation de valeur, la liste des meilleurs coups
 				if (valeur <= temp) {
 					a = temp;
-					List<Carte> l;
 					// si la liste est vide ou on trouve un meilleur coup
 					// initialser la liste
-					if (!coupGagnant.containsKey( hash ) || temp > valeur) {
-						l = new ArrayList<Carte>();
-						coupGagnant.put(hash, l);
+					// sinon ajouter le coup dans la liste
+					if (this.horizon == horizon) {
+						if ( temp > valeur)
+							meilleursCoup = new ArrayList<Carte>();
+						meilleursCoup.add(c);
 					}
-					l = coupGagnant.get( hash );
-					l.add(0, c);
 					valeur = temp;
 				}
 				// Beta coupure
-				if (valeur > beta) return valeur;
+				if (alpha >= beta)  return valeur;
                 if (valeur > alpha) alpha = valeur;
 			}
 		}
-		// afficher meilleur coup de ce noeud
-		if (a == - infini) System.out.printf("Evaluation A: -oo\n");
-		else if (a == infini) System.out.printf("Evaluation A: +oo\n");
+		/* afficher meilleur coup de ce noeud
+		if (a == - oo) System.out.printf("Evaluation A: -oo\n");
+		else if (a == oo) System.out.printf("Evaluation A: +oo\n");
 		else System.out.printf("Evaluation A: %.2f\n", a);
+		*/
 		return valeur;
 	}
-
 	float calculJoueurB(Jeu config, int horizon, float alpha, float beta) {
 		Plateau plateau = config.plateau();
-		
-		if (estFeuille(plateau) || horizon == 0) {
+		if (estFeuille(plateau) || horizon == 0)
 				return evaluation(plateau);
-		}
 		
-		// represente +oo
-		float valeur = + infini;
-		float b = + infini;
+		float valeur = +oo;
+		float b = +oo;
 		List<Carte> C = coup(plateau);
 		for(Carte c: C) {
 			if (plateau.joueurCourant() == autreJoueur && plateau.carteJouable(c)) {
 				Jeu nconfig = config.clone();
-				// considere que cette carte appartient au joueur b, fausse inclusion dans ca main
+				// considere que cette carte appartient au joueur B, fausse inclusion dans ca main
 				for(Carte nc: nconfig.plateau().cartes()) {
 					if (c.estEgale(nc)) {
 						if (nc.getCategorie() != nconfig.plateau().mainJoueur(autreJoueur)) {
@@ -164,31 +142,32 @@ public class IAHeuristique implements IA {
 					b = temp;
 				}
 			// Alpha coupure
-            if (valeur < alpha)  return valeur;
+			if (alpha >= beta)  return valeur;
             if (valeur < beta)  beta = valeur;
 			}
 		}
-		if (b == - infini) System.out.printf("Evaluation B: -oo\n");
-		else if (b == + infini) System.out.printf("Evaluation B: +oo\n");
+		/*
+		if (b == - oo) System.out.printf("Evaluation B: -oo\n");
+		else if (b == + oo) System.out.printf("Evaluation B: +oo\n");
 		else System.out.printf("Evaluation B: %.2f\n", b);
+		*/
 		return valeur;
 	}
 
    	// constuire la liste des coups possible pour le joueur courant
 	List <Carte> coup(Plateau plateau) {
-		List<Carte> r = new ArrayList<>();
+		List<Carte> main = plateau.getMain( plateau.joueurCourant());
 		// Cas particulier: si phase 1 et le tour de l'adversiare
 		// retourner l'ensemble des cartes possibles que l'adversaire peut avoir
 		if (plateau.phase() == 1 && plateau.joueurCourant() == autreJoueur) {
 			for(Carte c: plateau.cartes()) {
 				int cat = c.getCategorie();
-				if (cat == plateau.mainJoueur(autreJoueur) || cat == plateau.iCartes || cat == plateau.iPioche)
-					r.add( c );	
+				if (cat == Plateau.iCartes || cat == Plateau.iPioche)
+					main.add( c );	
 			}
-			return r;
 		}
 		//sinon retourner la main de joueur courant
-		return plateau.getMain( plateau.joueurCourant());
+		return main;
 	}
 
 	boolean estFeuille(Plateau plateau) {
@@ -201,16 +180,11 @@ public class IAHeuristique implements IA {
 	
 	float score(Plateau plateau) {
 		float scoreParDefaut = 10;
-		float res = scoreParDefaut;
-		int joueur = plateau.joueurCourant();
-
 		if (!plateau.finDePhase2()) switch(plateau.phase()) {
-			case 1: res = strategiesPhase1[0].score(plateau); break;
-			case 2:	res = strategiesPhase2[0].score(plateau); break;
+			case 1: return strategiesPhase1[0].score(plateau);
+			case 2:	return strategiesPhase2[0].score(plateau);
 		}
-		// retourner le max pour le joueurA et le min pour le joueurB
-		if (joueur == this.joueur) return res;
-		return - res;
+		return scoreParDefaut;
 	}
 	void changerStrategie(Strategie [] s) {
 		Strategie t = s[0];

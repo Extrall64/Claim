@@ -11,16 +11,17 @@ public class Jeu {
     private int gagnant;
     private int mode;
     private String[] noms;
-    
+    boolean menu;
     public Jeu() {
         plateau = new Plateau();
         noms = new String[2];
+        menu = true;
     }
     
     public void nouvellePartie() {
     	lancerUnePartie();
     	plateau.melanger();
-        
+        menu = false;
         gagnant = -1;
     }
     
@@ -78,15 +79,12 @@ public class Jeu {
     		if(plateau.finDePhase2()) {
     			int x = plateau.joueurGagant();
     			if(x == Plateau.JoueurA) {
-    				System.out.println("Joueur 1 a gagne");
     				gagnant = 1;
     			}
     			else if(x == Plateau.JoueurB) {
-    				System.out.println("Joueur 2 a gagne");
     				gagnant = 2;
     			}
     			else {
-    				System.out.println("Match nul");
     				gagnant = 0;
     			}
     		}
@@ -178,5 +176,18 @@ public class Jeu {
     public void setNom(int joueur, String s) {
     	noms[joueur] = s;
     }
-}
+    public void afficherResultat() {
+		if (gagnant() == 0) System.out.println("Match nul");
+		if (gagnant() == 1) System.out.println("Joueur 1 a gagne");
+		if (gagnant() == 2) System.out.println("Joueur 2 a gagne"); 	
+		gagnant = -1;
+    }
+	public boolean estSurMenu() {
+		return menu;
+	}
+	
+	public void setSurMenu() {
+		menu = true;
+	}
 
+}

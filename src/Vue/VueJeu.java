@@ -12,9 +12,8 @@ import Modele.Jeu;
 import Modele.Plateau;
 
 public class VueJeu {
-	public static final int nbCaseH = 12;
-	public static final int nbCaseL = 26;
-	int largeurCase, hauteurCase,joueurCourant;
+	int joueurCourant,hauteurCarte;
+	Point[] posCartes;
 	Jeu jeu;
 	ImageClaim images[][]; //ex images[0][1] image gobelin de force 1
 	ImageClaim dos;
@@ -58,7 +57,7 @@ public class VueJeu {
 		tracerPartie();
 	}
 
-	public void tracerPartieV() {
+	public void tracerPartie() {
 		Plateau plateau = jeu.plateau();
 		int largeur = jg.largeur();
 		int hauteur = jg.hauteur();
@@ -89,7 +88,7 @@ public class VueJeu {
 		int margeL = largeur/7;
 		int margeH = hauteur/20;
 
-		dessineCarteScore(joueur,x1+margeL,y1+joueur*2*margeH,5*margeL,hauteur-3*margeH);
+		dessineCarteScore(joueur,x1+2*margeL,y1+joueur*2*margeH,4*margeL,hauteur-3*margeH);
 	}
 
 	//dessine les perso entre les points
@@ -114,8 +113,10 @@ public class VueJeu {
 
 		if (joueur==0){
 			jg.tracerImage(j1,x1+3*margeL,y1+3*margeH,largeur-6*margeL,hauteur-6*margeH);
+			jg.tracerTxt(jeu.getNom(joueur), +3*margeL,y1+3*margeH+hauteur-5*margeH);
 		}else{
 			jg.tracerImage(j2,x1+3*margeL,y1+3*margeH,largeur-6*margeL,hauteur-6*margeH);
+			jg.tracerTxt(jeu.getNom(joueur),x1+3*margeL,y1+3*margeH+hauteur-5*margeH);
 		}
 	}
 	private void dessinePioche(int x1,int y1,int x2,int y2){
@@ -138,29 +139,39 @@ public class VueJeu {
 
 	}
 	private void dessineMain(int joueur,int x1,int y1,int x2,int y2){
+		joueurCourant = jeu.joueurCourant();
+		if(joueurCourant == joueur){
+			posCartes = new Point[14];
+		}
 		int nbCarteEspace = 6;
 		int largeur = x2-x1;
-		int hauteur = y2-y1;
+		hauteurCarte = y2-y1;
 
-		int margeH = hauteur/30;
+		int margeH = hauteurCarte/30;
 
 		List<Carte> main = jeu.plateau().getMain(joueur);
-		int nbMain = main.size();
+		int nbCartes = main.size();
 		int tailleCarte = largeur/nbCarteEspace;
-		int tailleReel = largeur/(nbMain+1);
+		int tailleReel = largeur/(nbCartes+1);
+		tailleReel = (tailleReel > tailleCarte)?tailleCarte:tailleReel;
 
 		int coef = (joueur == 0)? 1:-1;
 
 		Carte c;
-		for (int i = 0;i<nbMain;i++) {
+		int i = 0;
+		while (i<nbCartes) {
 			c = main.get(i);
 			if(jeu.joueurCourant()==joueur) {
-				jg.tracerImage(images[c.getFaction()][c.getPoid()], x1 + i * tailleReel, y1 + coef*margeH, tailleCarte, hauteur);
+				jg.tracerImage(images[c.getFaction()][c.getPoid()], x1 + i * tailleReel, y1 + coef*margeH, tailleCarte, hauteurCarte);
+				posCartes[i] = new Point(x1 + i * tailleReel, y1 + coef*margeH);
 			}else{
-				jg.tracerImage(dos, x1 + i * tailleReel, y1+ coef*margeH, tailleCarte, hauteur);
+				jg.tracerImage(dos, x1 + i * tailleReel, y1 + coef*margeH, tailleCarte, hauteurCarte);
 			}
+			i++;
 		}
-
+		if(jeu.joueurCourant()==joueur && nbCartes !=0) {
+			posCartes[i] = new Point(posCartes[i - 1].x + tailleCarte, y1 + coef * margeH);
+		}
 	}
 
 	private void dessineCarteScore(int joueur,int x,int y,int larg,int haut){
@@ -186,7 +197,7 @@ public class VueJeu {
 		}else{
 			jg.tracerImage(dos,x1+2*margeL,3*margeH+y1,8*largeur/20,hauteur-3*margeH);
 			jg.tracerTxt("Partisans",2*margeL+x1,y1+2*margeH);
-			dessineCarteScore(0,x1+11*margeL,3*margeH+y1,8*largeur/20,hauteur-3*margeH);
+			dessineCarteScore(1,x1+11*margeL,3*margeH+y1,8*largeur/20,hauteur-3*margeH);
 			jg.tracerTxt("Score",11*margeL+x1,y1+2*margeH);
 		}
 	}
@@ -200,14 +211,16 @@ public class VueJeu {
 
 		Carte a = jeu.plateau().carteCourante(0);
 		if(a != null) {
-			jg.tracerImage(images[a.getFaction()][a.getPoid()],x1+margeL,y1+2*margeH,8*margeL,16*margeH);
+			jg.tracerImage(images[a.getFaction()][a.getPoid()],x1+margeL,y1+margeH,8*margeL,17*margeH);
 		}
 		Carte b = jeu.plateau().carteCourante(1);
 		if(b != null) {
-			jg.tracerImage(images[b.getFaction()][b.getPoid()],x1+11*margeL,y1+2*margeH,8*margeL,16*margeH);
+			jg.tracerImage(images[b.getFaction()][b.getPoid()],x1+11*margeL,y1+margeH,8*margeL,17*margeH);
 		}
-		jg.tracerImage(cadreCarte,x1+margeL,y1+2*margeH,8*margeL,16*margeH);
-		jg.tracerImage(cadreCarte,x1+11*margeL,y1+2*margeH,8*margeL,16*margeH);
+		jg.tracerImage(cadreCarte,x1+margeL,y1+margeH,8*margeL,17*margeH);
+		jg.tracerTxt(jeu.getNom(0),x1+margeL,y2-margeH);
+		jg.tracerImage(cadreCarte,x1+11*margeL,y1+margeH,8*margeL,17*margeH);
+		jg.tracerTxt(jeu.getNom(1), 11*margeL+x1,y2-margeH);
 	}
 	private void dessineDefausse(int x1,int y1,int x2,int y2){
 		int largeur = x2-x1;
@@ -219,70 +232,26 @@ public class VueJeu {
 		List<Carte> def = jeu.plateau().defausse;
 		if(def.size() >0){
 			Carte c = def.get(def.size()-1);
-			jg.tracerImage(images[c.getFaction()][c.getPoid()],x1+margeL,y1+margeH,largeur-2*margeL,hauteur-3*margeH);
+			jg.tracerImage(images[c.getFaction()][c.getPoid()],x1+3*margeL,y1+margeH,3*margeL,hauteur-3*margeH);
 		}
-		jg.tracerTxt("Défausse",x1+margeL,y2-2*margeH);
-	}
-
-	public void tracerPartie() {
-		Plateau plateau = jeu.plateau();
-		largeurCase = jg.largeur() / nbCaseL;
-		hauteurCase = jg.hauteur() / nbCaseH;
-		//largeurCase = Math.min(largeurCase, hauteurCase);
-		//hauteurCase = largeurCase;
-		joueurCourant = plateau.joueurCourant();
-		
-		List<Carte> main = plateau.getMain(joueurCourant);
-		Collections.sort(main);
-		int nbCarte = main.size();
-		int debut = (13-nbCarte)/2 * 2;
-		int h = nbCaseH - 3;
-		for(Carte c: main) {
-			jg.tracerImage(images[c.getFaction()][c.getPoid()], debut * largeurCase, h * hauteurCase, largeurCase*2, hauteurCase*3);
-			debut = debut + 2;
-		}
-		
-		if(plateau.phase() == 1) {
-			jg.tracerImage(dos,largeurCase, hauteurCase, largeurCase*4, hauteurCase*6);
-			Carte x = plateau.carteAJouer();
-			if(plateau.carteAJouer() == null) {System.out.println(""+ plateau.phase());System.exit(0);}
-			jg.tracerImage(images[x.getFaction()][x.getPoid()],largeurCase * 6, hauteurCase, largeurCase*4, hauteurCase*6);
-		}
-		
-		Carte a = plateau.carteCourante(0);
-		if(a != null) {
-			jg.tracerImage(images[a.getFaction()][a.getPoid()],largeurCase * 13, hauteurCase, largeurCase*4, hauteurCase*6);
-		}
-		Carte b = plateau.carteCourante(1);
-		if(b != null) {
-			jg.tracerImage(images[b.getFaction()][b.getPoid()],largeurCase * 19, hauteurCase, largeurCase*4, hauteurCase*6);
-		}
-	}
-	
-	public int largeurCase() {
-		return largeurCase;
-	}
-	
-	public int hauteurCase() {
-		return hauteurCase;
+		jg.tracerTxt("Défausse",x1+3*margeL,y2-1*margeH);
 	}
 	
 	public int joueurCourant() {
 		return joueurCourant;
 	}
 	
-	public Carte determinerCarte(int l, int c) {
-		
-			Plateau plateau = jeu.plateau();
-			List<Carte> main = plateau.getMain(joueurCourant);
-			int nbCarte = main.size();
-			int debut = (13-nbCarte)/2 * 2;
-			int h = nbCaseH - 3;
-			if(l >= h && c < debut + 2*nbCarte && c >= debut) {
-				int posCarte = c/2 - debut/2;
-				return plateau.cartePosMain(posCarte,joueurCourant);
+	public Carte determinerCarte(int x, int y) {
+		joueurCourant = jeu.joueurCourant();
+		int i = 0;
+		List<Carte> main = jeu.plateau().getMain(joueurCourant);
+		int nbCarte = main.size();
+		while(i<nbCarte){
+			if(x>=posCartes[i].x && x<posCartes[i+1].x && y>=posCartes[i].y && y<=posCartes[i].y+hauteurCarte){
+				return jeu.plateau().cartePosMain(i,jeu.joueurCourant());
 			}
-		
+			i++;
+		}
 		return null;
 
 	}

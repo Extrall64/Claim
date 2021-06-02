@@ -23,8 +23,8 @@ public class AdapteurNouvellePartie implements ActionListener{
 		ia1 = (String) n.choixia1.getSelectedItem();
 		ia2 = (String) n.choixia2.getSelectedItem();
 		joueur = (String) n.joueurCommence.getSelectedItem();
-		nom1 =  n.nom1.getText();
-		nom2 =  n.nom2.getText();
+		nom1 =  n.choixnom1.getText();
+		nom2 =  n.choixnom2.getText();
 		if(n.mode == Jeu.HUMAIN_VS_HUMAIN) {
 			ia1 = null;
 			ia2 = null;

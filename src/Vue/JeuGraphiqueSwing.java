@@ -44,14 +44,6 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		return hauteur;
 	}
 	
-	public int largeurCase() {
-		return vue.largeurCase();
-	}
-	
-	public int hauteurCase() {
-		return vue.hauteurCase();
-	}
-	
 	@Override
 	public void tracerImage(ImageClaim img, int x, int y, int largeur, int hauteur) {
 		drawable.drawImage(img.image(), x, y, largeur, hauteur, null);

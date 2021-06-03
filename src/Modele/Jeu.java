@@ -93,13 +93,19 @@ public class Jeu {
     		}
     	}
     }
-    
+
     public void joueCarte(Carte carte) {
     	jouerCarte(carte);
     	if(combatPret())
     		combat();
     	else
     		changeJoueur();
+    }
+    public void suivant(){
+        if(combatPret())
+            combat();
+        else
+            changeJoueur();
     }
     
     public void changeJoueur() {
@@ -190,4 +196,15 @@ public class Jeu {
 		menu = true;
 	}
 
+	public boolean estIAVsIA(){
+        return mode == IA_VS_IA;
+    }
+
+    public boolean estHumVsIA(){
+        return mode == HUMAIN_VS_IA;
+    }
+
+    public boolean TourHumain(){
+        return mode == HUMAIN_VS_HUMAIN || mode == HUMAIN_VS_IA && joueurCourant()==0;
+    }
 }

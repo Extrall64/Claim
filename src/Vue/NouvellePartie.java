@@ -35,6 +35,10 @@ public class NouvellePartie extends JComponent {
 	
 	public void init(int m) {
 		mode = m;
+		ia1.setVisible(true);
+		choixia1.setVisible(true);
+		ia2.setVisible(true);
+		choixia2.setVisible(true);
 		if(m == Jeu.HUMAIN_VS_IA) {
 			ia1.setVisible(false);
 			choixia1.setVisible(false);
@@ -132,7 +136,7 @@ public class NouvellePartie extends JComponent {
 		joueur2 = createLabel("Joueur 2");
 		this.add(joueur2);
 		
-		String[] ia = { "Aleatoire", "Heuristique", "MinMax" };
+		String[] ia = { "Aleatoire", "Heuristique", "MinMax","Monte Carlo" };
 		choixia1 = new JComboBox(ia);
 		choixia1.setSelectedIndex(0);
 		this.add(choixia1);

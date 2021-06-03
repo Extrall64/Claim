@@ -63,7 +63,7 @@ public class HautDePlateau extends Box{
 		m = new JMenu(s);
 		menuBar.add(m);
 
-		menuItem = new JMenuItem("Menu");
+		menuItem = new JMenuItem("Ecran d'accueil");
 		menuItem.addActionListener(new AdaptateurCommande(controle, "menu"));
 		m.add(menuItem);
 		

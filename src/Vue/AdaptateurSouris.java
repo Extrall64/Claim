@@ -19,7 +19,7 @@ public class AdaptateurSouris extends MouseAdapter {
 	public void mousePressed(MouseEvent e) {
 		Carte t = jg.determinerCarte(e.getX(),e.getY());
 		if (t != null) {
-			controle.jouerCarte(t);
+			controle.clicSouris(t);
 		}
 	}
 	

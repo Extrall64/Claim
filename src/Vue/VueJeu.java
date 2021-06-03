@@ -22,6 +22,9 @@ public class VueJeu {
 	ImageClaim cadreCarte;
 	JeuGraphique jg;
 
+	boolean estEnAnim;
+	int x,y,vx,vy;
+
 	private ImageClaim chargeCartes(String nom) {
 		InputStream in = Configuration.charge("carte" + File.separator + nom + ".jpg");
 		return ImageClaim.getImageClaim(in);
@@ -33,6 +36,7 @@ public class VueJeu {
 	}
 
 	public VueJeu(Jeu j, JeuGraphique n) {
+		estEnAnim = false;
 		images = new ImageClaim[5][10];
 		for(int i=0;i<10;i++) {
 			images[Plateau.NAINS][i] = chargeCartes("nain_"+i);
@@ -79,6 +83,9 @@ public class VueJeu {
 			dessineScore(1, 5 * largeur / 7, 0, largeur, hauteur / 3);
 			dessineScore(0, 5 * largeur / 7, 2 * hauteur / 3, largeur, hauteur);
 		}
+		if(jeu.combatPret()){
+
+		}
 	}
 
 	private void dessineScore(int joueur,int x1,int y1,int x2,int y2){
@@ -95,10 +102,6 @@ public class VueJeu {
 	private void dessineJoueur(int joueur,int x1,int y1,int x2,int y2){
 		int largeur = x2-x1;
 		int hauteur = y2-y1;
-		if(largeur<=0 || hauteur <=0){
-			System.out.println("Largeur ou hauteur a 0 dans VueJeu");
-		}
-
 		Color c;
 		if(joueur == jeu.joueurCourant()){
 			c = Color.YELLOW;
@@ -161,15 +164,17 @@ public class VueJeu {
 		int i = 0;
 		while (i<nbCartes) {
 			c = main.get(i);
-			if(jeu.joueurCourant()==joueur) {
-				jg.tracerImage(images[c.getFaction()][c.getPoid()], x1 + i * tailleReel, y1 + coef*margeH, tailleCarte, hauteurCarte);
-				posCartes[i] = new Point(x1 + i * tailleReel, y1 + coef*margeH);
-			}else{
-				jg.tracerImage(dos, x1 + i * tailleReel, y1 + coef*margeH, tailleCarte, hauteurCarte);
+			if (jeu.joueurCourant() == joueur && jeu.TourHumain() || jeu.estIAVsIA() || jeu.estHumVsIA() && joueur==0) {
+				jg.tracerImage(images[c.getFaction()][c.getPoid()], x1 + i * tailleReel, y1 + coef * margeH, tailleCarte, hauteurCarte);
+				if (jeu.TourHumain()) {
+					posCartes[i] = new Point(x1 + i * tailleReel, y1 + coef * margeH);
+				}
+			} else {
+				jg.tracerImage(dos, x1 + i * tailleReel, y1 + coef * margeH, tailleCarte, hauteurCarte);
 			}
 			i++;
 		}
-		if(jeu.joueurCourant()==joueur && nbCartes !=0) {
+		if(jeu.joueurCourant()==joueur && nbCartes !=0 && jeu.TourHumain()) {
 			posCartes[i] = new Point(posCartes[i - 1].x + tailleCarte, y1 + coef * margeH);
 		}
 	}
@@ -190,14 +195,18 @@ public class VueJeu {
 		int margeH = hauteur/20;
 
 		if (joueur==0){
-			jg.tracerImage(dos,x1+2*margeL,y1,8*largeur/20,hauteur-3*margeH);
+			if(jeu.plateau().getPartisans(joueur).size() > 0) {
+				jg.tracerImage(dos, x1 + 2 * margeL, y1, 8 * largeur / 20, hauteur - 3 * margeH);
+			}
 			jg.tracerTxt("Partisans",x1+2*margeL,y1+hauteur-2*margeH);
-			dessineCarteScore(0,x1+11*margeL,y1,8*largeur/20,hauteur-3*margeH);
+			dessineCarteScore(joueur,x1+11*margeL,y1,8*largeur/20,hauteur-3*margeH);
 			jg.tracerTxt("Score",11*margeL+x1,y1+hauteur-2*margeH);
 		}else{
-			jg.tracerImage(dos,x1+2*margeL,3*margeH+y1,8*largeur/20,hauteur-3*margeH);
+			if(jeu.plateau().getPartisans(joueur).size() > 0) {
+				jg.tracerImage(dos, x1 + 2 * margeL, 3 * margeH + y1, 8 * largeur / 20, hauteur - 3 * margeH);
+			}
 			jg.tracerTxt("Partisans",2*margeL+x1,y1+2*margeH);
-			dessineCarteScore(1,x1+11*margeL,3*margeH+y1,8*largeur/20,hauteur-3*margeH);
+			dessineCarteScore(joueur,x1+11*margeL,3*margeH+y1,8*largeur/20,hauteur-3*margeH);
 			jg.tracerTxt("Score",11*margeL+x1,y1+2*margeH);
 		}
 	}
@@ -242,18 +251,18 @@ public class VueJeu {
 	}
 	
 	public Carte determinerCarte(int x, int y) {
-		joueurCourant = jeu.joueurCourant();
-		int i = 0;
-		List<Carte> main = jeu.plateau().getMain(joueurCourant);
-		int nbCarte = main.size();
-		while(i<nbCarte){
-			if(x>=posCartes[i].x && x<posCartes[i+1].x && y>=posCartes[i].y && y<=posCartes[i].y+hauteurCarte){
-				return jeu.plateau().cartePosMain(i,jeu.joueurCourant());
+		if(!estEnAnim && jeu.TourHumain()) {
+			joueurCourant = jeu.joueurCourant();
+			int i = 0;
+			List<Carte> main = jeu.plateau().getMain(joueurCourant);
+			int nbCarte = main.size();
+			while (i < nbCarte) {
+				if (x >= posCartes[i].x && x < posCartes[i + 1].x && y >= posCartes[i].y && y <= posCartes[i].y + hauteurCarte) {
+					return jeu.plateau().cartePosMain(i, jeu.joueurCourant());
+				}
+				i++;
 			}
-			i++;
 		}
 		return null;
-
 	}
-	
 }

@@ -50,7 +50,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		controle.fixerInterfaceUtilisateur(this);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500, 300);
+		frame.setSize(800, 500);
 		frame.setVisible(true);
 		
 		afficherMenu();

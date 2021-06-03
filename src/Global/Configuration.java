@@ -22,14 +22,18 @@ public class Configuration {
 	private Configuration() {
 		prop = new Properties();
 		try {
-			InputStream propIn = charge("default.cfg");
-			prop.load(propIn);
+
 			String home = System.getProperty("user.home");
 			FileInputStream f = new FileInputStream(home + File.separator + ".claim");
 			prop = new Properties(prop);
 			prop.load(f);
 		} catch (Exception e) {
-			System.err.println("Erreur lors de la lecture de la configuration : " + e);
+			try{
+				InputStream propIn = charge("default.cfg");
+				prop.load(propIn);
+			}catch(Exception x) {
+				System.err.println("Erreur lors de la lecture de la configuration : " + x);
+			}
 		}
 	}
 
@@ -55,7 +59,7 @@ public class Configuration {
 			case "Liste":
 				return new SequenceListe<>();
 			default:
-				throw new RuntimeException("Type de séquence inconnu : " + type);
+				throw new RuntimeException("Type de sï¿½quence inconnu : " + type);
 		}
 	}
 	

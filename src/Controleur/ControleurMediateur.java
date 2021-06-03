@@ -198,6 +198,11 @@ public class ControleurMediateur implements CollecteurEvenements{
 			if(carteJouer){
 				jeu.suivant();
 				carteJouer = false;
+			}else{
+				// par defaut appeler la tourIA si le joueur est une "IA" "non occupée" == LIBRE
+				// elle joue son coup, sinon l'appel est ignoré
+				if (!jeu.estSurMenu() && etats[jeu.joueurCourant()] == LIBRE && !estMenu)
+					tourIA();
 			}
 			if(doitAnnuler){
 				annuler();
@@ -212,10 +217,6 @@ public class ControleurMediateur implements CollecteurEvenements{
 				doitMenu = false;
 			}
 			decompte = TEMPS;
-			// par defaut appeler la tourIA si le joueur est une "IA" "non occupée" == LIBRE
-			// elle joue son coup, sinon l'appel est ignoré
-			if (!jeu.estSurMenu() && etats[jeu.joueurCourant()] == LIBRE && !estMenu)
-				tourIA();
 			if (jeu.finDePartie() && jeu.gagnant() != -1) {
 				jeu.afficherResultat();
 			}

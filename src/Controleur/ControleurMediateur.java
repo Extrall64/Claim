@@ -92,11 +92,11 @@ public class ControleurMediateur implements CollecteurEvenements{
 	public void initialiserIA(int j,String ia) {
 		if(ia == null)
 			joueurs[j] = null;
-		else if(ia.equals("Aleatoire"))
+		else if(ia.equals("Facile"))
 			joueurs[j] = new IAAleatoire(jeu, j);
-		else if(ia.equals("MinMax"))
+		else if(ia.equals("Moyen"))
 			joueurs[j] = new IAMinMax(jeu,j,6);
-		else if(ia.equals("Monte Carlo"))
+		else if(ia.equals("Difficile +"))
 			joueurs[j] = new IAMonteCarlo(jeu,j, 20);
 		else
 			joueurs[j] = new IAHeuristique(jeu,j,6);

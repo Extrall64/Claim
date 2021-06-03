@@ -56,6 +56,14 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 	public Carte determinerCarte(int l, int c) {
 		return vue.determinerCarte(l,c);
 	}
+
+	public boolean okDrop(int x,int y){
+		return vue.okDrop(x,y);
+	}
+
+	public void estRelease(){
+		vue.estRelease();
+	}
 	
 	public int joueurCourant() {
 		return vue.joueurCourant();

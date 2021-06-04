@@ -23,7 +23,7 @@ public class IAMinMax implements IA {
     	horizon = h;
     	rand = new Random();
         // fixer strategies
-        strategie1 = new StrategiePhase1(s2);
+        strategie1 = new StrategiePhase1(s1);
         strategie2 = new StrategiePhase2(s2);
         visionComplete = false;
     }

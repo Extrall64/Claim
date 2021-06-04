@@ -4,16 +4,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
+import IA.IA;
 public class Jeu {
 
     private Plateau plateau;
-    private int gagnant;
-    private int mode;
+    private int gagnant, mode;
     private String[] noms;
     boolean menu;
+    private Joueur [] joueurs;
     public Jeu() {
         plateau = new Plateau();
+        joueurs = new Joueur[2];
         noms = new String[2];
         menu = true;
     }
@@ -21,7 +22,6 @@ public class Jeu {
     public void nouvellePartie() {
     	lancerUnePartie();
     	plateau.melanger();
-        menu = false;
         gagnant = -1;
     }
     
@@ -196,6 +196,9 @@ public class Jeu {
 		menu = true;
 	}
 
+	public void setMenu(boolean b) {
+		menu = b;
+	}
 	public boolean estIAVsIA(){
         return mode == IA_VS_IA;
     }
@@ -206,5 +209,14 @@ public class Jeu {
 
     public boolean TourHumain(){
         return mode == HUMAIN_VS_HUMAIN || mode == HUMAIN_VS_IA && joueurCourant()==0;
+    }
+    public void setJoueur(int j, String n, IA ia) {
+    	joueurs[j] = new Joueur(this, n, j, ia);
+    	joueurs[j].setMain( plateau.getMain(j));
+    	joueurs[j].setPartisans( plateau.getPartisans(j));
+    	joueurs[j].setScore( plateau.getScore(j));
+    }
+    public Joueur getJoueur(int j) {
+    	return joueurs[j];
     }
 }

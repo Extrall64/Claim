@@ -13,17 +13,19 @@ public class IAMinMax implements IA {
     public Jeu config;
     int joueur, autreJoueur, horizon;
     Strategie strategie1, strategie2;
+    Random rand;
+	private boolean visionComplete;
     // constructeur 1 --> choisir les strategies
     public IAMinMax(Jeu c, int j, int h, String s1, String s2) {
     	config = c;
     	joueur = j;
     	autreJoueur = (j + 1) % 2;
     	horizon = h;
+    	rand = new Random();
         // fixer strategies
-        strategie1 = new StrategiePhase1();
-        strategie1.fixerStrategie(s1);
-        strategie2 = new StrategiePhase2();
-        strategie2.fixerStrategie(s2);
+        strategie1 = new StrategiePhase1(s2);
+        strategie2 = new StrategiePhase2(s2);
+        visionComplete = false;
     }
     // constructeur 2 -> strategies par defaut
     public IAMinMax(Jeu c, int j, int h) {
@@ -31,11 +33,11 @@ public class IAMinMax implements IA {
     	joueur = j;
     	autreJoueur = (j + 1) % 2;
     	horizon = h;
+    	rand = new Random();
         // fixer strategies par defaut
-        strategie1 = new StrategiePhase1();
-        strategie1.fixerStrategie("moyenne");
-        strategie2 = new StrategiePhase2();
-        strategie2.fixerStrategie("difference");
+        strategie1 = new StrategiePhase1("moyenne");
+        strategie2 = new StrategiePhase2("difference");
+        visionComplete = false;
     }
     @Override
     public Carte determineCoup() {
@@ -134,21 +136,22 @@ public class IAMinMax implements IA {
 		return valeur;
 	}
 
-   	// constuire la liste des coups possible pour le joueur courant
-	List <Carte> coup(Plateau plateau) {
-		List<Carte> main = plateau.getMain( plateau.joueurCourant());
-		// Cas particulier: si phase 1 et le tour de l'adversiare
-		// retourner l'ensemble des cartes possibles que l'adversaire peut avoir
-		if (plateau.phase() == 1 && plateau.joueurCourant() == autreJoueur) {
-			for(Carte c: plateau.cartes()) {
-				int cat = c.getCategorie();
-				if (cat == Plateau.iCartes || cat == Plateau.iPioche)
-					main.add( c );	
-			}
-		}
-		//sinon retourner la main de joueur courant
-		return main;
-	}
+   	/* Constuire la liste des coups possible pour le joueur courant
+	 * Cas particulier: si visionComplete = false et phase 1 et le tour de l'adversiare
+	 *	Construire tous les coups possible que l'adversaire peut joueur(en ajoutant des cartes dans ca main)
+	*/
+    public List<Carte> coup(Plateau plateau) {
+    	List<Carte> coups = plateau.getMain( plateau.joueurCourant() );
+    	int j = config.joueurCourant();
+    	for(Carte c: plateau.cartes()) {
+    		if (plateau.carteJouable(c)) {
+	    		int cat = c.getCategorie();
+	    		if (!visionComplete && plateau.phase() == 1 && j == autreJoueur && (cat == Plateau.iCartes || cat == Plateau.iPioche))
+					coups.add(c);
+    		}
+    	}
+    	return coups;
+    }
 
 	boolean estFeuille(Plateau plateau) {
 		return plateau.finDePhase1() || plateau.finDePhase2();
@@ -166,4 +169,7 @@ public class IAMinMax implements IA {
 		}
 		return scoreParDefaut;
 	}
+	public void activerVisionComplete() {
+    	visionComplete = true;
+    }
 }

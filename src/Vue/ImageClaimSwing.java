@@ -4,17 +4,18 @@ import Global.Configuration;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
 import java.io.InputStream;
 
 public class ImageClaimSwing extends ImageClaim {
 	Image img;
 
-	ImageClaimSwing(InputStream in) {
+	ImageClaimSwing(String in) {
 		try {
 			// Chargement d'une image utilisable dans Swing
-			img = ImageIO.read(in);
+			img = ImageIO.read((getClass().getClassLoader().getResource(in)));
 		} catch (Exception e) {
-			Configuration.instance().logger().severe("Impossible de charger l'image");
+			Configuration.instance().logger().severe("Impossible de charger l'image : " + e);
 			System.exit(1);
 		}
 	}

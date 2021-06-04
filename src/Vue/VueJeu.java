@@ -42,6 +42,7 @@ public class VueJeu {
 	Carte dragAndDrop;
 	int xDropDeb,yDropDeb,xDropFin,yDropFin;
 	int dragX,dragY;
+	boolean estSurZoneDrop;
 
 	private ImageClaim chargeCartes(String nom) {
 		InputStream in = Configuration.charge("carte" + File.separator + nom + ".jpg");
@@ -444,7 +445,7 @@ public class VueJeu {
 	}
 	
 	public Carte determinerCarte(int x, int y) {
-		if(jeu.TourHumain()) {
+		if(jeu.TourHumain() && jeu.plateau().carteCourante(jeu.joueurCourant()) == null) {
 			joueurCourant = jeu.joueurCourant();
 			int i = 0;
 			List<Carte> main = jeu.plateau().getMain(joueurCourant);
@@ -466,12 +467,22 @@ public class VueJeu {
 		dragX = x;
 		dragY = y;
 		if(x>=xDropDeb && x<= xDropFin && y>=yDropDeb && y<=yDropFin){
+			estSurZoneDrop = true;
 			return true;
 		}
+		estSurZoneDrop = false;
 		return false;
 	}
 
 	public void estRelease(){
 		dragAndDrop = null;
+	}
+
+	public boolean estCarteOk(){
+		return dragAndDrop != null;
+	}
+
+	public boolean estSurZoneDrop(){
+		return estSurZoneDrop;
 	}
 }

@@ -3,6 +3,7 @@ package Vue;
 import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -42,6 +43,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		
 		jg = new JeuGraphiqueSwing(jeu);
 		jg.addMouseListener(new AdaptateurSouris(jg, controle));
+		jg.addMouseMotionListener(new AdaptateurMotionSouris(jg,controle));
 		
 		haut = new HautDePlateau(controle);
 		

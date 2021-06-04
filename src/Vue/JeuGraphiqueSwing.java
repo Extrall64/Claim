@@ -57,6 +57,12 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		return vue.determinerCarte(l,c);
 	}
 
+	public boolean estCarteOk(){
+		return vue.estCarteOk();
+	}
+
+	public boolean estSurZoneDrop(){return vue.estSurZoneDrop();}
+
 	public boolean okDrop(int x,int y){
 		return vue.okDrop(x,y);
 	}

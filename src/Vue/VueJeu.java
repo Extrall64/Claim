@@ -44,13 +44,13 @@ public class VueJeu {
 	int dragX,dragY;
 
 	private ImageClaim chargeCartes(String nom) {
-		InputStream in = Configuration.charge("carte" + File.separator + nom + ".jpg");
-		return ImageClaim.getImageClaim(in);
+//		/InputStream in = Configuration.charge("carte" + File.separator + nom + ".jpg");
+		return ImageClaim.getImageClaim("carte/" + nom + ".jpg");
 	}
 	
 	private ImageClaim chargeImage(String nom) {
-		InputStream in = Configuration.charge("Image" + File.separator + nom + ".jpg");
-		return ImageClaim.getImageClaim(in);
+		InputStream in = Configuration.charge("Image"+ nom + ".jpg");
+		return ImageClaim.getImageClaim("Image/"+ nom + ".jpg");
 	}
 
 	public VueJeu(Jeu j, JeuGraphique n) {
@@ -73,7 +73,7 @@ public class VueJeu {
 		jg = n;
 		j1 = chargeImage("j1");
 		j2 = chargeImage("j2");
-		cadreCarte = ImageClaim.getImageClaim(Configuration.charge("Image/Fond_carte.png"));
+		cadreCarte = ImageClaim.getImageClaim("Image/Fond_carte.png");
 	}
 
 	void tracerNiveau() {

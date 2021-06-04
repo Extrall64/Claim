@@ -30,7 +30,7 @@ public class Menu extends JComponent{
 	
 	private ImageClaim chargeImage(String nom) {
 		InputStream in = Configuration.charge("Image" + File.separator + nom + ".jpg");
-		return ImageClaim.getImageClaim(in);
+		return ImageClaim.getImageClaim("Image/"+ nom + ".jpg");
 	}
 	
 	private JLabel createLabel(String s) {

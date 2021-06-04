@@ -6,6 +6,9 @@ import Modele.Plateau;
 public class StrategiePhase2 implements Strategie {
 	String strategie;
 	int joueur, autreJoueur;
+	public StrategiePhase2(String nom) {
+		strategie = nom;
+	}
 	public void fixerStrategie(String nom) {
 		strategie = nom;
 	}

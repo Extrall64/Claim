@@ -6,6 +6,9 @@ import Modele.Plateau;
 public class StrategiePhase1 implements Strategie {
 	String strategie;
 	int joueur;
+	public StrategiePhase1(String nom) {
+		strategie = nom;
+	}
 	public void fixerStrategie(String nom) {
 		strategie = nom;
 	}
@@ -34,7 +37,7 @@ public class StrategiePhase1 implements Strategie {
 		for(Carte c: plateau.getPartisans(joueur))
 			if (max[c.getFaction()] < c.getPoid()) max[c.getFaction()] = c.getPoid();
 		for(int n: max) res += n;
-		return res / nbFaction;	
+		return res/nbFaction - 5;	
 	}
 
 	/*
@@ -66,7 +69,7 @@ public class StrategiePhase1 implements Strategie {
 		max[x] = 0;
 
 		for(int n: max) res += n;
-		return res / 3;	
+		return res/3 - 5;	
 	}
 	
 	/*	la meme strategie de moyenne mais a chaque faction son poid
@@ -79,7 +82,7 @@ public class StrategiePhase1 implements Strategie {
 		for(Carte c: plateau.getPartisans(joueur))
 			if (max[c.getFaction()] < c.getPoid()) max[c.getFaction()] = c.getPoid();
 		for(int i = 0; i < nbFaction; i++) res += poid[i] * max[i];
-		return res / nbFaction;	
+		return res/nbFaction - 5;	
 	}
 	/*
 	 *  favorise l'aquisition des cartes des faction les plus presentes en main
@@ -95,6 +98,6 @@ public class StrategiePhase1 implements Strategie {
 		for(Carte c: plateau.getMain(joueur))
 			poid[c.getFaction()] += 1;
 		for(int i = 0; i < nbFaction; i++) res += poid[i] * max[i]; 
-		return res;
+		return res - 5;
 	}
 }

@@ -11,4 +11,5 @@ public interface JeuGraphique {
 	void tracerRectArrond(int x,int y,int largeur,int hauteur,int arcL,int arcH);
 	void tracerLigne(int x1,int y1,int x2,int y2);
 	void tracerTxt(String s,int x,int y);
+	void grise(int x,int y,int larg,int haut);
 }

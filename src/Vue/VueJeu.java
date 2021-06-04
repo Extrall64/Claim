@@ -93,7 +93,9 @@ public class VueJeu {
 		margeH = hauteur/40;
 
 		dessineJoueur();
-		dessineDefausse();
+		if(plateau.phase()==1) {
+			dessineDefausse();
+		}
 		dessineScore();
 		dessineCartesCourantes();
 		dessineMains();
@@ -123,9 +125,14 @@ public class VueJeu {
 			//face
 			if (jeu.joueurCourant() == 0 && jeu.TourHumain() || jeu.estIAVsIA() || jeu.estHumVsIA()) {
 				if(dragAndDrop != null && c.equals(dragAndDrop)){
+					jg.tracerImage(cadreCarte,15 * margeL,13 * margeH,carteL+2*margeL,carteH+4*margeH);
 					jg.tracerImage(images[c.getFaction()][c.getPoid()], dragX, dragY, carteL, carteH);
 				}else {
 					jg.tracerImage(images[c.getFaction()][c.getPoid()],  8*margeL + i * tailleReelJ0, hauteur-carteH, carteL, carteH);
+					if(jeu.joueurCourant() == 0 && (!jeu.plateau().carteJouable(c)||jeu.plateau().carteCourante(0)!=null)
+							|| jeu.estHumVsIA() && jeu.joueurCourant()==1){
+						jg.grise(8*margeL + i * tailleReelJ0,hauteur-carteH,carteL,carteH);
+					}
 				}
 				if (jeu.TourHumain()) {
 					posCartes[i] = new Point(8*margeL + i * tailleReelJ0, hauteur-carteH);
@@ -150,9 +157,13 @@ public class VueJeu {
 			//face
 			if (jeu.joueurCourant() == 1 && jeu.TourHumain() || jeu.estIAVsIA()) {
 				if(dragAndDrop != null && c.equals(dragAndDrop)){
+					jg.tracerImage(cadreCarte,largeur - 19 * margeL,13 * margeH,carteL+2*margeL,carteH+4*margeH);
 					jg.tracerImage(images[c.getFaction()][c.getPoid()], dragX, dragY, carteL, carteH);
 				}else {
 					jg.tracerImage(images[c.getFaction()][c.getPoid()],  8*margeL + i * tailleReelJ1, 0, carteL, carteH);
+					if(jeu.joueurCourant() == 1 && (!jeu.plateau().carteJouable(c)||jeu.plateau().carteCourante(1)!=null)){
+						jg.grise(8*margeL + i * tailleReelJ1,0,carteL,carteH);
+					}
 				}
 				if (jeu.TourHumain()) {
 					posCartes[i] = new Point(8*margeL + i * tailleReelJ1, 0);
@@ -218,20 +229,20 @@ public class VueJeu {
 
 		//j1
 		jg.tracerImage(cadreCarte,dxCC0,dyCC0,carteL,carteH);
-		jg.tracerTxt(jeu.getNom(0),dxCC0,hauteur-16*margeH);
+		jg.tracerTxt(jeu.getNom(0),dxCC0,hauteur-17*margeH);
 		//j2
 		jg.tracerImage(cadreCarte,dxCC1,dyCC1,carteL,carteH);
-		jg.tracerTxt(jeu.getNom(1), dxCC1,hauteur-16*margeH);
+		jg.tracerTxt(jeu.getNom(1), dxCC1,hauteur-17*margeH);
 
 		//zone de drop
 		if (jeu.joueurCourant() == 0){
-			xDropDeb = 16*margeL;
+			xDropDeb = 15*margeL;
 		}else {
-			xDropDeb = largeur - 18*margeL;
+			xDropDeb = largeur - 19 * margeL;
 		}
-		yDropDeb = 14*margeH;
-		xDropFin = xDropDeb + carteL;
-		yDropFin = yDropDeb + carteH;
+		yDropDeb = 13*margeH;
+		xDropFin = xDropDeb + carteL + 2*margeL;
+		yDropFin = yDropDeb + carteH + 4*margeH;
 	}
 
 	private void dessineDefausse(){
@@ -453,9 +464,14 @@ public class VueJeu {
 			while (i < nbCarte) {
 				if (x >= posCartes[i].x && x < posCartes[i + 1].x && y >= posCartes[i].y && y <= posCartes[i].y + carteH) {
 					dragAndDrop = jeu.plateau().cartePosMain(i, jeu.joueurCourant());
-					dragX = x;
-					dragY = y;
-					return dragAndDrop;
+					if(jeu.plateau().carteJouable(dragAndDrop)){
+						dragX = x;
+						dragY = y;
+						estSurZoneDrop = false;
+						return dragAndDrop;
+					}else{
+						dragAndDrop = null;
+					}
 				}
 				i++;
 			}

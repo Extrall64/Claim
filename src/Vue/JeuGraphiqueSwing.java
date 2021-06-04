@@ -93,5 +93,11 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		drawable.setColor(Color.black);
 		drawable.drawString(s,x,y);
 	}
+
+	public void grise(int x,int y,int larg,int haut){
+		drawable.setColor(new Color(96,96,96,170));
+		drawable.fillRect(x,y,larg,haut);
+		drawable.setColor(Color.black);
+	}
 	
 }

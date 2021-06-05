@@ -17,7 +17,7 @@ import Vue.InterfaceUtilisateur;
 // etat du joueur courant, occupe == entrain de jouer ca carte/calculer si c'est l'IA
 enum Etat {LIBRE, OCCUPE};
 // action a faire au prochain appel de timer, NOP == rien a faire
-enum Action {ANNULER, REFAIRE, MENU, NOP};
+enum Action {ANNULER, REFAIRE, MENU,CHARGER,SAUVER, NOP};
 
 public class ControleurMediateur implements CollecteurEvenements{
     
@@ -118,6 +118,15 @@ public class ControleurMediateur implements CollecteurEvenements{
 		jeu.setMenu(true);
 	}
 
+	public void charger (){
+    	jeu.charger();
+    	System.out.println("charger");
+	}
+	public void sauver (){
+    	jeu.sauvegarder();
+		System.out.println("sauver");
+	}
+
 	public void commande(String c) {
 		switch (c) {
 			case "humain_vs_humain":
@@ -146,6 +155,10 @@ public class ControleurMediateur implements CollecteurEvenements{
 				action = Action.ANNULER;
 				break;
 			case "charger":
+				action=Action.CHARGER;
+				break;
+			case "sauver":
+				action=Action.SAUVER;
 				break;
 			case "regle":
 				break;
@@ -204,6 +217,12 @@ public class ControleurMediateur implements CollecteurEvenements{
 		}
 		else if (action == Action.MENU && etat == Etat.LIBRE) {
 			menu();
+		}
+		else if(action== Action.CHARGER){
+			charger();
+		}
+		else if(action== Action.SAUVER){
+			sauver();
 		}
 		action = Action.NOP;
 		// actualiser l'affichage

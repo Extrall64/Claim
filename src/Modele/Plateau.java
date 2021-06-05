@@ -4,10 +4,7 @@ package Modele;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Plateau extends Historique<Action> implements Serializable {
 	public static final int nbCarte = 52;

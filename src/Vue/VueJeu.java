@@ -26,24 +26,28 @@ public class VueJeu {
 	int carteL,carteH;
 	int margeL,margeH;
 
-	boolean combatAnim,combatAnimPioche;
-	int xCarteWin,yCarteWin,xPioche,yPioche;
-	int vx,vy,vxPioche,vyPioche;
-	int versPartisansJ1x,versPartisansJ1y,versPartisansJ0x,versPartisansJ0y;
-	int depuisxPioche,depuisyPioche,depuisxCarte,depuisyCarte;
+	boolean combatAnim,combatAnimPioche, carteCouranteAnim;
 	int joueurWin;
 
-	boolean carteCouranteAnim;
-	int xCC0,yCC0,xCC1,yCC1;
-	int dxCC0,dyCC0,dxCC1,dyCC1;
-	int vxCC0,vyCC0,vxCC1,vyCC1;
-	int versxCC0,versyCC0,versxCC1,versyCC1;
-
+	Point versPartisansJ0, versPartisansJ1;
+	Point depCarte;
+	Point pioche, depPioche, versPioche;
+	Point carteWin;
+	Point cc0, cc1, depCC0, depCC1, versCC0, versCC1;
+	Point drag, dropDeb, dropFin;
+	
 	Carte dragAndDrop;
-	int xDropDeb,yDropDeb,xDropFin,yDropFin;
-	int dragX,dragY;
 	boolean estSurZoneDrop;
+	final static double PRECISION = 3.5;
 
+	// fonction de tweeing lineaire pour les animations
+	private void interpolation(Point dep, Point arr) {
+		dep.y = (int) (dep.y + (arr.y - dep.y) / 3.5);
+		dep.x = (int) (dep.x + (arr.x - dep.x) / 3.5);
+		if (Math.abs(dep.x - arr.x) < PRECISION) dep.x = arr.x;
+		if (Math.abs(dep.y - arr.y) < PRECISION) dep.y = arr.y;
+
+	}
 	private ImageClaim chargeCartes(String nom) {
 //		/InputStream in = Configuration.charge("carte" + File.separator + nom + ".jpg");
 		return ImageClaim.getImageClaim("carte/" + nom + ".jpg");
@@ -55,8 +59,6 @@ public class VueJeu {
 	}
 
 	public VueJeu(Jeu j, JeuGraphique n) {
-		vx = 7;
-		vy = 3;
 		combatAnim = false;
 		images = new ImageClaim[5][10];
 		for(int i=0;i<10;i++) {
@@ -127,7 +129,7 @@ public class VueJeu {
 			if (jeu.joueurCourant() == 0 && jeu.TourHumain() || jeu.estIAVsIA() || jeu.estHumVsIA()) {
 				if(dragAndDrop != null && c.equals(dragAndDrop)){
 					jg.tracerImage(cadreCarte,15 * margeL,13 * margeH,carteL+2*margeL,carteH+4*margeH);
-					jg.tracerImage(images[c.getFaction()][c.getPoid()], dragX, dragY, carteL, carteH);
+					jg.tracerImage(images[c.getFaction()][c.getPoid()], drag.x, drag.y, carteL, carteH);
 				}else {
 					jg.tracerImage(images[c.getFaction()][c.getPoid()],  8*margeL + i * tailleReelJ0, hauteur-carteH, carteL, carteH);
 					if(jeu.joueurCourant() == 0 && (!jeu.plateau().carteJouable(c)||jeu.plateau().carteCourante(0)!=null)
@@ -160,7 +162,7 @@ public class VueJeu {
 			if (jeu.joueurCourant() == 1 && jeu.TourHumain() || jeu.estIAVsIA()) {
 				if(dragAndDrop != null && c.equals(dragAndDrop)){
 					jg.tracerImage(cadreCarte,largeur - 19 * margeL,13 * margeH,carteL+2*margeL,carteH+4*margeH);
-					jg.tracerImage(images[c.getFaction()][c.getPoid()], dragX, dragY, carteL, carteH);
+					jg.tracerImage(images[c.getFaction()][c.getPoid()], drag.x, drag.y, carteL, carteH);
 				}else {
 					jg.tracerImage(images[c.getFaction()][c.getPoid()],  8*margeL + i * tailleReelJ1, 0, carteL, carteH);
 					if(jeu.joueurCourant() == 1 && (!jeu.plateau().carteJouable(c)||jeu.plateau().carteCourante(1)!=null)){
@@ -181,79 +183,57 @@ public class VueJeu {
 	}
 
 	private void dessineCartesCourantes(){
-		dxCC0 = 16 * margeL;
-		dyCC0 = 14 * margeH;
-		dxCC1 = largeur - 18 * margeL;
-		dyCC1 = 14 * margeH;
+		depCC0 = new Point(16 * margeL, 14 * margeH);
+		depCC1 = new Point( largeur - 18 * margeL, 14 * margeH);
 		if(jeu.plateau().combatPret()) {
 			if(!carteCouranteAnim){
 				carteCouranteAnim = true;
 				joueurWin = jeu.plateau().quiGagneCombat();
-				xCC0 = dxCC0;
-				yCC0 = dyCC0;
-				xCC1 = dxCC1;
-				yCC1 = dyCC1;
-				vxCC0 = (versxCC0 - dxCC0)/15;
-				vyCC0 = (versyCC0 - dyCC0)/15;
-				vxCC1 = (versxCC1 - dxCC1)/15;
-				vyCC1 = (versyCC1 - dyCC1)/15;
+				cc0 = new Point(depCC0.x ,depCC0.y);
+				cc1 = new Point(depCC1.x ,depCC1.y);
 			}
-			xCC0 = (xCC0 + vxCC0 > versxCC0)?versxCC0:xCC0 + vxCC0;
-			if(vyCC0<0){
-				yCC0 = (yCC0 + vyCC0 < versyCC0)?versyCC0:yCC0 + vyCC0;
-			}else{
-				yCC0 = (yCC0 + vyCC0 >= versyCC0)?versyCC0:yCC0 + vyCC0;
-			}
-			xCC1 = (xCC1 + vxCC1 > versxCC1)?versxCC1:xCC1 + vxCC1;
-			if(vyCC1<0){
-				yCC1 = (yCC1 + vyCC1 < versyCC1)?versyCC1:yCC1 + vyCC1;
-			}else{
-				yCC1 = (yCC1 + vyCC1 >= versyCC1)?versyCC1:yCC1 + vyCC1;
-			}
+			interpolation(cc0, versCC0);
+			interpolation(cc1, versCC1);
 		}else{
 			carteCouranteAnim = false;
-			xCC0 = dxCC0;
-			yCC0 = dyCC0;
-			xCC1 = dxCC1;
-			yCC1 = dyCC1;
+			cc0 = new Point(depCC0.x ,depCC0.y);
+			cc1 = new Point(depCC1.x ,depCC1.y);
 		}
 
 		//joueur 1
 		Carte a = jeu.plateau().carteCourante(0);
 		if (a != null) {
-			jg.tracerImage(images[a.getFaction()][a.getPoid()], xCC0, yCC0, carteL, carteH);
+			jg.tracerImage(images[a.getFaction()][a.getPoid()], cc0.x, cc0.y, carteL, carteH);
 		}
 		//joueur2
 		Carte b = jeu.plateau().carteCourante(1);
 		if (b != null) {
-			jg.tracerImage(images[b.getFaction()][b.getPoid()], xCC1, yCC1, carteL, carteH);
+			jg.tracerImage(images[b.getFaction()][b.getPoid()], cc1.x, cc1.y, carteL, carteH);
 		}
 
 		//j1
-		jg.tracerImage(cadreCarte,dxCC0,dyCC0,carteL,carteH);
-		jg.tracerTxt(jeu.getJoueur(0).getNom(),dxCC0,hauteur-17*margeH);
+		jg.tracerImage(cadreCarte, depCC0.x,depCC0.y,carteL,carteH);
+		jg.tracerTxt(jeu.getJoueur(0).getNom(),depCC0.x,hauteur-17*margeH);
 		//j2
-		jg.tracerImage(cadreCarte,dxCC1,dyCC1,carteL,carteH);
-		jg.tracerTxt(jeu.getJoueur(1).getNom(), dxCC1,hauteur-17*margeH);
+		jg.tracerImage(cadreCarte,depCC1.x,depCC1.y,carteL,carteH);
+		jg.tracerTxt(jeu.getJoueur(1).getNom(), depCC1.x,hauteur-17*margeH);
 
 		//zone de drop
+		int xDropDeb;
 		if (jeu.joueurCourant() == 0){
 			xDropDeb = 15*margeL;
 		}else {
 			xDropDeb = largeur - 19 * margeL;
 		}
-		yDropDeb = 13*margeH;
-		xDropFin = xDropDeb + carteL + 2*margeL;
-		yDropFin = yDropDeb + carteH + 4*margeH;
+		dropDeb = new Point (xDropDeb, 13*margeH);
+		dropFin = new Point( dropDeb.x + carteL + 2*margeL, dropDeb.y + carteH + 4*margeH );
 	}
 
 	private void dessineDefausse(){
 		List<Carte> def = jeu.plateau().defausse;
 		if(jeu.plateau().phase()==1) {
-			versyCC0 = 14 * margeH;
-			versyCC1 = versyCC0;
-			versxCC0 = largeur - 8 * margeL;
-			versxCC1 = versxCC0;
+			versCC0 = new Point(largeur - 8 * margeL, 14 * margeH);
+			versCC1 = new Point(versCC0.x, versCC0.y);
 		}
 		if(def.size() >0){
 			Carte c = def.get(def.size()-1);
@@ -264,18 +244,16 @@ public class VueJeu {
 
 	private void dessinePartisans(){
 		//joueur 1
-		versPartisansJ0x = largeur-10*margeL;
-		versPartisansJ0y = hauteur - 13*margeH;
+		versPartisansJ0 = new Point (largeur-10*margeL, hauteur - 13*margeH);
 		if(jeu.plateau().getPartisans(0).size() > 0) {
-			jg.tracerImage(dos, versPartisansJ0x, versPartisansJ0y, carteL, carteH);
+			jg.tracerImage(dos, versPartisansJ0.x, versPartisansJ0.y, carteL, carteH);
 		}
 		jg.tracerTxt("Partisans",largeur-10*margeL,hauteur-margeH);
 
 		//joueur 2
-		versPartisansJ1x = largeur-10*margeL;
-		versPartisansJ1y = 2*margeH;
+		versPartisansJ1= new Point(largeur-10*margeL, 2*margeH);
 		if(jeu.plateau().getPartisans(1).size() > 0) {
-			jg.tracerImage(dos, versPartisansJ1x, versPartisansJ1y, carteL, carteH);
+			jg.tracerImage(dos, versPartisansJ1.x, versPartisansJ1.y, carteL, carteH);
 		}
 		jg.tracerTxt("Partisans",largeur-10*margeL,2*margeH);
 	}
@@ -298,20 +276,18 @@ public class VueJeu {
 			if(jeu.plateau().combatPret()) {
 				if (jeu.plateau().carteCourante(0).getFaction() == jeu.plateau().MORTSVIVANTS) {
 					if(jeu.plateau().quiGagneCombat() == 0) {
-						versxCC0 = x1;
-						versyCC0 = y1;
+						versCC0 = new Point (x1, y1);
 					}else{
-						versxCC0 = x2;
-						versyCC0 = y2;
+						versCC0 = new Point (x2, y2);
+
 					}
 				}
 				if (jeu.plateau().carteCourante(1).getFaction() == jeu.plateau().MORTSVIVANTS) {
 					if(jeu.plateau().quiGagneCombat() == 1) {
-						versxCC1 = x2;
-						versyCC1 = y2;
+						versCC1 = new Point (x2, y2);
+
 					}else{
-						versxCC1 = x1;
-						versyCC1 = y1;
+						versCC1 = new Point (x1, y1);
 					}
 				}
 			}
@@ -323,36 +299,33 @@ public class VueJeu {
 			if(jeu.plateau().combatPret()) {
 				if (jeu.plateau().carteCourante(0).getFaction() == jeu.plateau().NAINS) {
 					if(jeu.plateau().quiGagneCombat() == 1) {
-						versxCC0 = x1;
-						versyCC0 = y1;
+						versCC0 = new Point (x1, y1);
+
 					}else{
-						versxCC0 = x2;
-						versyCC0 = y2;
+						versCC0 = new Point (x2, y2);
+
 					}
 				}else{
 					if(jeu.plateau().quiGagneCombat() == 0) {
-						versxCC0 = x1;
-						versyCC0 = y1;
+						versCC0 = new Point (x1, y1);
+
 					}else{
-						versxCC0 = x2;
-						versyCC0 = y2;
+						versCC0 = new Point (x2, y2);
+
 					}
 				}
 				if (jeu.plateau().carteCourante(1).getFaction() == jeu.plateau().NAINS) {
 					if(jeu.plateau().quiGagneCombat() == 0) {
-						versxCC1 = x2;
-						versyCC1 = y2;
+						versCC1 = new Point (x2, y2);
+
 					}else{
-						versxCC1 = x1;
-						versyCC1 = y1;
+						versCC1 = new Point (x1, y1);
 					}
 				}else{
 					if(jeu.plateau().quiGagneCombat() == 1) {
-						versxCC1 = x2;
-						versyCC1 = y2;
+						versCC1 = new Point (x2, y2);
 					}else{
-						versxCC1 = x1;
-						versyCC1 = y1;
+						versCC1 = new Point (x1, y1);
 					}
 				}
 			}
@@ -367,65 +340,51 @@ public class VueJeu {
 	}
 
 	private void dessineAgagner(){
-		depuisxCarte = 6*margeL;
-		depuisyCarte = 14*margeH;
+		depCarte =new Point( 6*margeL, 14*margeH);
 
 		if(jeu.plateau().combatPret()){
 			if(!combatAnim){
 				combatAnim = true;
 				joueurWin = jeu.plateau().quiGagneCombat();
-				xCarteWin = depuisxCarte;
-				yCarteWin = depuisyCarte;
-				vx = (versPartisansJ0x - depuisxCarte)/15;
-				vy = (versPartisansJ0y - depuisyCarte)/15;
+				carteWin = new Point (depCarte.x, depCarte.y);
 			}
 			if(joueurWin == 0){
-				xCarteWin = (xCarteWin+vx>versPartisansJ0x)?versPartisansJ0x:xCarteWin+vx;
-				yCarteWin = (yCarteWin+vy>versPartisansJ0y)?versPartisansJ0y:yCarteWin+vy;
+				interpolation(carteWin, versPartisansJ0);
 			}else{
-				xCarteWin = (xCarteWin+vx>versPartisansJ1x)?versPartisansJ1x:xCarteWin+vx;
-				yCarteWin = (yCarteWin-vy<versPartisansJ1y)?versPartisansJ1y:yCarteWin-vy;
+				interpolation(carteWin, versPartisansJ1);
 			}
 		}else{
 			combatAnim = false;
-			xCarteWin = depuisxCarte;
-			yCarteWin = depuisyCarte;
+			carteWin = new Point (depCarte.x, depCarte.y);
 		}
 		Carte aGagner = jeu.plateau().carteAJouer();
 		if(aGagner != null) {
-			jg.tracerImage(images[aGagner.getFaction()][aGagner.getPoid()], xCarteWin, yCarteWin, carteL, carteH);
+			jg.tracerImage(images[aGagner.getFaction()][aGagner.getPoid()], carteWin.x, carteWin.y, carteL, carteH);
 		}
 	}
 
 	private void dessinePioche(){
-		depuisxPioche = margeL;
-		depuisyPioche = 14*margeH;
+		depPioche = new Point(margeL, 14*margeH);
 		if(jeu.plateau().combatPret()){
 			if(!combatAnimPioche){
 				combatAnimPioche = true;
 				joueurWin = jeu.plateau().quiGagneCombat();
-				xPioche = depuisxPioche;
-				yPioche = depuisyPioche;
-				vxPioche = (versPartisansJ0x - depuisxPioche)/15;
-				vyPioche = (versPartisansJ0y - depuisyPioche)/15;
+				pioche  = new Point(depPioche.x, depPioche.y);
 			}
 			if(joueurWin == 0){
-				xPioche = (xPioche+vxPioche>versPartisansJ1x)?versPartisansJ1x:xPioche+vxPioche;
-				yPioche = (yPioche-vyPioche<versPartisansJ1y)?versPartisansJ1y:yPioche-vyPioche;
+				interpolation(pioche, versPartisansJ1);
 			}else{
-				xPioche = (xPioche+vxPioche>versPartisansJ0x)?versPartisansJ0x:xPioche+vxPioche;
-				yPioche = (yPioche+vyPioche>versPartisansJ0y)?versPartisansJ0y:yPioche+vyPioche;
+				interpolation(pioche, versPartisansJ0);
 			}
-			if(jeu.plateau().pioche.size() > 1){
-				jg.tracerImage(dos, depuisxPioche, depuisyPioche, carteL, carteH);
+			if(jeu.plateau().pioche.size() > 1) {
+				jg.tracerImage(dos, depPioche.x, depPioche.y, carteL, carteH);
 			}
 		}else{
 			combatAnimPioche = false;
-			xPioche = depuisxPioche;
-			yPioche = depuisyPioche;
+			pioche = new Point(depPioche.x, depPioche.y);
 		}
 		if(jeu.plateau().pioche.size() > 0) {
-			jg.tracerImage(dos, xPioche, yPioche, carteL, carteH);
+			jg.tracerImage(dos, pioche.x, pioche.y, carteL, carteH);
 			jg.tracerTxt("Pioche",margeL,26*margeH);
 		}
 	}
@@ -467,8 +426,7 @@ public class VueJeu {
 				if (x >= posCartes[i].x && x < posCartes[i + 1].x && y >= posCartes[i].y && y <= posCartes[i].y + carteH) {
 					dragAndDrop = jeu.plateau().cartePosMain(i, jeu.joueurCourant());
 					if(jeu.plateau().carteJouable(dragAndDrop)){
-						dragX = x;
-						dragY = y;
+						drag = new Point(x, y);
 						estSurZoneDrop = false;
 						return dragAndDrop;
 					}else{
@@ -482,9 +440,8 @@ public class VueJeu {
 	}
 
 	public boolean okDrop(int x,int y){
-		dragX = x;
-		dragY = y;
-		if(x>=xDropDeb && x<= xDropFin && y>=yDropDeb && y<=yDropFin){
+		drag = new Point(x, y);
+		if(x>=dropDeb.x && x<= dropFin.x && y>= dropDeb.y && y<= dropFin.y){
 			estSurZoneDrop = true;
 			return true;
 		}

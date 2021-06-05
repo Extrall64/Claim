@@ -14,26 +14,25 @@ import Modele.Joueur;
 import Vue.CollecteurEvenements;
 import Vue.InterfaceUtilisateur;
 
+// etat du joueur courant, occupe == entrain de jouer ca carte/calculer si c'est l'IA
+enum Etat {LIBRE, OCCUPE};
+// action a faire au prochain appel de timer, NOP == rien a faire
+enum Action {ANNULER, REFAIRE, MENU, NOP};
+
 public class ControleurMediateur implements CollecteurEvenements{
     
 	Jeu jeu;
 	InterfaceUtilisateur inter;
 	int decompte;
-	public int [] etats;
+    boolean carteJouer;
+    Action action;
+    Etat etat;
 	public static final int TEMPS = 60;
-    public static final int LIBRE = 0;
-    public static final int OCCUPEE = 1;
-    boolean carteJouer,estMenu;
 
-    boolean doitAnnuler,doitRefaire,doitMenu;
-    
-	public ControleurMediateur(Jeu j) {
-		estMenu = false;
-		doitAnnuler = false;
-		doitRefaire = false;
-		doitMenu = false;
+    public ControleurMediateur(Jeu j) {
+		action = Action.NOP;
+		etat = Etat.LIBRE;
 		jeu = j;
-		etats = new int[2];
 		carteJouer = false;
 	}
 	
@@ -42,10 +41,10 @@ public class ControleurMediateur implements CollecteurEvenements{
 		int j = jeu.joueurCourant();
 		Joueur joueur = jeu.getJoueur(j);
 		if (jeu.carteJouable(carte) && joueur.estHumain() && !carteJouer) {
-			etats[j] = OCCUPEE;
+			etat = Etat.OCCUPE;
 			joueur.jouerHumain(carte);
 			carteJouer = true;
-			etats[j] = LIBRE;
+			etat = Etat.LIBRE;
 			decompte = TEMPS;
 		}
 	}
@@ -81,7 +80,6 @@ public class ControleurMediateur implements CollecteurEvenements{
 			jeu.joueurCommence(0);
 		else
 			jeu.joueurCommence(1);
-		estMenu = false;
 		jeu.setMenu(false);
 		jeu.initialiserPhase1();
 		inter.afficherPlateau();
@@ -95,11 +93,11 @@ public class ControleurMediateur implements CollecteurEvenements{
 			a = new IAAleatoire(jeu, j);
 		else if(ia.equals("Moyen"))
 			a = new IAMinMax(jeu,j,6);
-		else if(ia.equals("Difficile +"))
-			a = new IAVisionComplete(jeu,j, 20);
-		else
+		else if(ia.equals("Difficile"))
 			a = new IAMonteCarlo(jeu,j, 20);
-		
+		else
+			a = new IAVisionComplete(jeu,j, 20);
+		// le joueur j sera une IA
 		jeu.getJoueur(j).setAssistant( a );
 	}
 	
@@ -107,18 +105,17 @@ public class ControleurMediateur implements CollecteurEvenements{
 		int j = jeu.joueurCourant();
 		Joueur joueur = jeu.getJoueur(j);
 		if(!jeu.finDePartie() && !joueur.estHumain()) {
-			etats[j] = OCCUPEE;
+			etat = Etat.OCCUPE;
 			carteJouer = true;
 			joueur.jouerAssistant();
-			etats[j] = LIBRE;
+			etat = Etat.LIBRE;
 			decompte = TEMPS;
 		}
 	}
 	
 	public void menu() {
 		inter.afficherMenu();
-		jeu.setSurMenu();
-		estMenu = true;
+		jeu.setMenu(true);
 	}
 
 	public void commande(String c) {
@@ -137,20 +134,16 @@ public class ControleurMediateur implements CollecteurEvenements{
 				test.demarrer( 50 );
 				break;
 			case "menu":
-				if(jeu.TourHumain()) {
-					menu();
-				}else{
-					doitMenu = true;
-				}
-				break;
-			case "refaire":
-				doitRefaire = true;
-				break;
-			case "annuler":
-				doitAnnuler = true;
+				action = Action.MENU;
 				break;
 			case "retour-menu":
 				menu();
+				break;
+			case "refaire":
+				action = Action.REFAIRE;
+				break;
+			case "annuler":
+				action = Action.ANNULER;
 				break;
 			case "charger":
 				break;
@@ -186,34 +179,34 @@ public class ControleurMediateur implements CollecteurEvenements{
 	public void tictac() {
 		decompte = decompte - 1;
 		// temporisation
-		if (decompte < 0) {
-			int j = jeu.joueurCourant();
+		if (!jeu.getMenu() && decompte < 0) {
 			if(carteJouer){
 				jeu.suivant();
 				carteJouer = false;
 			}else{
 				// par defaut appeler la tourIA si le joueur est une "IA" "non occupée" == LIBRE
 				// elle joue son coup, sinon l'appel est ignoré
-				if (!jeu.estSurMenu() && etats[jeu.joueurCourant()] == LIBRE && !estMenu)
+				if (etat == Etat.LIBRE)
 					tourIA();
 			}
-			if(doitAnnuler && etats[j] == LIBRE){
-				annuler();
-				doitAnnuler = false;
-			}
-			if (doitRefaire && etats[j] == LIBRE){
-				refaire();
-				doitRefaire = false;
-			}
-			if (doitMenu){
-				menu();
-				doitMenu = false;
-			}
 			decompte = TEMPS;
-			if (jeu.finDePartie() && jeu.gagnant() != -1) {
+			if (jeu.finDePartie()) {
 				jeu.afficherResultat();
+				action = Action.MENU;
 			}
 		}
+		// executer les actions dés que possible
+		if(action == Action.ANNULER && etat == Etat.LIBRE){
+			annuler();
+		}
+		else if (action == Action.REFAIRE && etat == Etat.LIBRE){
+			refaire();
+		}
+		else if (action == Action.MENU && etat == Etat.LIBRE) {
+			menu();
+		}
+		action = Action.NOP;
+		// actualiser l'affichage
 		inter.metAJour();
 	}
 }

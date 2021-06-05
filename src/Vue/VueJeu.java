@@ -114,7 +114,8 @@ public class VueJeu {
 			posCartes = new Point[14];
 		}
 		//joueur 1
-		List<Carte> mainJ0 = jeu.plateau().getMain(0);
+		List<Carte> mainJ0 = jeu.getJoueur(0).getMain();
+		Collections.sort(mainJ0);
 		int nbCartesJ0 = mainJ0.size();
 		int tailleReelJ0 = 20*margeL/(nbCartesJ0+1);
 		tailleReelJ0 = (tailleReelJ0 > carteL)?carteL:tailleReelJ0;
@@ -147,7 +148,8 @@ public class VueJeu {
 		}
 
 		//joueur 2
-		List<Carte> mainJ1 = jeu.plateau().getMain(1);
+		List<Carte> mainJ1 = jeu.getJoueur(1).getMain();
+		Collections.sort(mainJ1);
 		int nbCartesJ1 = mainJ1.size();
 		int tailleReelJ1 = 20*margeL/(nbCartesJ1+1);
 		tailleReelJ1 = (tailleReelJ1 > carteL)?carteL:tailleReelJ1;
@@ -229,10 +231,10 @@ public class VueJeu {
 
 		//j1
 		jg.tracerImage(cadreCarte,dxCC0,dyCC0,carteL,carteH);
-		jg.tracerTxt(jeu.getNom(0),dxCC0,hauteur-17*margeH);
+		jg.tracerTxt(jeu.getJoueur(0).getNom(),dxCC0,hauteur-17*margeH);
 		//j2
 		jg.tracerImage(cadreCarte,dxCC1,dyCC1,carteL,carteH);
-		jg.tracerTxt(jeu.getNom(1), dxCC1,hauteur-17*margeH);
+		jg.tracerTxt(jeu.getJoueur(1).getNom(), dxCC1,hauteur-17*margeH);
 
 		//zone de drop
 		if (jeu.joueurCourant() == 0){
@@ -441,12 +443,12 @@ public class VueJeu {
 		/* dessin du Joueur 1*/
 		jg.tracerRond(1*margeL,hauteur-12*margeH,5*margeL,9*margeH,cJ1);
 		jg.tracerImage(j1,2*margeL,hauteur-11*margeH,3*margeL,5*margeH);
-		jg.tracerTxt(jeu.getNom(0), 2*margeL,hauteur-5*margeH);
+		jg.tracerTxt(jeu.getJoueur(0).getNom(), 2*margeL,hauteur-5*margeH);
 
 		/* dessin du Joueur 2*/
 		jg.tracerRond(1*margeL,2*margeH,5*margeL,9*margeH,cJ2);
 		jg.tracerImage(j2,2*margeL,3*margeH,3*margeL,5*margeH);
-		jg.tracerTxt(jeu.getNom(1),2*margeL,9*margeH);
+		jg.tracerTxt(jeu.getJoueur(1).getNom(),2*margeL,9*margeH);
 
 	}
 

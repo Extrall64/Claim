@@ -14,14 +14,16 @@ import Modele.Plateau;
 public class IAMonteCarlo implements IA {
 	Jeu config;
 	int joueur, autreJoueur, meilleurScore, echantillon;
-	Random rand;
 	List<Carte> meilleursCoup;
+	private boolean visionComplete;
+	Random rand;
 	public IAMonteCarlo(Jeu c, int j, int nb) {
 		config = c;
 		echantillon = nb;
-		rand = new Random();
 		joueur = j;
 		autreJoueur = (joueur + 1) % 2;
+		visionComplete = false;
+		rand = new Random();
 	}
     public Carte determineCoup() {
 		meilleursCoup = new ArrayList<>();
@@ -42,7 +44,7 @@ public class IAMonteCarlo implements IA {
     						break;
     					}
     				}
-    				// continue la partie aleatoirement
+    				// continuer la partie aleatoirement
         			continueAleatoirement(nconfig);
         			// actualiser le score de coup
         			if (nconfig.gagnant() - 1 == joueur)
@@ -63,6 +65,7 @@ public class IAMonteCarlo implements IA {
         System.out.printf("[IA MonteCarlo] a joué son coup: [%d] %s\n", aleatoire, carte);
     	return carte;
     }
+    
     // terminer la partie aleatoirement
     public void continueAleatoirement(Jeu config) {
     	Plateau plateau = config.plateau();
@@ -85,5 +88,9 @@ public class IAMonteCarlo implements IA {
 	    	Carte c = l.get( rand.nextInt(l.size()) );
 			config.joueCarte(c);
 		}
+    }
+
+	public void activerVisionComplete() {
+    	visionComplete = true;
     }
 }

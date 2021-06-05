@@ -9,13 +9,11 @@ public class Jeu {
 
     private Plateau plateau;
     private int gagnant, mode;
-    private String[] noms;
     boolean menu;
     private Joueur [] joueurs;
     public Jeu() {
         plateau = new Plateau();
         joueurs = new Joueur[2];
-        noms = new String[2];
         menu = true;
     }
     
@@ -175,27 +173,16 @@ public class Jeu {
     	return mode;
     }
     
-    public String getNom(int joueur) {
-    	return noms[joueur];
-    }
-    
-    public void setNom(int joueur, String s) {
-    	noms[joueur] = s;
-    }
     public void afficherResultat() {
 		if (gagnant() == 0) System.out.println("Match nul");
 		if (gagnant() == 1) System.out.println("Joueur 1 a gagne");
 		if (gagnant() == 2) System.out.println("Joueur 2 a gagne"); 	
 		gagnant = -1;
     }
-	public boolean estSurMenu() {
+	public boolean getMenu() {
 		return menu;
 	}
 	
-	public void setSurMenu() {
-		menu = true;
-	}
-
 	public void setMenu(boolean b) {
 		menu = b;
 	}

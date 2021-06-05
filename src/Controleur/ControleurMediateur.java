@@ -144,18 +144,10 @@ public class ControleurMediateur implements CollecteurEvenements{
 				}
 				break;
 			case "refaire":
-				if(jeu.TourHumain()) {
-					refaire();
-				}else{
-					doitRefaire = true;
-				}
+				doitRefaire = true;
 				break;
 			case "annuler":
-				if(jeu.TourHumain()) {
-					annuler();
-				}else{
-					doitAnnuler = true;
-				}
+				doitAnnuler = true;
 				break;
 			case "retour-menu":
 				menu();
@@ -195,6 +187,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 		decompte = decompte - 1;
 		// temporisation
 		if (decompte < 0) {
+			int j = jeu.joueurCourant();
 			if(carteJouer){
 				jeu.suivant();
 				carteJouer = false;
@@ -204,11 +197,11 @@ public class ControleurMediateur implements CollecteurEvenements{
 				if (!jeu.estSurMenu() && etats[jeu.joueurCourant()] == LIBRE && !estMenu)
 					tourIA();
 			}
-			if(doitAnnuler){
+			if(doitAnnuler && etats[j] == LIBRE){
 				annuler();
 				doitAnnuler = false;
 			}
-			if (doitRefaire){
+			if (doitRefaire && etats[j] == LIBRE){
 				refaire();
 				doitRefaire = false;
 			}

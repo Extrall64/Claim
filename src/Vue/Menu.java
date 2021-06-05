@@ -1,8 +1,6 @@
 package Vue;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
 
@@ -13,15 +11,15 @@ import javax.swing.JLabel;
 import Global.Configuration;
 
 public class Menu extends JComponent{
-	int largeur, hauteur;
+	int largeur, hauteur,margeL,margeH;
 	Graphics2D drawable;
 
 	CollecteurEvenements controle;
 	
-	ImageClaim fond;
+	ImageClaim fond,claim;
 	JButton nouvellePartie_h_vs_h,nouvellePartie_ia_vs_ia,nouvellePartie_h_vs_ia,test_ia;
 	JButton charger,regle,aide,parametre;
-	JLabel titre,nouvelle_partie;
+	JLabel nouvelle_partie;
 	
 	public Menu(CollecteurEvenements c) {
 		controle = c;
@@ -53,8 +51,12 @@ public class Menu extends JComponent{
 		largeur = getSize().width;
 		hauteur = getSize().height;
 
+		margeL = largeur/40;
+		margeH = hauteur/40;
+
 		drawable.clearRect(0, 0, largeur, hauteur); //efface tout
 		drawable.drawImage(fond.image(), 0, 0, largeur, hauteur, null);
+		drawable.drawImage(claim.image(), 12*margeL, 0, 16*margeL, 12*margeH, null);
 		ajuster();
 	}
 	
@@ -63,8 +65,7 @@ public class Menu extends JComponent{
 		int btnH = hauteur/12;
 		int orgX = largeur/17 * 2;
 		int orgY = hauteur/24;
-		
-		titre.setBounds(largeur/2 - btnL/2, orgY, btnL, btnH);
+
 		nouvelle_partie.setBounds(orgX, hauteur/3 - orgY, btnL, btnH);
 		
 		nouvellePartie_h_vs_h.setBounds(orgX, hauteur/3 + orgY, btnL, btnH);
@@ -81,6 +82,7 @@ public class Menu extends JComponent{
 	private void initilaiser() {
 		
 		fond = chargeImage("fond");
+		claim = ImageClaim.getImageClaim("Image/claimLogo.png");
 
 		nouvellePartie_h_vs_h = createButton("Humain VS Humain", "humain_vs_humain");
 		this.add(nouvellePartie_h_vs_h);
@@ -105,9 +107,6 @@ public class Menu extends JComponent{
 		
 		parametre = createButton("Parametre", "parametre");
 		this.add(parametre);
-		
-		titre = createLabel("MENU");
-		this.add(titre);
 		
 		nouvelle_partie = createLabel("Nouvelle Partie :");
 		this.add(nouvelle_partie);

@@ -160,6 +160,9 @@ public class ControleurMediateur implements CollecteurEvenements{
 					doitAnnuler = true;
 				}
 				break;
+			case "retour-menu":
+				menu();
+				break;
 			case "charger":
 				break;
 			case "regle":

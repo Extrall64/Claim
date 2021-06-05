@@ -1,8 +1,6 @@
 package Vue;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
 
@@ -16,21 +14,25 @@ import Global.Configuration;
 import Modele.Jeu;
 
 public class NouvellePartie extends JComponent {
-	int largeur, hauteur;
+	int largeur, hauteur,margeL,margeH;
 	Graphics2D drawable;
 
 	CollecteurEvenements controle;
 	int mode;
 	
 	ImageClaim fond;
-	JButton jouer;
-	JLabel nouvelle_partie,nom1,nom2,ia1,ia2,joueur1,joueur2,joueur;
+	JButton jouer,retour;
+	JLabel nom1,nom2,ia1,ia2,joueur1,joueur2,quiCommence;
 	JComboBox joueurCommence,choixia1,choixia2;
 	JTextField choixnom1,choixnom2;
+
+	ImageClaim livre,nvlpartie;
 	
 	public NouvellePartie(CollecteurEvenements c) {
 		controle = c;
 		initilaiser();
+		livre = ImageClaim.getImageClaim("Image/livreOuvert.png");
+		nvlpartie = ImageClaim.getImageClaim("Image/nvlPartie.png");
 	}
 	
 	public void init(int m) {
@@ -59,6 +61,8 @@ public class NouvellePartie extends JComponent {
 	private JLabel createLabel(String s) {
 		JLabel lab = new JLabel(s);
 		lab.setAlignmentX(Component.CENTER_ALIGNMENT);
+		Font font = new Font("Comic Sans MS", Font.ITALIC | Font.BOLD, 15);
+		lab.setFont(font);
 		return lab;
 	}
 	
@@ -80,36 +84,37 @@ public class NouvellePartie extends JComponent {
 		largeur = getSize().width;
 		hauteur = getSize().height;
 
+		margeL = largeur/40;
+		margeH = hauteur/40;
+
 		drawable.clearRect(0, 0, largeur, hauteur); //efface tout
 		drawable.drawImage(fond.image(), 0, 0, largeur, hauteur, null);
+		drawable.drawImage(livre.image(),2*margeL,8*margeH,36*margeL,32*margeH,null);
+		drawable.drawImage(nvlpartie.image(),12*margeL,margeH,16*margeL,7*margeH,null);
 		ajuster();
 	}
 	
 	private void ajuster() {
-		int btnL = largeur/17 * 3;
-		int btnH = hauteur/12;
-		int orgX = largeur/17 * 2;
-		int orgY = hauteur/24;
-		
-		nouvelle_partie.setBounds(largeur/2 - btnL/2, orgY, btnL, btnH);
-		joueur1.setBounds(largeur/4 - btnL/2, orgY *3, btnL, btnH);
-		joueur2.setBounds(largeur/4 * 3 - btnL/2, orgY*3, btnL, btnH);
-		
-		nom1.setBounds(largeur/6 - btnL/2, orgY *6 , btnL, btnH);
-		nom2.setBounds(largeur/6 * 4 - btnL/2, orgY*6, btnL, btnH);
-		choixnom1.setBounds(largeur/6 * 2 - btnL/2, orgY*6, btnL, btnH);
-		choixnom2.setBounds(largeur/6 * 5 - btnL/2, orgY*6, btnL, btnH);
-		
-		ia1.setBounds(largeur/6 - btnL/2, orgY*9, btnL, btnH);
-		ia2.setBounds(largeur/6 *4 - btnL/2, orgY*9, btnL, btnH);
-		choixia1.setBounds(largeur/6 *2 - btnL/2, orgY*9, btnL, btnH);
-		choixia2.setBounds(largeur/6 * 5 - btnL/2, orgY*9, btnL, btnH);
-		
-		joueur.setBounds(largeur/3 - btnL/2, orgY * 12, btnL, btnH);
-		joueurCommence.setBounds(largeur/3 *2 - btnL/2, orgY*12, btnL, btnH);
-		
-		jouer.setBounds(largeur/2 - btnL/2, orgY*18, btnL, btnH);
-		
+		joueur1.setBounds(7*margeL,11*margeH,12*margeL,2*margeH);
+		joueur2.setBounds(24*margeL,11*margeH,12*margeL,2*margeH);
+
+		nom1.setBounds(7*margeL, 15*margeH, 5*margeL, 2*margeH);
+		nom2.setBounds(24*margeL, 15*margeH, 5*margeL, 2*margeH);
+
+		choixnom1.setBounds(10*margeL, 15*margeH, 6*margeL, 2*margeH);
+		choixnom2.setBounds(27*margeL, 15*margeH, 6*margeL, 2*margeH);
+
+		ia1.setBounds(7*margeL, 19*margeH, 5*margeL, 2*margeH);
+		ia2.setBounds(24*margeL, 19*margeH, 5*margeL, 2*margeH);
+
+		choixia1.setBounds(10*margeL, 19*margeH, 6*margeL, 2*margeH);
+		choixia2.setBounds(27*margeL, 19*margeH, 6*margeL, 2*margeH);
+
+		quiCommence.setBounds(22*margeL, 25*margeH, 10*margeL, 2*margeH);
+		joueurCommence.setBounds(29*margeL, 25*margeH, 5*margeL, 2*margeH);
+
+		jouer.setBounds(29*margeL, 30*margeH, 6*margeL, 2*margeH);
+		retour.setBounds(7*margeL, 30*margeH, 6*margeL, 2*margeH);
 	}
 	
 	private void initilaiser() {
@@ -118,9 +123,10 @@ public class NouvellePartie extends JComponent {
 
 		jouer = createButton("Jouer", "demarrer_partie");
 		this.add(jouer);
-		
-		nouvelle_partie = createLabel("NOUVELLE PARTIE");
-		this.add(nouvelle_partie);
+		retour = createButton("Accueil", "retour-menu");
+		this.add(retour);
+
+
 		nom1 = createLabel("Nom :");
 		this.add(nom1);
 		nom2 = createLabel("Nom :");
@@ -129,11 +135,11 @@ public class NouvellePartie extends JComponent {
 		this.add(ia1);
 		ia2 = createLabel("IA :");
 		this.add(ia2);
-		joueur = createLabel("Joueur Commence :");
-		this.add(joueur);
-		joueur1 = createLabel("Joueur 1");
+		quiCommence = createLabel("Qui commence ?");
+		this.add(quiCommence);
+		joueur1 = createLabel("Joueur 1 :");
 		this.add(joueur1);
-		joueur2 = createLabel("Joueur 2");
+		joueur2 = createLabel("Joueur 2 :");
 		this.add(joueur2);
 		
 		String[] ia = { "Facile", "Moyen", "Difficile","Difficile +" };

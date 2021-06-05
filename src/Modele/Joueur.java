@@ -3,7 +3,9 @@ package Modele;
 import java.util.List;
 import IA.IA;
 import IA.IAMonteCarlo;
-
+/*
+* Joueur peut etre un humain ou une IA, joue soit via jouerHumain ou jouerAssistant
+*/
 public class Joueur {
 	private List<Carte> main, partisans, score;
 	private String nom;

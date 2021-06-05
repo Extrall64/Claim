@@ -144,6 +144,8 @@ public class Plateau extends Historique<Action> implements Serializable {
                 case Plateau.iPartisansB: partisans.get(JoueurB).add( cartes[i] );break;
             }
         }
+            Collections.sort(mains.get(JoueurA));
+            Collections.sort(mains.get(JoueurB));
     }
 
     public void changerJoueur() {
@@ -493,22 +495,13 @@ public class Plateau extends Historique<Action> implements Serializable {
 		return clone;
 	}
     
-    public int hash() {
-        int r = 1	;
-        for (int i = 0; i < nbCarte; i++)
-        	r = r + i * cartes[i].hash();
-        	r = r % 20000;
-        return r;
-    }
-
-	public boolean equals(Object o) {
-		Plateau p = (Plateau) o;
-		return hash() == p.hash();
-	}
     public void remplace(Plateau n) { //appel de l'historique
     	cartes = n.cartes();
      	phase = n.phase();
     	joueurCourant = n.joueurCourant();
+    	carteAJouer = n.carteAJouer;
+    	carteCourante[JoueurA] = n.carteCourante[JoueurA];
+    	carteCourante[JoueurB] = n.carteCourante[JoueurB];
     	reconstruirePiles();
     }
 

@@ -241,7 +241,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 		}else if(action == Action.NVLPARTIE && etat == Etat.LIBRE){
 			nvlpartie();
 		}
-		action = Action.NOP;
+		else if(etat == Etat.LIBRE) action = Action.NOP;
 		// actualiser l'affichage
 		inter.metAJour();
 	}

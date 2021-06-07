@@ -239,10 +239,10 @@ public class VueJeu {
 		}
 
 		//j1
-		jg.tracerImage(cadreCarte, depCC0.x,depCC0.y,carteL,carteH);
+		jg.tracerImage(cadreCarte, depCC0.x-margeL/10,depCC0.y-margeH/6,carteL+margeL/5,carteH+margeH/3);
 		jg.tracerTxt(jeu.getJoueur(0).getNom(),depCC0.x,hauteur-17*margeH,f);
 		//j2
-		jg.tracerImage(cadreCarte,depCC1.x,depCC1.y,carteL,carteH);
+		jg.tracerImage(cadreCarte,depCC1.x-margeL/10,depCC1.y-margeH/6,carteL+margeL/5,carteH+margeH/3);
 		jg.tracerTxt(jeu.getJoueur(1).getNom(), depCC1.x,hauteur-17*margeH,f);
 
 		//zone de drop
@@ -282,7 +282,7 @@ public class VueJeu {
 		if(jeu.plateau().getPartisans(1).size() > 0) {
 			jg.tracerImage(dos, versPartisansJ1.x, versPartisansJ1.y, carteL, carteH);
 		}
-		jg.tracerTxt("Partisans",largeur-10*margeL,2*margeH,f);
+		jg.tracerTxt("Partisans",largeur-10*margeL,2*margeH - margeH/2,f);
 	}
 
 	private void metAJourCartesScore(){
@@ -310,13 +310,13 @@ public class VueJeu {
 
 	private void afficheScore(){
 		//J1
-		jg.tracerImage(cadreCarte, largeur - 10*margeL, hauteur - 13*margeH,9*margeL,carteH);
+		jg.tracerImage(cadreCarte, largeur - 10*margeL -margeL/10, hauteur - 13*margeH-margeH/6,9*margeL,carteH+margeH/3);
 		for(int i=0;i<5;i++){
 			jg.tracerTxt(nomFact[i]+": x "+cartesJ0[i],largeur - 5*margeL,hauteur - 13*margeH +(i+1)*2*margeH,f1);
 		}
 
 		//J2
-		jg.tracerImage(cadreCarte, largeur - 10*margeL, 2*margeH,9*margeL,carteH);
+		jg.tracerImage(cadreCarte, largeur - 10*margeL -margeL/10, 2*margeH-margeH/6,9*margeL,carteH+margeH/3);
 		for(int i=0;i<5;i++){
 			jg.tracerTxt(nomFact[i]+": x "+cartesJ1[i],largeur - 5*margeL,2*margeH +(i+1)*2*margeH,f1);
 		}
@@ -400,11 +400,12 @@ public class VueJeu {
 
 		//joueur 1
 		dessineCarteScore(0,x1,y1);
-		jg.tracerTxt("Score",x1,hauteur-margeH,f);
+		jg.tracerTxt("Score",x1+2*margeL,hauteur-margeH,f);
 
 		//joueur 2
 		dessineCarteScore(1,x2,y2);
-		jg.tracerTxt("Score",x2,2*margeH,f);
+		jg.tracerTxt("Score",x2+2*margeL,2*margeH - margeH/2,f);
+
 		if(jeu.plateau().phase()==2){
 			afficheScore();
 		}

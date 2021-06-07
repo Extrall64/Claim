@@ -95,6 +95,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 		jeu.setMenu(false);
 		jeu.initialiserPhase1();
 		inter.afficherPlateau();
+		decompte = TEMPS;
 	}
 	
 	public void initialiserIA(int j,String ia) {

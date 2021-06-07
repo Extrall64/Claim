@@ -9,6 +9,9 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import Global.Configuration;
 import Modele.Jeu;
@@ -155,10 +158,31 @@ public class NouvellePartie extends JComponent {
 		this.add(joueurCommence);
 		
 		choixnom1 = new JTextField(20);
+		choixnom1.setDocument(new LimitJTextField(12));
 		choixnom1.setText("Joueur 1");
 		this.add(choixnom1);
+
 		choixnom2 = new JTextField(20);
+		choixnom2.setDocument(new LimitJTextField(12));
 		choixnom2.setText("Joueur 2");
 		this.add(choixnom2);
-	}	
+
+	}
+
+	class LimitJTextField extends PlainDocument {
+		private int max;
+
+		LimitJTextField(int max) {
+			super();
+			this.max = max;
+		}
+
+		public void insertString(int offset, String text, AttributeSet attr) throws BadLocationException {
+			if (text == null)
+				return;
+			if ((getLength() + text.length()) <= max) {
+				super.insertString(offset, text, attr);
+			}
+		}
+	}
 }

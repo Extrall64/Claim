@@ -3,12 +3,15 @@ package Vue;
 import java.awt.*;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import Global.Configuration;
 import Modele.Carte;
 import Modele.Jeu;
 import Modele.Plateau;
+
+import static java.lang.Math.min;
 
 public class VueJeu {
 	int joueurCourant;
@@ -20,9 +23,11 @@ public class VueJeu {
 	ImageClaim j1,j2;
 	ImageClaim cadreCarte;
 	JeuGraphique jg;
-	Font f;
+	Font f,f1;
+
 	int[] cartesJ0;
 	int[] cartesJ1;
+	String[] nomFact;
 
 	int hauteur,largeur;
 	int carteL,carteH;
@@ -63,6 +68,12 @@ public class VueJeu {
 	public VueJeu(Jeu j, JeuGraphique n) {
 		cartesJ0 = new int[5];
 		cartesJ1 = new int[5];
+		nomFact = new String[5];
+		nomFact[0] = "Gobelins";
+		nomFact[1] = "Nains";
+		nomFact[2] = "Mort-vivants";
+		nomFact[3] = "Doppelgangers";
+		nomFact[4] = "Chevaliers";
 		combatAnim = false;
 		images = new ImageClaim[5][10];
 		for(int i=0;i<10;i++) {
@@ -81,7 +92,6 @@ public class VueJeu {
 		j1 = chargeImage("j1");
 		j2 = chargeImage("j2");
 		cadreCarte = ImageClaim.getImageClaim("Image/Fond_carte.png");
-		Font f = new Font("Comic Sans MS", Font.ITALIC | Font.BOLD, 12);
 	}
 
 	void tracerNiveau() {
@@ -98,6 +108,8 @@ public class VueJeu {
 		carteH = 5*hauteur/20;
 		margeL = largeur/40;
 		margeH = hauteur/40;
+
+		//f1 = new Font("Comic Sans MS", Font.ITALIC | Font.BOLD, (min(2*margeL/3,5*margeH/4)));
 
 		dessineJoueur();
 		if(plateau.phase()==1) {
@@ -263,6 +275,43 @@ public class VueJeu {
 		jg.tracerTxt("Partisans",largeur-10*margeL,2*margeH,f);
 	}
 
+	private void metAJourCartesScore(){
+		for(int i=0;i<5;i++){
+			cartesJ0[i]=0;
+			cartesJ1[i]=0;
+		}
+
+		Carte c;
+		List<Carte> l = jeu.getJoueur(0).getScore();
+		Iterator<Carte> it = l.iterator();
+		while(it.hasNext()){
+			c = it.next();
+			cartesJ0[c.getFaction()] += 1;
+		}
+
+		l = jeu.getJoueur(1).getScore();
+		it = l.iterator();
+		while(it.hasNext()){
+			c = it.next();
+			cartesJ1[c.getFaction()] += 1;
+		}
+
+	}
+
+	private void afficheScore(){
+		//J1
+		jg.tracerImage(cadreCarte, largeur - 10*margeL, hauteur - 13*margeH,9*margeL,carteH);
+		for(int i=0;i<5;i++){
+			jg.tracerTxt(nomFact[i]+": x "+cartesJ0[i],largeur - 5*margeL,hauteur - 13*margeH +(i+1)*2*margeH,f1);
+		}
+
+		//J2
+		jg.tracerImage(cadreCarte, largeur - 10*margeL, 2*margeH,9*margeL,carteH);
+		for(int i=0;i<5;i++){
+			jg.tracerTxt(nomFact[i]+": x "+cartesJ1[i],largeur - 5*margeL,2*margeH +(i+1)*2*margeH,f1);
+		}
+	}
+
 	private void dessineCarteScore(int joueur,int x,int y){
 		List<Carte> cartes = jeu.plateau().getScore(joueur);
 		int nbCartes = cartes.size();
@@ -333,10 +382,12 @@ public class VueJeu {
 						versCC1 = new Point (x1, y1);
 					}
 				}
-				//metAJourCartesScore();
-				//afficheScore();
+			}
+			if(jeu.plateau().carteCourante(0)==null && jeu.plateau().carteCourante(1)==null){
+				metAJourCartesScore();
 			}
 		}
+
 		//joueur 1
 		dessineCarteScore(0,x1,y1);
 		jg.tracerTxt("Score",x1,hauteur-margeH,f);
@@ -344,6 +395,9 @@ public class VueJeu {
 		//joueur 2
 		dessineCarteScore(1,x2,y2);
 		jg.tracerTxt("Score",x2,2*margeH,f);
+		if(jeu.plateau().phase()==2){
+			afficheScore();
+		}
 	}
 
 	private void dessineAgagner(){

@@ -20,7 +20,7 @@ public class FinDePartie extends JComponent{
 
     ImageClaim fond,j1,j2,claim,nain,dop,chev,gob,mor;
     JButton rejouerMemeReglages,menu;
-    JLabel nom1,nom2,gagnantTxt,perdantTxt,egaliteTxt;
+    JLabel nom1,nom2,gagnantTxt,egaliteTxt;
     int gagnant;
 
     int[] cartesJ0;
@@ -74,10 +74,22 @@ public class FinDePartie extends JComponent{
         n1 = jeu.getJoueur(0).getNom();
         n2 = jeu.getJoueur(1).getNom();
 
+        if(nom1!=null){
+            this.remove(nom1);
+        }
+        if(nom2!=null){
+            this.remove(nom2);
+        }
+
         nom1 = createLabel(n1);
         this.add(nom1);
         nom2 = createLabel(n2);
         this.add(nom2);
+
+        for(int i=0;i<5;i++){
+            cartesJ0[i]=0;
+            cartesJ1[i]=0;
+        }
 
         Carte c;
         List<Carte> l = jeu.getJoueur(0).getScore();
@@ -119,6 +131,8 @@ public class FinDePartie extends JComponent{
 
         switch (gagnant){
             case 0:
+                gagnantTxt.setVisible(false);
+                egaliteTxt.setVisible(true);
                 setFont(egaliteTxt,min(3*margeL,4*margeH));
                 egaliteTxt.setBounds(16*margeL, 4*margeH, 16*margeL, 5*margeH);
                 /*
@@ -126,6 +140,8 @@ public class FinDePartie extends JComponent{
                 drawable.drawImage(j2.image(), 35*margeL, 4*margeH, 4*margeL, 4*margeH, null);*/
                 break;
             case 1:
+                gagnantTxt.setVisible(true);
+                egaliteTxt.setVisible(false);
                 setFont(gagnantTxt,min(2*margeL,3*margeH));
                 gagnantTxt.setBounds(8*margeL, 3*margeH, 11*margeL, 5*margeH);
 
@@ -137,6 +153,8 @@ public class FinDePartie extends JComponent{
                 grise(35*margeL, 4*margeH, 4*margeL, 4*margeH);*/
                 break;
             case 2:
+                gagnantTxt.setVisible(true);
+                egaliteTxt.setVisible(false);
                 setFont(gagnantTxt,min(2*margeL,3*margeH));
                 gagnantTxt.setBounds(8*margeL, 3*margeH, 11*margeL, 5*margeH);
 
@@ -205,8 +223,6 @@ public class FinDePartie extends JComponent{
 
         gagnantTxt = createLabel("Gagnant : ");
         this.add(gagnantTxt);
-        perdantTxt = createLabel("Perdant : ");
-        this.add(perdantTxt);
         egaliteTxt = createLabel("Egalité ! ");
         this.add(egaliteTxt);
 

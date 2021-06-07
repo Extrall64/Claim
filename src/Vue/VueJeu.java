@@ -11,9 +11,9 @@ import Modele.Carte;
 import Modele.Jeu;
 import Modele.Plateau;
 
-import static java.lang.Math.min;
-
 public class VueJeu {
+	static int TMPANIM = 20;
+
 	int joueurCourant;
 	Point[] posCartes;
 	Jeu jeu;
@@ -33,15 +33,17 @@ public class VueJeu {
 	int carteL,carteH;
 	int margeL,margeH;
 
-	boolean combatAnim,combatAnimPioche, carteCouranteAnim;
+	boolean combatAnim,combatAnimPioche, carteCouranteAnim,piocheAnim;
 	int joueurWin;
 
+	int comptAvtAnim;
 	Point versPartisansJ0, versPartisansJ1;
 	Point depCarte;
-	Point pioche, depPioche, versPioche;
+	Point pioche, depPioche;
 	Point carteWin;
 	Point cc0, cc1, depCC0, depCC1, versCC0, versCC1;
 	Point drag, dropDeb, dropFin;
+	Point depNvlPioche,destNvlPioche;
 	
 	Carte dragAndDrop;
 	boolean estSurZoneDrop;
@@ -66,6 +68,7 @@ public class VueJeu {
 	}
 
 	public VueJeu(Jeu j, JeuGraphique n) {
+		comptAvtAnim = TMPANIM;
 		cartesJ0 = new int[5];
 		cartesJ1 = new int[5];
 		nomFact = new String[5];
@@ -203,15 +206,22 @@ public class VueJeu {
 		depCC0 = new Point(16 * margeL, 14 * margeH);
 		depCC1 = new Point( largeur - 18 * margeL, 14 * margeH);
 		if(jeu.plateau().combatPret()) {
-			if(!carteCouranteAnim){
-				carteCouranteAnim = true;
-				joueurWin = jeu.plateau().quiGagneCombat();
+			if(comptAvtAnim == 0) {
+				if (!carteCouranteAnim) {
+					carteCouranteAnim = true;
+					joueurWin = jeu.plateau().quiGagneCombat();
+					cc0 = new Point(depCC0.x, depCC0.y);
+					cc1 = new Point(depCC1.x, depCC1.y);
+				}
+				interpolation(cc0, versCC0);
+				interpolation(cc1, versCC1);
+			}else{
+				comptAvtAnim--;
 				cc0 = new Point(depCC0.x ,depCC0.y);
 				cc1 = new Point(depCC1.x ,depCC1.y);
 			}
-			interpolation(cc0, versCC0);
-			interpolation(cc1, versCC1);
 		}else{
+			comptAvtAnim = TMPANIM;
 			carteCouranteAnim = false;
 			cc0 = new Point(depCC0.x ,depCC0.y);
 			cc1 = new Point(depCC1.x ,depCC1.y);
@@ -401,7 +411,7 @@ public class VueJeu {
 	}
 
 	private void dessineAgagner(){
-		depCarte =new Point( 6*margeL, 14*margeH);
+		depCarte = new Point( 6*margeL, 14*margeH);
 
 		if(jeu.plateau().combatPret()){
 			if(!combatAnim){
@@ -416,7 +426,17 @@ public class VueJeu {
 			}
 		}else{
 			combatAnim = false;
-			carteWin = new Point (depCarte.x, depCarte.y);
+			if(jeu.plateau().carteCourante(0)==null && jeu.plateau().carteCourante(1)==null){
+				destNvlPioche = depCarte;
+				if(!piocheAnim){
+					piocheAnim = true;
+					carteWin = new Point(depPioche.x,depPioche.y);
+				}
+				interpolation(carteWin,destNvlPioche);
+			}else{
+				piocheAnim = false;
+				carteWin = new Point (depCarte.x, depCarte.y);
+			}
 		}
 		Carte aGagner = jeu.plateau().carteAJouer();
 		if(aGagner != null) {

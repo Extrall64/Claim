@@ -5,7 +5,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -22,13 +21,16 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	HautDePlateau haut;
 	NouvellePartie nouv;
 	FinDePartie fin;
-	
-	JPanel panneau;
+
+	ImageClaim Icon;
+
 	JFrame frame;
 
 	InterfaceGraphique(Jeu j, CollecteurEvenements c) {
 		jeu = j;
 		controle = c;
+
+		Icon = ImageClaim.getImageClaim("Image/iconPage.jpg");
 	}
 
 	public static void demarrer(Jeu j, CollecteurEvenements c) {
@@ -37,6 +39,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 
 	public void run() {	
 		frame = new JFrame("Claim");
+		frame.setIconImage(Icon.image());
 		
 		menu = new Menu(controle);
 		nouv = new NouvellePartie(controle);

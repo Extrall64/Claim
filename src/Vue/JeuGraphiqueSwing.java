@@ -89,7 +89,8 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		drawable.drawLine(x1,y1,x2,y2);
 	}
 
-	public void tracerTxt(String s,int x,int y){
+	public void tracerTxt(String s,int x,int y,Font f){
+		drawable.setFont(f);
 		drawable.setColor(Color.black);
 		drawable.drawString(s,x,y);
 	}

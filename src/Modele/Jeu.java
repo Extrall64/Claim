@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import IA.IA;
+
 public class Jeu {
 
     private Plateau plateau;
@@ -176,8 +177,7 @@ public class Jeu {
     public void afficherResultat() {
 		if (gagnant() == 0) System.out.println("Match nul");
 		if (gagnant() == 1) System.out.println("Joueur 1 a gagne");
-		if (gagnant() == 2) System.out.println("Joueur 2 a gagne"); 	
-		gagnant = -1;
+		if (gagnant() == 2) System.out.println("Joueur 2 a gagne");
     }
 	public boolean getMenu() {
 		return menu;

@@ -1,7 +1,6 @@
 package Vue;
 
 import java.awt.*;
-import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +20,7 @@ public class VueJeu {
 	ImageClaim j1,j2;
 	ImageClaim cadreCarte;
 	JeuGraphique jg;
+	Font f;
 
 	int hauteur,largeur;
 	int carteL,carteH;
@@ -77,6 +77,7 @@ public class VueJeu {
 		j1 = chargeImage("j1");
 		j2 = chargeImage("j2");
 		cadreCarte = ImageClaim.getImageClaim("Image/Fond_carte.png");
+		Font f = new Font("Comic Sans MS", Font.ITALIC | Font.BOLD, 12);
 	}
 
 	void tracerNiveau() {
@@ -213,10 +214,10 @@ public class VueJeu {
 
 		//j1
 		jg.tracerImage(cadreCarte, depCC0.x,depCC0.y,carteL,carteH);
-		jg.tracerTxt(jeu.getJoueur(0).getNom(),depCC0.x,hauteur-17*margeH);
+		jg.tracerTxt(jeu.getJoueur(0).getNom(),depCC0.x,hauteur-17*margeH,f);
 		//j2
 		jg.tracerImage(cadreCarte,depCC1.x,depCC1.y,carteL,carteH);
-		jg.tracerTxt(jeu.getJoueur(1).getNom(), depCC1.x,hauteur-17*margeH);
+		jg.tracerTxt(jeu.getJoueur(1).getNom(), depCC1.x,hauteur-17*margeH,f);
 
 		//zone de drop
 		int xDropDeb;
@@ -239,7 +240,7 @@ public class VueJeu {
 			Carte c = def.get(def.size()-1);
 			jg.tracerImage(images[c.getFaction()][c.getPoid()],largeur - 8*margeL,14*margeH,carteL,carteH);
 		}
-		jg.tracerTxt("Défausse",largeur - 8*margeL,hauteur-16*margeH);
+		jg.tracerTxt("Défausse",largeur - 8*margeL,hauteur-16*margeH,f);
 	}
 
 	private void dessinePartisans(){
@@ -248,14 +249,14 @@ public class VueJeu {
 		if(jeu.plateau().getPartisans(0).size() > 0) {
 			jg.tracerImage(dos, versPartisansJ0.x, versPartisansJ0.y, carteL, carteH);
 		}
-		jg.tracerTxt("Partisans",largeur-10*margeL,hauteur-margeH);
+		jg.tracerTxt("Partisans",largeur-10*margeL,hauteur-margeH,f);
 
 		//joueur 2
 		versPartisansJ1= new Point(largeur-10*margeL, 2*margeH);
 		if(jeu.plateau().getPartisans(1).size() > 0) {
 			jg.tracerImage(dos, versPartisansJ1.x, versPartisansJ1.y, carteL, carteH);
 		}
-		jg.tracerTxt("Partisans",largeur-10*margeL,2*margeH);
+		jg.tracerTxt("Partisans",largeur-10*margeL,2*margeH,f);
 	}
 
 	private void dessineCarteScore(int joueur,int x,int y){
@@ -332,11 +333,11 @@ public class VueJeu {
 		}
 		//joueur 1
 		dessineCarteScore(0,x1,y1);
-		jg.tracerTxt("Score",x1,hauteur-margeH);
+		jg.tracerTxt("Score",x1,hauteur-margeH,f);
 
 		//joueur 2
 		dessineCarteScore(1,x2,y2);
-		jg.tracerTxt("Score",x2,2*margeH);
+		jg.tracerTxt("Score",x2,2*margeH,f);
 	}
 
 	private void dessineAgagner(){
@@ -385,7 +386,7 @@ public class VueJeu {
 		}
 		if(jeu.plateau().pioche.size() > 0) {
 			jg.tracerImage(dos, pioche.x, pioche.y, carteL, carteH);
-			jg.tracerTxt("Pioche",margeL,26*margeH);
+			jg.tracerTxt("Pioche",margeL,26*margeH,f);
 		}
 	}
 
@@ -402,12 +403,12 @@ public class VueJeu {
 		/* dessin du Joueur 1*/
 		jg.tracerRond(1*margeL,hauteur-12*margeH,5*margeL,9*margeH,cJ1);
 		jg.tracerImage(j1,2*margeL,hauteur-11*margeH,3*margeL,5*margeH);
-		jg.tracerTxt(jeu.getJoueur(0).getNom(), 2*margeL,hauteur-5*margeH);
+		jg.tracerTxt(jeu.getJoueur(0).getNom(), 2*margeL,hauteur-5*margeH,f);
 
 		/* dessin du Joueur 2*/
 		jg.tracerRond(1*margeL,2*margeH,5*margeL,9*margeH,cJ2);
 		jg.tracerImage(j2,2*margeL,3*margeH,3*margeL,5*margeH);
-		jg.tracerTxt(jeu.getJoueur(1).getNom(),2*margeL,9*margeH);
+		jg.tracerTxt(jeu.getJoueur(1).getNom(),2*margeL,9*margeH,f);
 
 	}
 

@@ -74,6 +74,10 @@ public class HautDePlateau extends Box{
 		menuItem = new JMenuItem("Charger");
 		menuItem.addActionListener(new AdaptateurCommande(controle, "charger"));
 		m.add(menuItem);
+
+		menuItem = new JMenuItem("Nouvelle Partie");
+		menuItem.addActionListener(new AdaptateurCommande(controle, "nouvellePartie"));
+		m.add(menuItem);
 		
 		return menuBar;
 	}

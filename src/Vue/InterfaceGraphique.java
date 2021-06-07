@@ -3,7 +3,6 @@ package Vue;
 import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.MouseMotionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,6 +21,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	JeuGraphiqueSwing jg;
 	HautDePlateau haut;
 	NouvellePartie nouv;
+	FinDePartie fin;
 	
 	JPanel panneau;
 	JFrame frame;
@@ -40,10 +40,11 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		
 		menu = new Menu(controle);
 		nouv = new NouvellePartie(controle);
-		
+
 		jg = new JeuGraphiqueSwing(jeu);
 		jg.addMouseListener(new AdaptateurSouris(jg, controle));
 		jg.addMouseMotionListener(new AdaptateurMotionSouris(jg,controle));
+		fin = new FinDePartie(controle,jeu);
 		
 		haut = new HautDePlateau(controle);
 		
@@ -109,5 +110,12 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	public void nouvellePartie(int mode) {
 		nouv.init(mode);
 		afficherNouvellePartie();
+	}
+
+	public void afficherFinPartie(){
+		masquer();
+		frame.add(fin);
+		fin.setVisible(true);
+		frame.setVisible(true);
 	}
 }

@@ -3,7 +3,6 @@ package Controleur;
 
 import IA.IA;
 import IA.IAAleatoire;
-import IA.IAHeuristique;
 import IA.IAMinMax;
 import IA.IAMonteCarlo;
 import IA.IAVisionComplete;
@@ -17,7 +16,7 @@ import Vue.InterfaceUtilisateur;
 // etat du joueur courant, occupe == entrain de jouer ca carte/calculer si c'est l'IA
 enum Etat {LIBRE, OCCUPE};
 // action a faire au prochain appel de timer, NOP == rien a faire
-enum Action {ANNULER, REFAIRE, MENU,CHARGER,SAUVER, NOP};
+enum Action {ANNULER, REFAIRE, MENU,CHARGER,SAUVER,NVLPARTIE, NOP};
 
 public class ControleurMediateur implements CollecteurEvenements{
     
@@ -28,6 +27,10 @@ public class ControleurMediateur implements CollecteurEvenements{
     Action action;
     Etat etat;
 	public static final int TEMPS = 60;
+
+	String infoia1,infoia2, infojoueur, infonom1, infonom2;
+	int mode;
+
 
     public ControleurMediateur(Jeu j) {
 		action = Action.NOP;
@@ -50,24 +53,33 @@ public class ControleurMediateur implements CollecteurEvenements{
 	}
 	
 	public void nouvelle_partie() {
+    	mode = Jeu.HUMAIN_VS_HUMAIN;
 		jeu.nouvellePartie();
 		inter.nouvellePartie(Jeu.HUMAIN_VS_HUMAIN);
 		jeu.mode(Jeu.HUMAIN_VS_HUMAIN);
 	}
 	
 	public void nouvelle_partie_vs_ia() {
+		mode = Jeu.HUMAIN_VS_IA;
 		jeu.nouvellePartie();
 		inter.nouvellePartie(Jeu.HUMAIN_VS_IA);
 		jeu.mode(Jeu.HUMAIN_VS_IA);
 	}
 	
 	public void nouvelle_partie_ia_vs_ia() {
+		mode = Jeu.IA_VS_IA;
 		jeu.nouvellePartie();
 		inter.nouvellePartie(Jeu.IA_VS_IA);
 		jeu.mode(Jeu.IA_VS_IA);
 	}
 	
 	public void lancer_partie(String ia1,String ia2,String joueur,String nom1,String nom2) {
+    	infoia1 = ia1;
+    	infoia2 = ia2;
+    	infojoueur = joueur;
+    	infonom1 = nom1;
+    	infonom2 = nom2;
+
 		jeu.setJoueur(0, nom1, null);
 		jeu.setJoueur(1, nom2, null);
 		
@@ -160,6 +172,8 @@ public class ControleurMediateur implements CollecteurEvenements{
 			case "sauver":
 				action=Action.SAUVER;
 				break;
+			case "nouvellePartie":
+				action = Action.NVLPARTIE;
 			case "regle":
 				break;
 			case "aide":
@@ -205,7 +219,8 @@ public class ControleurMediateur implements CollecteurEvenements{
 			decompte = TEMPS;
 			if (jeu.finDePartie()) {
 				jeu.afficherResultat();
-				action = Action.MENU;
+				inter.afficherFinPartie();
+				jeu.setMenu(true);
 			}
 		}
 		// executer les actions dés que possible
@@ -223,9 +238,17 @@ public class ControleurMediateur implements CollecteurEvenements{
 		}
 		else if(action== Action.SAUVER){
 			sauver();
+		}else if(action == Action.NVLPARTIE && etat == Etat.LIBRE){
+			nvlpartie();
 		}
 		action = Action.NOP;
 		// actualiser l'affichage
 		inter.metAJour();
+	}
+
+	private void nvlpartie() {
+		jeu.nouvellePartie();
+		jeu.mode(mode);
+		lancer_partie(infoia1,infoia2,infojoueur,infonom1,infonom2);
 	}
 }

@@ -1,12 +1,10 @@
 package Modele;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+
 import IA.IA;
 
-public class Jeu {
+public class Jeu implements Serializable {
 
     private Plateau plateau;
     private int gagnant, mode;
@@ -122,37 +120,43 @@ public class Jeu {
 	public void refaire() {
 		plateau.refaire();
 	}
-    
 
-	public static final String fichierSauvegarde="sauvegarde"; //TODO:pouvoir choisir la partie sauvegardée
-    /* sauvegarder le plateau dans un fichier
-    */
+    public static final String fichierSauvegarde="sauvegarde";
+    /* sauvegarder le jeu dans un fichier*/
     public void sauvegarder() {
-       try {
-           FileOutputStream fileOutputStream = new FileOutputStream(fichierSauvegarde);
-           ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-           objectOutputStream.writeObject(plateau);
-           objectOutputStream.flush();
-           objectOutputStream.close();
-       }catch(Exception e){
-           System.err.println("erreur sauvegarde"+e.toString());
-       }
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(fichierSauvegarde);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(this);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+        }catch(Exception e){
+            System.err.println("erreur sauvegarde"+e.toString());
+        }
     }
     public Jeu clone() {
-    	Jeu clone = new Jeu();
-    	clone.plateau = plateau.clone();
-    	return clone;
+        Jeu clone = new Jeu();
+        clone.plateau = plateau.clone();
+        return clone;
     }
-    // charger la partie depuis un fichier
+    // charger le jeu depuis un fichier
     public void charger() {
         try{
             FileInputStream fileInputStream = new FileInputStream(fichierSauvegarde);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            plateau = (Plateau) objectInputStream.readObject();
+            Jeu clone = (Jeu) objectInputStream.readObject();
             objectInputStream.close();
+            plateau=clone.plateau;
+            joueurs=clone.joueurs;
+            menu=clone.menu;
+            mode=clone.mode;
+            gagnant=clone.gagnant;
+            joueurs[0].setJeu(this);
+            joueurs[1].setJeu(this);
         }catch(Exception e){
-        	System.err.println("erreur chargement"+e.toString());
+            System.err.println("erreur chargement"+e.toString());
         }
+
     }
     
     public Plateau plateau() {

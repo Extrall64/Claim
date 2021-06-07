@@ -114,6 +114,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 
 	public void afficherFinPartie(){
 		masquer();
+		fin.init();
 		frame.add(fin);
 		fin.setVisible(true);
 		frame.setVisible(true);

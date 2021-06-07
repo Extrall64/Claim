@@ -21,6 +21,8 @@ public class VueJeu {
 	ImageClaim cadreCarte;
 	JeuGraphique jg;
 	Font f;
+	int[] cartesJ0;
+	int[] cartesJ1;
 
 	int hauteur,largeur;
 	int carteL,carteH;
@@ -59,6 +61,8 @@ public class VueJeu {
 	}
 
 	public VueJeu(Jeu j, JeuGraphique n) {
+		cartesJ0 = new int[5];
+		cartesJ1 = new int[5];
 		combatAnim = false;
 		images = new ImageClaim[5][10];
 		for(int i=0;i<10;i++) {
@@ -293,7 +297,7 @@ public class VueJeu {
 				}
 			}
 		}else{
-			x1 = largeur - 8*margeL;
+			x1 = largeur - 10*margeL;
 			x2 = x1;
 			y2 = 2*margeH;
 			y1 = hauteur - 13*margeH;
@@ -329,6 +333,8 @@ public class VueJeu {
 						versCC1 = new Point (x1, y1);
 					}
 				}
+				//metAJourCartesScore();
+				//afficheScore();
 			}
 		}
 		//joueur 1

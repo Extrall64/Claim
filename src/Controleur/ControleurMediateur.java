@@ -126,15 +126,18 @@ public class ControleurMediateur implements CollecteurEvenements{
 	}
 	
 	public void menu() {
+		action = Action.NOP;
 		inter.afficherMenu();
 		jeu.setMenu(true);
 	}
 
 	public void charger (){
+		action = Action.NOP;
     	jeu.charger();
     	System.out.println("charger");
 	}
 	public void sauver (){
+		action = Action.NOP;
     	jeu.sauvegarder();
 		System.out.println("sauver");
 	}
@@ -186,11 +189,13 @@ public class ControleurMediateur implements CollecteurEvenements{
 	}
 	
 	public void refaire() {
+		action = Action.NOP;
 		jeu.refaire();
 		//tourIA();
 	}
 	
 	public void annuler() {
+		action = Action.NOP;
 		jeu.annule();
 		//tourIA();
 	}
@@ -247,6 +252,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 	}
 
 	private void nvlpartie() {
+		action = Action.NOP;
 		jeu.nouvellePartie();
 		jeu.mode(mode);
 		lancer_partie(infoia1,infoia2,infojoueur,infonom1,infonom2);

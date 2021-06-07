@@ -69,34 +69,34 @@ public class FinDePartie extends JComponent{
         drawable.setColor(Color.black);
     }
 
+    public void init(){
+        gagnant = jeu.gagnant();
+        n1 = jeu.getJoueur(0).getNom();
+        n2 = jeu.getJoueur(1).getNom();
+
+        nom1 = createLabel(n1);
+        this.add(nom1);
+        nom2 = createLabel(n2);
+        this.add(nom2);
+
+        Carte c;
+        List<Carte> l = jeu.getJoueur(0).getScore();
+        Iterator<Carte> it = l.iterator();
+        while(it.hasNext()){
+            c = it.next();
+            cartesJ0[c.getFaction()] += 1;
+        }
+
+        l = jeu.getJoueur(1).getScore();
+        it = l.iterator();
+        while(it.hasNext()){
+            c = it.next();
+            cartesJ1[c.getFaction()] += 1;
+        }
+    }
+
     public void paintComponent(Graphics g) {
         drawable = (Graphics2D) g;
-
-        if(nom1==null){
-            gagnant = jeu.gagnant();
-            n1 = jeu.getJoueur(0).getNom();
-            n2 = jeu.getJoueur(1).getNom();
-
-            nom1 = createLabel(n1);
-            this.add(nom1);
-            nom2 = createLabel(n2);
-            this.add(nom2);
-
-            Carte c;
-            List<Carte> l = jeu.getJoueur(0).getScore();
-            Iterator<Carte> it = l.iterator();
-            while(it.hasNext()){
-                c = it.next();
-                cartesJ0[c.getFaction()] += 1;
-            }
-
-            l = jeu.getJoueur(1).getScore();
-            it = l.iterator();
-            while(it.hasNext()){
-                c = it.next();
-                cartesJ1[c.getFaction()] += 1;
-            }
-        }
 
         largeur = getSize().width;
         hauteur = getSize().height;
@@ -121,9 +121,9 @@ public class FinDePartie extends JComponent{
             case 0:
                 setFont(egaliteTxt,min(3*margeL,4*margeH));
                 egaliteTxt.setBounds(16*margeL, 4*margeH, 16*margeL, 5*margeH);
-
+                /*
                 drawable.drawImage(j1.image(), 30*margeL, 4*margeH, 4*margeL, 4*margeH, null);
-                drawable.drawImage(j2.image(), 35*margeL, 4*margeH, 4*margeL, 4*margeH, null);
+                drawable.drawImage(j2.image(), 35*margeL, 4*margeH, 4*margeL, 4*margeH, null);*/
                 break;
             case 1:
                 setFont(gagnantTxt,min(2*margeL,3*margeH));
@@ -131,9 +131,10 @@ public class FinDePartie extends JComponent{
 
                 setFont(nom1,min(margeL,2*margeH));
                 nom1.setBounds(18*margeL,3*margeH,18*margeL,5*margeH);
+                /*
                 drawable.drawImage(j1.image(), 30*margeL, 4*margeH, 4*margeL, 4*margeH, null);
                 drawable.drawImage(j2.image(), 35*margeL, 4*margeH, 4*margeL, 4*margeH, null);
-                grise(35*margeL, 4*margeH, 4*margeL, 4*margeH);
+                grise(35*margeL, 4*margeH, 4*margeL, 4*margeH);*/
                 break;
             case 2:
                 setFont(gagnantTxt,min(2*margeL,3*margeH));
@@ -141,9 +142,10 @@ public class FinDePartie extends JComponent{
 
                 setFont(nom2,min(margeL,2*margeH));
                 nom2.setBounds(18*margeL,3*margeH,18*margeL,5*margeH);
+                /*
                 drawable.drawImage(j1.image(), 30*margeL, 4*margeH, 4*margeL, 4*margeH, null);
                 drawable.drawImage(j2.image(), 35*margeL, 4*margeH, 4*margeL, 4*margeH, null);
-                grise(30*margeL, 4*margeH, 4*margeL, 4*margeH);
+                grise(30*margeL, 4*margeH, 4*margeL, 4*margeH);*/
                 break;
             default:
                 break;

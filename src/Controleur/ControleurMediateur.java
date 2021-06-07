@@ -134,6 +134,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 	public void charger (){
 		action = Action.NOP;
     	jeu.charger();
+		inter.afficherPlateau();
     	System.out.println("charger");
 	}
 	public void sauver (){

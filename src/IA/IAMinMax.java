@@ -82,9 +82,9 @@ public class IAMinMax implements IA {
 					}
 					valeur = temp;
 				}
-				// Beta coupure
-				if (alpha >= beta)  return valeur;
+				// Alpha coupure
                 if (valeur > alpha) alpha = valeur;
+				if (alpha >= beta)  return valeur;
 			}
 		}
 		/* afficher meilleur coup de ce noeud
@@ -123,9 +123,9 @@ public class IAMinMax implements IA {
 					valeur = temp;
 					b = temp;
 				}
-			// Alpha coupure
+			// Beta coupure
+	        if (valeur < beta)  beta = valeur;
 			if (alpha >= beta)  return valeur;
-            if (valeur < beta)  beta = valeur;
 			}
 		}
 		/*
@@ -144,9 +144,9 @@ public class IAMinMax implements IA {
     	List<Carte> coups = plateau.getMain( plateau.joueurCourant() );
     	int j = config.joueurCourant();
     	for(Carte c: plateau.cartes()) {
-    		if (plateau.carteJouable(c)) {
+    		if (!visionComplete && plateau.carteJouable(c)) {
 	    		int cat = c.getCategorie();
-	    		if (!visionComplete && plateau.phase() == 1 && j == autreJoueur && (cat == Plateau.iCartes || cat == Plateau.iPioche))
+	    		if (plateau.phase() == 1 && j == autreJoueur && (cat == Plateau.iCartes || cat == Plateau.iPioche))
 					coups.add(c);
     		}
     	}

@@ -125,6 +125,20 @@ public class FinDePartie extends JComponent{
         ajuster();
     }
 
+    private void traceImage(ImageClaim im,int i,int faction){
+        drawable.drawImage(im.image(),largeur-7*margeL - i*6*margeL,10*margeH,carteL,carteH,null);
+        drawable.drawString("x "+cartesJ0[faction],largeur-7*margeL  - i*6*margeL,21*margeH);
+
+        drawable.drawImage(im.image(),largeur-7*margeL - i*6*margeL,23*margeH,carteL,carteH,null);
+        drawable.drawString("x "+cartesJ1[faction],largeur-7*margeL  - i*6*margeL,34*margeH);
+
+        if(cartesJ0[faction] > cartesJ1[faction]){
+            grise(largeur-7*margeL - i*6*margeL,23*margeH,carteL,carteH);
+        }else if (cartesJ0[faction] < cartesJ1[faction]){
+            grise(largeur-7*margeL - i*6*margeL,10*margeH,carteL,carteH);
+        }
+    }
+
     private void ajuster() {
         drawable.setColor(Color.black);
         drawable.drawLine(5*margeL,9*margeH,largeur-5*margeL,9*margeH);
@@ -174,9 +188,17 @@ public class FinDePartie extends JComponent{
 
         drawable.drawImage(j1.image(), 2*margeL, 10*margeH, 5*margeL, 7*margeH, null);
         drawable.drawString(n1,2*margeL,18*margeH);
+        drawable.drawImage(j2.image(), 2*margeL, 23*margeH, 5*margeL, 7*margeH, null);
+        drawable.drawString(n2,2*margeL,31*margeH);
 
+        traceImage(gob,0,Plateau.GLOBELINS);
+        traceImage(dop,1,Plateau.DOPPELGANGERS);
+        traceImage(chev,2,Plateau.CHEVALIERS);
+        traceImage(mor,3,Plateau.MORTSVIVANTS);
+        traceImage(nain,4,Plateau.NAINS);
+        /*
         drawable.drawImage(gob.image(),largeur-7*margeL,10*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ0[Plateau.GLOBELINS],largeur-7*margeL,21*margeH);
+        drawable.drawString("x "+cartesJ0[],largeur-7*margeL,21*margeH);
         drawable.drawImage(dop.image(),largeur-13*margeL,10*margeH,carteL,carteH,null);
         drawable.drawString("x "+cartesJ0[Plateau.DOPPELGANGERS],largeur-13*margeL,21*margeH);
         drawable.drawImage(chev.image(),largeur-19*margeL,10*margeH,carteL,carteH,null);
@@ -185,9 +207,6 @@ public class FinDePartie extends JComponent{
         drawable.drawString("x "+cartesJ0[Plateau.MORTSVIVANTS],largeur-25*margeL,21*margeH);
         drawable.drawImage(nain.image(),largeur-31*margeL,10*margeH,carteL,carteH,null);
         drawable.drawString("x "+cartesJ0[Plateau.NAINS],largeur-31*margeL,21*margeH);
-
-        drawable.drawImage(j2.image(), 2*margeL, 23*margeH, 5*margeL, 7*margeH, null);
-        drawable.drawString(n2,2*margeL,31*margeH);
 
         drawable.drawImage(gob.image(),largeur-7*margeL,23*margeH,carteL,carteH,null);
         drawable.drawString("x "+cartesJ1[Plateau.GLOBELINS],largeur-7*margeL,34*margeH);
@@ -199,6 +218,7 @@ public class FinDePartie extends JComponent{
         drawable.drawString("x "+cartesJ1[Plateau.MORTSVIVANTS],largeur-25*margeL,34*margeH);
         drawable.drawImage(nain.image(),largeur-31*margeL,23*margeH,carteL,carteH,null);
         drawable.drawString("x "+cartesJ1[Plateau.NAINS],largeur-31*margeL,34*margeH);
+        */
 
         if(gagnant==1){
             grise(2*margeL, 23*margeH, 5*margeL, 7*margeH);

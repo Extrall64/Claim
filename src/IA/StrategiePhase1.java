@@ -21,7 +21,6 @@ public class StrategiePhase1 implements Strategie {
 			case "moyenne": return moyenne(plateau);
 			case "moyenne3FactionMajoritaire": return moyenne3FactionMajoritaire(plateau);
 			case "moyenneAvecPoidFaction": return moyenneAvecPoidFaction(plateau);
-			case "favoriseFactionEnMain": return favoriseFactionEnMain(plateau);
 			default: System.err.println("Stategie non reconnue !"); break;
 		}
 		return 0;
@@ -83,21 +82,5 @@ public class StrategiePhase1 implements Strategie {
 			if (max[c.getFaction()] < c.getPoid()) max[c.getFaction()] = c.getPoid();
 		for(int i = 0; i < nbFaction; i++) res += poid[i] * max[i];
 		return res/nbFaction - 5;	
-	}
-	/*
-	 *  favorise l'aquisition des cartes des faction les plus presentes en main
-	 *  le poid est le nombre de carte d'une faction
-	 */
-	public float favoriseFactionEnMain(Plateau plateau) {
-		float res = 0;
-		float [] poid = new float [nbFaction];
-		float [] max = new float [nbFaction];
-
-		for(Carte c: plateau.getPartisans(joueur))
-			if (max[c.getFaction()] < c.getPoid()) max[c.getFaction()] = c.getPoid();
-		for(Carte c: plateau.getMain(joueur))
-			poid[c.getFaction()] += 1;
-		for(int i = 0; i < nbFaction; i++) res += poid[i] * max[i]; 
-		return res - 5;
 	}
 }

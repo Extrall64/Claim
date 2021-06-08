@@ -76,7 +76,7 @@ public class IAMonteCarlo implements IA {
 			List<Carte> main = plateau.getMain( config.joueurCourant() );
 	    	List<Carte> l = new ArrayList<>();
 	    	for(Carte c: main) if (config.carteJouable(c)) l.add(c);
-	    	if (plateau.phase() == 1 && config.joueurCourant() == autreJoueur) {
+	    	if (!visionComplete && plateau.phase() == 1 && config.joueurCourant() == autreJoueur) {
 	    		for(Carte c: plateau.cartes()) {
 	    			int cat = c.getCategorie();
 					if (config.carteJouable(c) && (cat == Plateau.iCartes || cat == Plateau.iPioche)) {

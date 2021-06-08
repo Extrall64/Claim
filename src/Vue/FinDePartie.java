@@ -196,29 +196,6 @@ public class FinDePartie extends JComponent{
         traceImage(chev,2,Plateau.CHEVALIERS);
         traceImage(mor,3,Plateau.MORTSVIVANTS);
         traceImage(nain,4,Plateau.NAINS);
-        /*
-        drawable.drawImage(gob.image(),largeur-7*margeL,10*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ0[],largeur-7*margeL,21*margeH);
-        drawable.drawImage(dop.image(),largeur-13*margeL,10*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ0[Plateau.DOPPELGANGERS],largeur-13*margeL,21*margeH);
-        drawable.drawImage(chev.image(),largeur-19*margeL,10*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ0[Plateau.CHEVALIERS],largeur-19*margeL,21*margeH);
-        drawable.drawImage(mor.image(),largeur-25*margeL,10*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ0[Plateau.MORTSVIVANTS],largeur-25*margeL,21*margeH);
-        drawable.drawImage(nain.image(),largeur-31*margeL,10*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ0[Plateau.NAINS],largeur-31*margeL,21*margeH);
-
-        drawable.drawImage(gob.image(),largeur-7*margeL,23*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ1[Plateau.GLOBELINS],largeur-7*margeL,34*margeH);
-        drawable.drawImage(dop.image(),largeur-13*margeL,23*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ1[Plateau.DOPPELGANGERS],largeur-13*margeL,34*margeH);
-        drawable.drawImage(chev.image(),largeur-19*margeL,23*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ1[Plateau.CHEVALIERS],largeur-19*margeL,34*margeH);
-        drawable.drawImage(mor.image(),largeur-25*margeL,23*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ1[Plateau.MORTSVIVANTS],largeur-25*margeL,34*margeH);
-        drawable.drawImage(nain.image(),largeur-31*margeL,23*margeH,carteL,carteH,null);
-        drawable.drawString("x "+cartesJ1[Plateau.NAINS],largeur-31*margeL,34*margeH);
-        */
 
         if(gagnant==1){
             grise(2*margeL, 23*margeH, 5*margeL, 7*margeH);

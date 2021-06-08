@@ -71,9 +71,7 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		vue.estRelease();
 	}
 	
-	public int joueurCourant() {
-		return vue.joueurCourant();
-	}
+
 
 	public void tracerRond(int x,int y,int largeur,int hauteur, Color couleur){
 		drawable.setColor(couleur);
@@ -100,5 +98,9 @@ public class JeuGraphiqueSwing extends JComponent implements JeuGraphique{
 		drawable.fillRect(x,y,larg,haut);
 		drawable.setColor(Color.black);
 	}
-	
+
+	public void annuler(){
+		vue.annuler();
+	}
+
 }

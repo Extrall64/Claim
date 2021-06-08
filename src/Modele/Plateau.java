@@ -42,6 +42,7 @@ public class Plateau extends Historique<Action> implements Serializable {
 	private List <List<Carte>> partisans, scores, mains;
 
 	public void initialiser() {
+		videHisto();
         rand = new Random();
         cartes = new Carte[nbCarte];
         initialiserCartes();

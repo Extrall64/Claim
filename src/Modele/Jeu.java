@@ -43,10 +43,6 @@ public class Jeu implements Serializable {
     
     public void lancerUnePartie() {
         plateau.initialiser();
-
-        // Pour tester sauve/charge:1)mettre que sauvegarder 2)mettre que charger sans meme initialiser avant
-        //sauvegarder();
-       	//charger();
     }
  
     public boolean carteJouable(Carte carte) {
@@ -116,11 +112,31 @@ public class Jeu implements Serializable {
     }
     
     public void annule() {
+        boolean b = plateau.peutAnnuler();
 		plateau.annuler();
+		if(b) {
+            joueurs[0].setMain(plateau().getMain(0));
+            joueurs[1].setMain(plateau().getMain(1));
+            joueurs[0].setPartisans(plateau().getPartisans(0));
+            joueurs[1].setPartisans(plateau().getPartisans(1));
+            joueurs[0].setScore(plateau().getScore(0));
+            joueurs[1].setScore(plateau().getScore(1));
+            System.out.println("Annulation !");
+        }
 	}
 
 	public void refaire() {
+        boolean b = plateau.peutRefaire();
 		plateau.refaire();
+        if(b) {
+            joueurs[0].setMain(plateau().getMain(0));
+            joueurs[1].setMain(plateau().getMain(1));
+            joueurs[0].setPartisans(plateau().getPartisans(0));
+            joueurs[1].setPartisans(plateau().getPartisans(1));
+            joueurs[0].setScore(plateau().getScore(0));
+            joueurs[1].setScore(plateau().getScore(1));
+            System.out.println("Refaire !");
+        }
 	}
 
     public static final String fichierSauvegarde="sauvegarde";

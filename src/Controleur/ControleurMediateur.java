@@ -196,6 +196,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 	
 	public void annuler() {
 		jeu.annule();
+		inter.annuler();
 	}
 
 	@Override

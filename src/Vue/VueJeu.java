@@ -1,12 +1,10 @@
 package Vue;
 
 import java.awt.*;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import Global.Configuration;
 import Modele.Carte;
 import Modele.Jeu;
 import Modele.Plateau;
@@ -14,10 +12,9 @@ import Modele.Plateau;
 public class VueJeu {
 	static int TMPANIM = 20;
 
-	int joueurCourant;
 	Point[] posCartes;
 	Jeu jeu;
-	ImageClaim images[][]; //ex images[0][1] image gobelin de force 1
+	ImageClaim[][] images; //ex images[0][1] image gobelin de force 1
 	ImageClaim dos;
 	ImageClaim fond;
 	ImageClaim j1,j2;
@@ -43,7 +40,7 @@ public class VueJeu {
 	Point carteWin;
 	Point cc0, cc1, depCC0, depCC1, versCC0, versCC1;
 	Point drag, dropDeb, dropFin;
-	Point depNvlPioche,destNvlPioche;
+	Point destNvlPioche;
 	
 	Carte dragAndDrop;
 	boolean estSurZoneDrop;
@@ -63,7 +60,6 @@ public class VueJeu {
 	}
 	
 	private ImageClaim chargeImage(String nom) {
-		InputStream in = Configuration.charge("Image"+ nom + ".jpg");
 		return ImageClaim.getImageClaim("Image/"+ nom + ".jpg");
 	}
 
@@ -137,7 +133,6 @@ public class VueJeu {
 	}
 
 	private void dessineMains(){
-		joueurCourant = jeu.joueurCourant();
 		if(jeu.TourHumain()){
 			posCartes = new Point[14];
 		}
@@ -510,15 +505,10 @@ public class VueJeu {
 	}
 
 	
-	public int joueurCourant() {
-		return joueurCourant;
-	}
-	
 	public Carte determinerCarte(int x, int y) {
 		if(jeu.TourHumain() && jeu.plateau().carteCourante(jeu.joueurCourant()) == null) {
-			joueurCourant = jeu.joueurCourant();
 			int i = 0;
-			List<Carte> main = jeu.plateau().getMain(joueurCourant);
+			List<Carte> main = jeu.plateau().getMain(jeu.joueurCourant());
 			int nbCarte = main.size();
 			while (i < nbCarte) {
 				if (x >= posCartes[i].x && x < posCartes[i + 1].x && y >= posCartes[i].y && y <= posCartes[i].y + carteH) {
@@ -557,5 +547,18 @@ public class VueJeu {
 
 	public boolean estSurZoneDrop(){
 		return estSurZoneDrop;
+	}
+
+	public void annuler(){
+		posCartes = new Point[14];
+		cartesJ0 = new int[5];
+		cartesJ1 = new int[5];
+		dragAndDrop = null;
+		/*
+		combatAnim = false;
+		combatAnimPioche = false;
+		carteCouranteAnim = false;
+		piocheAnim = false;*/
+		estSurZoneDrop = false;
 	}
 }

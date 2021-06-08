@@ -1,9 +1,5 @@
 package Modele;
 
-import Global.Configuration;
-import Structures.Iterateur;
-import Structures.Sequence;
-
 public class Action extends Commande {
 	Plateau courant;
 	Plateau copie;
@@ -14,6 +10,8 @@ public class Action extends Commande {
 	}
 
 	void remplace() {
+		Plateau p = courant.clone();
 		courant.remplace(copie);
+		copie = p.clone();
 	}
 }

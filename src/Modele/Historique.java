@@ -11,6 +11,11 @@ public class Historique<E extends Commande> {
 		futur = Configuration.instance().nouvelleSequence();
 	}
 
+	void videHisto(){
+		passe = Configuration.instance().nouvelleSequence();
+		futur = Configuration.instance().nouvelleSequence();
+	}
+
 	void nouveau(E c) {
 		passe.insereTete(c);
 		while (!futur.estVide())

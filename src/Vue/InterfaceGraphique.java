@@ -117,6 +117,11 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		afficherNouvellePartie();
 	}
 
+	@Override
+	public void annuler() {
+		jg.annuler();
+	}
+
 	public void afficherFinPartie(){
 		masquer();
 		fin.init();

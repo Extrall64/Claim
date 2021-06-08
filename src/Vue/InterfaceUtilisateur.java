@@ -8,4 +8,5 @@ public interface InterfaceUtilisateur {
 	void afficherFinPartie();
 	void afficherRegle();
 	void nouvellePartie(int mode);
+	void annuler();
 }

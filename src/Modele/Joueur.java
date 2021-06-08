@@ -26,7 +26,7 @@ public class Joueur implements Serializable {
 	public void setMain( List<Carte> l) { main = l;}
 	public void setPartisans(List<Carte> l) { partisans = l;}
 	public void setScore(List<Carte> l) { score = l;}
-	public void setJeu(Jeu c){ config=c; }//TODO: faire aussi setJeu pour l'IA
+	public void setJeu(Jeu c){ config=c; }
 	
 	public Carte proposerCarte() {
 		IA assistant =  new IAMonteCarlo(config, joueur, 50);
@@ -61,7 +61,6 @@ public class Joueur implements Serializable {
 		oos.writeObject(score);
 		oos.writeObject(nom);
 		oos.writeObject(joueur);
-		//TODO:ecrire IA (sans sauver leur config (sinon boucle infinie)
 	}
 	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
 		main=(List<Carte>)ois.readObject();
@@ -69,6 +68,5 @@ public class Joueur implements Serializable {
 		score=(List<Carte>)ois.readObject();
 		nom=(String)ois.readObject();
 		joueur=(int)ois.readObject();
-		//TODO:lire IA
 	}
 }

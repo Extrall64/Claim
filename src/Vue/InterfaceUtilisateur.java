@@ -6,5 +6,6 @@ public interface InterfaceUtilisateur {
 	void afficherMenu();
 	void afficherPlateau();
 	void afficherFinPartie();
+	void afficherRegle();
 	void nouvellePartie(int mode);
 }

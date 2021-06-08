@@ -4,9 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
+import javax.swing.*;
 
 import Modele.Jeu;
 
@@ -21,6 +19,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	HautDePlateau haut;
 	NouvellePartie nouv;
 	FinDePartie fin;
+	Regle r;
 
 	ImageClaim Icon;
 
@@ -40,7 +39,9 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	public void run() {	
 		frame = new JFrame("Claim");
 		frame.setIconImage(Icon.image());
-		
+
+		r = new Regle();
+
 		menu = new Menu(controle);
 		nouv = new NouvellePartie(controle);
 
@@ -121,5 +122,9 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame.add(fin);
 		fin.setVisible(true);
 		frame.setVisible(true);
+	}
+
+	public void afficherRegle(){
+		r.setVisible(true);
 	}
 }

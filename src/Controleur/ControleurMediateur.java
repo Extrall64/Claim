@@ -180,6 +180,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 			case "nouvellePartie":
 				action = Action.NVLPARTIE;
 			case "regle":
+				inter.afficherRegle();
 				break;
 			case "aide":
 				break;

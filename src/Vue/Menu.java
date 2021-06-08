@@ -18,9 +18,10 @@ public class Menu extends JComponent{
 	
 	ImageClaim fond,claim;
 	JButton nouvellePartie_h_vs_h,nouvellePartie_ia_vs_ia,nouvellePartie_h_vs_ia,test_ia;
-	JButton charger,regle,aide,parametre;
+	JButton charger,regle;
 	JLabel nouvelle_partie;
-	
+	JButton aide,parametre;
+
 	public Menu(CollecteurEvenements c) {
 		controle = c;
 		initilaiser();
@@ -75,9 +76,9 @@ public class Menu extends JComponent{
 		
 		charger.setBounds(orgX * 2 + btnL, hauteur/3 + orgY, btnL, btnH);
 		
-		regle.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY * 2 + btnH, btnL, btnH);
-		aide.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY * 3 + btnH *2, btnL, btnH);
-		parametre.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY, btnL, btnH);
+		regle.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY, btnL, btnH);
+		//aide.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY * 3 + btnH *2, btnL, btnH);
+		//parametre.setBounds(orgX * 3 + btnL * 2, hauteur/3 + orgY, btnL, btnH);
 	}
 	private void initilaiser() {
 		
@@ -99,15 +100,16 @@ public class Menu extends JComponent{
 		charger = createButton("Charger", "charger");
 		this.add(charger);
 		
-		regle = createButton("Regle", "regle");
+		regle = createButton("Regles", "regle");
 		this.add(regle);
-		
+
+		/*
 		aide = createButton("Aide", "aide");
 		this.add(aide);
-		
 		parametre = createButton("Parametre", "parametre");
 		this.add(parametre);
-		
+		*/
+
 		nouvelle_partie = createLabel("Nouvelle Partie :");
 		this.add(nouvelle_partie);
 	}	

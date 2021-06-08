@@ -8,12 +8,14 @@ public class Jeu implements Serializable {
 
     private Plateau plateau;
     private int gagnant, mode;
-    boolean menu;
+    boolean menu,chargePB;
     private Joueur [] joueurs;
+
     public Jeu() {
         plateau = new Plateau();
         joueurs = new Joueur[2];
         menu = true;
+        chargePB = false;
     }
     
     public void nouvellePartie() {
@@ -153,10 +155,11 @@ public class Jeu implements Serializable {
             gagnant=clone.gagnant;
             joueurs[0].setJeu(this);
             joueurs[1].setJeu(this);
+            chargePB = false;
         }catch(Exception e){
-            System.err.println("erreur chargement"+e.toString());
+            System.err.println("Erreur chargement "+e.toString());
+            chargePB = true;
         }
-
     }
     
     public Plateau plateau() {
@@ -209,5 +212,9 @@ public class Jeu implements Serializable {
     }
     public Joueur getJoueur(int j) {
     	return joueurs[j];
+    }
+
+    public boolean getChargePb(){
+        return chargePB;
     }
 }

@@ -18,10 +18,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import Global.Configuration;
+import Modele.Jeu;
+import Modele.Plateau;
 
 public class HautDePlateau extends Box{
 	int largeur, hauteur;
 	Graphics2D drawable;
+	int mode;
 
 	CollecteurEvenements controle;
 	
@@ -29,9 +32,10 @@ public class HautDePlateau extends Box{
 	JButton refaire, annuler;
 	
 	
-	public HautDePlateau(CollecteurEvenements c) {
+	public HautDePlateau(CollecteurEvenements c,int m) {
 		super(BoxLayout.LINE_AXIS);
 		controle = c;
+		mode = m;
 		initilaiser();
 	}
 	
@@ -66,14 +70,18 @@ public class HautDePlateau extends Box{
 		menuItem = new JMenuItem("Ecran d'accueil");
 		menuItem.addActionListener(new AdaptateurCommande(controle, "menu"));
 		m.add(menuItem);
-		
-		menuItem = new JMenuItem("Sauvegarder");
-		menuItem.addActionListener(new AdaptateurCommande(controle, "sauver"));
-		m.add(menuItem);
-		
+
+		if(mode == Jeu.HUMAIN_VS_HUMAIN) {
+			menuItem = new JMenuItem("Sauvegarder");
+			menuItem.addActionListener(new AdaptateurCommande(controle, "sauver"));
+			m.add(menuItem);
+		}
+
+		/*
 		menuItem = new JMenuItem("Charger");
 		menuItem.addActionListener(new AdaptateurCommande(controle, "charger"));
 		m.add(menuItem);
+		 */
 
 		menuItem = new JMenuItem("Nouvelle Partie");
 		menuItem.addActionListener(new AdaptateurCommande(controle, "nouvellePartie"));

@@ -27,7 +27,7 @@ public class VueJeu {
 
 	int[] cartesJ0;
 	int[] cartesJ1;
-	String[] nomFact;
+	String[] nomFact,nomFactCourt;
 
 	int hauteur,largeur;
 	int carteL,carteH;
@@ -72,11 +72,17 @@ public class VueJeu {
 		cartesJ0 = new int[5];
 		cartesJ1 = new int[5];
 		nomFact = new String[5];
+		nomFactCourt = new String[5];
 		nomFact[0] = "Gobelins";
 		nomFact[1] = "Nains";
 		nomFact[2] = "Mort-vivants";
 		nomFact[3] = "Doppelgangers";
 		nomFact[4] = "Chevaliers";
+		nomFactCourt[0] = "Gobe.";
+		nomFactCourt[1] = "Nain.";
+		nomFactCourt[2] = "Mort.";
+		nomFactCourt[3] = "Dopp.";
+		nomFactCourt[4] = "Chev.";
 		combatAnim = false;
 		images = new ImageClaim[5][10];
 		for(int i=0;i<10;i++) {
@@ -312,13 +318,23 @@ public class VueJeu {
 		//J1
 		jg.tracerImage(cadreCarte, largeur - 10*margeL -margeL/10, hauteur - 13*margeH-margeH/6,9*margeL,carteH+margeH/3);
 		for(int i=0;i<5;i++){
-			jg.tracerTxt(nomFact[i]+": x "+cartesJ0[i],largeur - 5*margeL,hauteur - 13*margeH +(i+1)*2*margeH,f1);
+			if(largeur>1200){
+				jg.tracerTxt(nomFact[i]+": x "+cartesJ0[i],largeur - 5*margeL,hauteur - 13*margeH +(i+1)*2*margeH,f1);
+			}else{
+				jg.tracerTxt(nomFactCourt[i]+": x "+cartesJ0[i],largeur - 5*margeL,hauteur - 13*margeH +(i+1)*2*margeH,f1);
+			}
+
 		}
 
 		//J2
 		jg.tracerImage(cadreCarte, largeur - 10*margeL -margeL/10, 2*margeH-margeH/6,9*margeL,carteH+margeH/3);
 		for(int i=0;i<5;i++){
-			jg.tracerTxt(nomFact[i]+": x "+cartesJ1[i],largeur - 5*margeL,2*margeH +(i+1)*2*margeH,f1);
+			if(largeur>1200){
+				jg.tracerTxt(nomFact[i]+": x "+cartesJ1[i],largeur - 5*margeL,2*margeH +(i+1)*2*margeH,f1);
+			}else{
+				jg.tracerTxt(nomFactCourt[i]+": x "+cartesJ1[i],largeur - 5*margeL,2*margeH +(i+1)*2*margeH,f1);
+			}
+
 		}
 	}
 

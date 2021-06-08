@@ -94,7 +94,7 @@ public class ControleurMediateur implements CollecteurEvenements{
 			jeu.joueurCommence(1);
 		jeu.setMenu(false);
 		jeu.initialiserPhase1();
-		inter.afficherPlateau();
+		inter.afficherPlateau(jeu.getMode());
 		decompte = TEMPS;
 	}
 	
@@ -133,8 +133,10 @@ public class ControleurMediateur implements CollecteurEvenements{
 
 	public void charger (){
     	jeu.charger();
-		inter.afficherPlateau();
-    	System.out.println("charger");
+    	if(!jeu.getChargePb()) {
+			inter.afficherPlateau(jeu.getMode());
+			System.out.println("charger");
+		}
 	}
 	public void sauver (){
     	jeu.sauvegarder();

@@ -50,7 +50,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		jg.addMouseMotionListener(new AdaptateurMotionSouris(jg,controle));
 		fin = new FinDePartie(controle,jeu);
 		
-		haut = new HautDePlateau(controle);
+		//haut = new HautDePlateau(controle);
 		
 		Timer time = new Timer(16, new AdaptateurTemps(controle));//timer
 		time.start();
@@ -67,7 +67,7 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 	public void metAJour() {
 		menu.repaint();
 		jg.repaint();
-		haut.repaint();
+		//haut.repaint();
 	}
 	
 	@Override
@@ -90,8 +90,9 @@ public class InterfaceGraphique implements Runnable, InterfaceUtilisateur{
 		frame.setVisible(true);
 	}
 	
-	public void afficherPlateau() {
+	public void afficherPlateau(int mode) {
 		masquer();
+		haut = new HautDePlateau(controle,mode);
 		frame.add(haut,BorderLayout.PAGE_START);
 		haut.setVisible(true);
 		frame.add(jg);
